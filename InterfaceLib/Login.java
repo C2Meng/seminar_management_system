@@ -1,8 +1,7 @@
-package Interface;
+package InterfaceLib;
 
 public interface Login{
     void authenticateUser(String username , String password);
-    void logoutUser();
-    String dashboardString();
+    void logOut();
 }
 
