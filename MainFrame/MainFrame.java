@@ -13,9 +13,6 @@ public class MainFrame extends JFrame {
         HomePage homePage = new HomePage();
         add(homePage);
         
-       
-
-    
         // set the size , close operation and visibility of the frame //
         
         setSize(800 , 500);
