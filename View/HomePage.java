@@ -1,73 +1,53 @@
 package View;
 
-import java.awt.*;
-import java.awt.event.*;
+import MainFrame.MainFrame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.*;
 
 
 public class HomePage extends JPanel{
-    public HomePage(){
 
-// =========================== Home Page Components ============================ //
-       
-        JLabel homeTextArea = new JLabel("Welcome to Seminar Management System!");
-        add(homeTextArea);
+    public HomePage(MainFrame mainFrame){ 
         
+// ======================================== WELCOME LABEL ===========================================//
 
-// =========================== Login Button ============================= //
+       setLayout(new GridBagLayout());
+       GridBagConstraints gbc = new GridBagConstraints();
+       gbc.gridx = 0;
+       gbc.gridy = 0;
+       gbc.weightx = 1.0;
+       gbc.weighty = 0.1;
+       gbc.anchor = GridBagConstraints.NORTH;
+       gbc.insets = new Insets(20, 0, 0, 0);
+       JLabel label = new JLabel("Welcome to the seminar management system");
+       add(label , gbc);
 
-        JButton loginButton = new JButton("Login");
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                LoginPage loginPage = new LoginPage();
-                loginPage.setVisible(true);
-            }
-        });
+// ======================================== LOGIN BUTTON ========================================== //
 
-// =========================== Sign Up Button ============================= //
+       gbc.gridy = 1;
+       gbc.weighty = 1.0;
+       gbc.anchor = GridBagConstraints.NORTH;
+       gbc.insets = new Insets(0, 0, 0, 0);    // Reset margins
+       JButton loginButton = new JButton("Login");
+       loginButton.addActionListener(e-> 
+           mainFrame.showPage("LoginPage")
+       );
+       add(loginButton, gbc);
 
-        JButton signUpButton = new JButton("Sign Up");
-        signUpButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed( ActionEvent e){
-                SignUpPage signUpPage = new SignUpPage();
-                signUpPage.setVisible(true);
-            }
-        });
+// ======================================== SIGNUP BUTTON ========================================= //
 
+       gbc.gridy = 1;
+       gbc.weighty = 1.0;
+       gbc.anchor = GridBagConstraints.NORTH;
+       gbc.insets = new Insets(40, 0, 0, 0);    
+       JButton signUpButton = new JButton("Sign Up");
+       signUpButton.addActionListener(e->
+         mainFrame.showPage("SignUpPage")
+       );
 
-
-// ============================= Layout Setup ============================== //
-
-
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER , 10 , 100));
-
-// =========================== Set Box Layout to center components vertically ============================ //
-
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(Box.createVerticalGlue());
-
-// =========================== Add components to panel ============================= //
-
-        homeTextArea.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(Box.createVerticalStrut(50)); // spacing from top to 50 pixels //
-        panel.add(homeTextArea);
-      
-// ============================== Add Login Button to panel ============================== //
-
-        loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(Box.createVerticalStrut(50)); // spacing from top to 50 pixels //
-        panel.add(loginButton);
-
-// ============================== Add Register Button to panel =============================== //
-        signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(Box.createVerticalStrut(50)); // spacing from top to 50 pixels //
-        panel.add(signUpButton);
-
-
-        add(panel);
-
+       add(signUpButton, gbc);
 
 
         
