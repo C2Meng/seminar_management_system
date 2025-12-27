@@ -7,10 +7,24 @@ import java.awt.TextField;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class SignUpPage extends JPanel{
+
+    private String[] roles = { "Student" , "Evaluator" , "Coordinator"};
+
+    private JComboBox <String> roleComboBox = new JComboBox<>();
+
+    public void getRoles(){
+        for (String role : roles){
+            roleComboBox.addItem(role);
+            
+        }
+    }
+
+
     public SignUpPage(MainFrame mainFrame){
        JLabel label = new JLabel("Sign Up Page");
        label.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -56,21 +70,33 @@ public class SignUpPage extends JPanel{
 
         add(Box.createVerticalStrut(10)); // spacing
 
-        JButton loginButton = new JButton("Login");
-        loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(loginButton);
+        JLabel roleLabel = new JLabel("Select Role: ");
+        roleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(roleLabel);
+
+        add(Box.createVerticalStrut(10)); // spacing
+
+        SignUpPage.this.getRoles();
+        roleComboBox.setMaximumSize(new Dimension(200 , 200));
+        add(roleComboBox);
+
+        add(Box.createVerticalStrut(20)); // spacing
+
+        JButton signUpButton = new JButton("Sign Up");
+        signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(signUpButton);
 
 
         add(Box.createVerticalStrut(10));
 
 // =================================================DISPLAY SIGN UP====================================================== //
 
-        JButton signInButton = new JButton("Already have an account? Login");
-        signInButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(signInButton);
+        JButton loginButton = new JButton("Already have an account? Login");
+        loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(loginButton);
 
 
-        signInButton.addActionListener(e-> 
+        loginButton.addActionListener(e-> 
             mainFrame.showPage("LoginPage")
         );
        

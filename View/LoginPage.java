@@ -47,7 +47,7 @@ public class LoginPage extends JPanel {
 
 // =================================================DISPLAY SIGN UP====================================================== //
 
-        JButton signUpButton = new JButton("Already have an account? Login");
+        JButton signUpButton = new JButton("Don't have an account? Sign Up");
         signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(signUpButton);
 
