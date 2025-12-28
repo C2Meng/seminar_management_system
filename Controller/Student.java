@@ -35,8 +35,6 @@ public class Student implements SignUp , SignIn{
          isRegistered = true;
          writeToCSV.writeData(line);
          navigator.goTo("LoginPage");
-         
-         
 
     }
 
