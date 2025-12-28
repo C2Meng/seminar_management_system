@@ -94,10 +94,11 @@ public class SignUpPage extends JPanel{
                 String userType = roleComboBox.getSelectedItem().toString();
 
                 if (userType.equals("Student")){
-                   Student student = new Student(email , name , password , userType);
+                   Student student = new Student(email , name , password , userType , mainFrame);
                    student.registerUser(name, password, email, userType);
-                   mainFrame.showPage("LoginPage");
-                } 
+                } else {
+                    // handle other types accordingly //
+                }
                
             }
         );

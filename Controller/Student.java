@@ -1,11 +1,13 @@
 package Controller;
 
+import InterfaceLib.Navigator;
+import InterfaceLib.SignIn;
 import InterfaceLib.SignUp;
 import Models.WriteToCSV;
 
 
 
-public class Student implements SignUp{
+public class Student implements SignUp , SignIn{
 
     private String email;
     private String password;
@@ -14,13 +16,14 @@ public class Student implements SignUp{
     private WriteToCSV writeToCSV = new WriteToCSV();
     private boolean isRegistered = false;
     private String line;
-
+    private Navigator navigator;
     
-    public Student (String email, String password , String name , String userType ){
+    public Student (String email, String password , String name , String userType , Navigator navigator ){
         this.email = email;
         this.password = password;
         this.name = name;
         this.userType = userType;
+        this.navigator = navigator;
     }
 
 
@@ -31,7 +34,20 @@ public class Student implements SignUp{
          line = name + "," + password + "," + email + "," + userType;
          isRegistered = true;
          writeToCSV.writeData(line);
+         navigator.goTo("LoginPage");
+         
 
+    }
+
+    @Override
+    public void authUser(String email , String password ){
+       writeToCSV.getFilePath();
+       
+    }
+
+    @Override
+    public void logOut(){
+       // implementation for logging out a user //
     }
 
     @Override
