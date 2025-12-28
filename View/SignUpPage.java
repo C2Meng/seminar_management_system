@@ -10,6 +10,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class SignUpPage extends JPanel{
@@ -96,8 +97,10 @@ public class SignUpPage extends JPanel{
                 if (userType.equals("Student")){
                    Student student = new Student(email , name , password , userType , mainFrame);
                    student.registerUser(name, password, email, userType);
+                   JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
+                   "success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    // handle other types accordingly //
+                    
                 }
                
             }
