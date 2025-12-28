@@ -1,5 +1,7 @@
 package Models;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -45,5 +47,29 @@ public class WriteToCSV {
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+
+// =========================== method to verify user credentials =========================== //
+
+    public boolean verifyUser(String email , String password){
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))){
+            String currentLine;
+            br.readLine();
+            while((currentLine = br.readLine())!= null){
+                String[] data = currentLine.split(",");
+                String storedEmail = data[0];
+                String storedPassword = data[2];
+
+                if (storedEmail.equals(email) && storedPassword.equals(password)){
+                    return true;
+                }
+                
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }
