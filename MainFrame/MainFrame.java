@@ -1,4 +1,5 @@
 package MainFrame;
+import InterfaceLib.Navigator;
 import View.HomePage;
 import View.LoginPage;
 import View.SignUpPage;
@@ -6,7 +7,7 @@ import View.StudentDashboard;
 import java.awt.CardLayout;
 import javax.swing.*;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements Navigator {
     private CardLayout cardLayout = new CardLayout();
     private JPanel mainPanel = new JPanel(cardLayout);
 
@@ -31,6 +32,15 @@ public class MainFrame extends JFrame {
         setSize(800 , 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
+    
+    @Override
+    public void goTo(String pageName){
+        showPage(pageName);
+    }
+
+
+    
 
 
     public void showPage(String pageName){
