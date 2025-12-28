@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Student;
 import MainFrame.MainFrame;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -50,13 +51,13 @@ public class SignUpPage extends JPanel{
         add(Box.createVerticalStrut(10)); // spacing
 
 
-        JLabel usernameLabel = new JLabel("Username: " );
+        JLabel usernameLabel = new JLabel("Name: " );
         usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(usernameLabel);
 
-        TextField usernameArea = new TextField();
-        usernameArea.setMaximumSize(new Dimension(200 , 200)); 
-        add(usernameArea);       
+        TextField nameArea = new TextField();
+        nameArea.setMaximumSize(new Dimension(200 , 200)); 
+        add(nameArea);       
         
         add(Box.createVerticalStrut(10)); // spacing
 
@@ -85,6 +86,21 @@ public class SignUpPage extends JPanel{
         JButton signUpButton = new JButton("Sign Up");
         signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(signUpButton);
+
+        signUpButton.addActionListener(e -> {
+                String email = emailArea.getText();
+                String name = nameArea.getText();
+                String password = passwordArea.getText();
+                String userType = roleComboBox.getSelectedItem().toString();
+
+                if (userType.equals("Student")){
+                   Student student = new Student(email , name , password , userType);
+                   student.registerUser(name, password, email, userType);
+                   mainFrame.showPage("LoginPage");
+                } 
+               
+            }
+        );
 
 
         add(Box.createVerticalStrut(10));

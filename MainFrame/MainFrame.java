@@ -2,6 +2,7 @@ package MainFrame;
 import View.HomePage;
 import View.LoginPage;
 import View.SignUpPage;
+import View.StudentDashboard;
 import java.awt.CardLayout;
 import javax.swing.*;
 
@@ -15,10 +16,13 @@ public class MainFrame extends JFrame {
         LoginPage loginPage = new LoginPage(this);
         SignUpPage signUpPage = new SignUpPage(this);
         HomePage homePage = new HomePage(this);
+        StudentDashboard studentDashboard = new StudentDashboard(this);
+
 
         mainPanel.add(homePage, "HomePage");
         mainPanel.add(loginPage, "LoginPage");
         mainPanel.add(signUpPage, "SignUpPage");
+        mainPanel.add(studentDashboard, "StudentDashboard");
 
         add(mainPanel);
 

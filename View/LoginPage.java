@@ -18,13 +18,13 @@ public class LoginPage extends JPanel {
 
 // ======================================== USERNAME LABEL & TEXTFIELD =========================================== //
 
-        JLabel usernameLabel = new JLabel("Username: " );
-        usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(usernameLabel);
+        JLabel nameLabel = new JLabel("Username: " );
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(nameLabel);
 
-        TextField usernameArea = new TextField();
-        usernameArea.setMaximumSize(new Dimension(200 , 200)); 
-        add(usernameArea);       
+        TextField nameArea = new TextField();
+        nameArea.setMaximumSize(new Dimension(200 , 200)); 
+        add(nameArea);       
         
         add(Box.createVerticalStrut(10)); // spacing
 
@@ -41,6 +41,9 @@ public class LoginPage extends JPanel {
         JButton loginButton = new JButton("Login");
         loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(loginButton);
+
+
+      
 
 
         add(Box.createVerticalStrut(10));
