@@ -18,20 +18,20 @@ public class Student implements SignUp , SignIn{
     private String line;
     private Navigator navigator;
     
-    public Student (String email, String password , String name , String userType , Navigator navigator ){
+    public Student (String email, String name , String password , String userType , Navigator navigator ){
         this.email = email;
-        this.password = password;
         this.name = name;
+        this.password = password;
         this.userType = userType;
         this.navigator = navigator;
     }
 
 
     @Override
-    public void registerUser(String name , String password , String email , String userType){
+    public void registerUser(String email , String name , String password , String userType){
          
          writeToCSV.getFilePath();
-         line = name + "," + password + "," + email + "," + userType;
+         line = email + "," + name + "," + password + "," + userType;
          isRegistered = true;
          writeToCSV.writeData(line);
          navigator.goTo("LoginPage");
@@ -41,7 +41,13 @@ public class Student implements SignUp , SignIn{
     @Override
     public void authUser(String email , String password ){
        writeToCSV.getFilePath();
-       
+       boolean isAuthenticated = writeToCSV.verifyUser(email, password , navigator);
+      
+       if (isAuthenticated){
+           System.out.println("User authenticated successfully");
+       } else {
+           System.out.println("Authentication failed. Invalid email or password.");
+       }
     }
 
     @Override

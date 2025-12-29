@@ -1,4 +1,5 @@
 package Models;
+import InterfaceLib.Navigator;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,7 +14,6 @@ public class WriteToCSV {
     public String getFilePath(){
         return filePath;
     }
-
 
      public void createFile() {
         try {
@@ -52,7 +52,7 @@ public class WriteToCSV {
 
 // =========================== method to verify user credentials =========================== //
 
-    public boolean verifyUser(String email , String password){
+    public boolean verifyUser(String email , String password , Navigator navigator){
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))){
             String currentLine;
             br.readLine();
@@ -60,9 +60,21 @@ public class WriteToCSV {
                 String[] data = currentLine.split(",");
                 String storedEmail = data[0];
                 String storedPassword = data[2];
+                String storedRole = data[3];
 
                 if (storedEmail.equals(email) && storedPassword.equals(password)){
+                    if (storedRole.equals("Student")){
+                        navigator.goTo("StudentDashboard");
+                    } else if (storedRole.equals("Evaluator")){
+                        navigator.goTo("EvaluatorDashboard");
+                    } 
+
+
                     return true;
+
+                    
+                } else {
+                    System.out.println("Invalid email or password.");
                 }
                 
             }

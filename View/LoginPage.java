@@ -1,5 +1,6 @@
 package View;
 import MainFrame.MainFrame;
+import Models.WriteToCSV;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.TextField;
@@ -18,13 +19,13 @@ public class LoginPage extends JPanel {
 
 // ======================================== USERNAME LABEL & TEXTFIELD =========================================== //
 
-        JLabel nameLabel = new JLabel("Username: " );
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(nameLabel);
+        JLabel emailLabel = new JLabel("Email: " );
+        emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(emailLabel);
 
-        TextField nameArea = new TextField();
-        nameArea.setMaximumSize(new Dimension(200 , 200)); 
-        add(nameArea);       
+        TextField emailArea = new TextField();
+        emailArea.setMaximumSize(new Dimension(200 , 200)); 
+        add(emailArea);       
         
         add(Box.createVerticalStrut(10)); // spacing
 
@@ -42,9 +43,15 @@ public class LoginPage extends JPanel {
         loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(loginButton);
 
-
-      
-
+        loginButton.addActionListener(e -> {
+            String email = emailArea.getText();
+            String password = passwordArea.getText();
+          
+            WriteToCSV writeToCSV = new WriteToCSV();
+            writeToCSV.verifyUser(email, password, mainFrame);
+            JOptionPane.showMessageDialog(LoginPage.this, "Login Successful!", 
+                "success", JOptionPane.INFORMATION_MESSAGE);
+    });
 
         add(Box.createVerticalStrut(10));
 

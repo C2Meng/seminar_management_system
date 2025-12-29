@@ -96,7 +96,7 @@ public class SignUpPage extends JPanel{
 
                 if (userType.equals("Student")){
                    Student student = new Student(email , name , password , userType , mainFrame);
-                   student.registerUser(name, password, email, userType);
+                   student.registerUser(email, name, password, userType);
                    JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
                    "success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
