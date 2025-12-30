@@ -2,7 +2,10 @@ package View;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
+
+import Controller.Student;
+
+//import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -10,42 +13,56 @@ import java.util.List;
 
 public class EvaluatorSystem extends JFrame {
 
+    String submissionfilepath = "seminar_management_system/Data/examplesubmissiondata.csv";
+    String evaluationfilepath = "seminar_management_system/Data/Evaluations.csv";
     // --- Data Model (should follow class diagram, subject to change) ---
-    static class Student {
-        String id;
-        String name;
-        String title;
-        String type; // Oral or Poster
-        String session;
+    static class Submission {
 
-        //---Rubrics Start-----
+        //---Attributes from submission CSV---
+        String submissionId;
+        String studentName;
+        String title;
+        String type;
+        String evaluatorId;
+        String status; 
+
+        // Evaluation Data (Loaded separately or set during grading)
+        int scoreClarity;
         int scoreMethodology;
         int scoreResults;
         int scorePresentation;
-        String comment;           
-        //--Rubrics End--       
-        String status; // Pending or Graded
+        String comment;
 
-        public Student(String[] data) {
-            this.id = data[0];
-            this.name = data[1];
+        //constructor  
+        public Submission(String[] data) {
+            this.submissionId = data[0];
+            this.studentName = data[1];
             this.title = data[2];
             this.type = data[3];
-            this.session = data[4];
-            this.scoreMethodology = Integer.parseInt(data[5]);
-            this.scoreResults = Integer.parseInt(data[6]);
-            this.scorePresentation = Integer.parseInt(data[7]);
-            this.comment = data[8];
-            this.status = data[9];
+            this.evaluatorId = data[4];
+
+            this.status = "Pending";
+            
+            this.comment = "N/A"; // Default comment
         }
         
-        public int getTotalScore() {
-            return scoreMethodology + scoreResults + scorePresentation;
+        //method to create the evaluation grade
+        public void setGrade(int c, int m, int r, int p, String comm) {
+            this.scoreClarity = c;
+            this.scoreMethodology = m;
+            this.scoreResults = r;
+            this.scorePresentation = p;
+            this.comment = comm;
+            this.status = "Graded";
         }
+        public int getTotalScore() {
+            return scoreClarity + scoreMethodology + scoreResults + scorePresentation;
+        }
+
     }
 
-    //holds a list of students
-    private List<Student> students = new ArrayList<>();
+    //holds a list of submissions
+    private List<Submission> submissions = new ArrayList<>();
     private JTable table;
     private DefaultTableModel tableModel;
 
@@ -57,10 +74,10 @@ public class EvaluatorSystem extends JFrame {
         setLocationRelativeTo(null);
 
         // Load Data
-        loadCSV("examplestudentdata.csv");
+        loadCSV(submissionfilepath);
 
         //DefaultTableModel from >> https://docs.oracle.com/javase/8/docs/api/javax/swing/table/DefaultTableModel.html
-        String[] columnNames = {"ID", "Student Name", "Title", "Type", "Session/Board", "Total Score", "Status"};
+        String[] columnNames = {"ID", "Student Name", "Title", "Type", "EvaluatorID", "Status"};
         tableModel = new DefaultTableModel(columnNames, 0)
         {
             @Override
@@ -93,13 +110,13 @@ public class EvaluatorSystem extends JFrame {
 
     //Code Segment to Read CSV file and fill the students list
     private void loadCSV(String filename) {
+        File file = new File(filename);
+        System.out.println("Loading CSV from: " + file.getAbsolutePath());
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                if(values.length >= 10) {
-                    students.add(new Student(values));
-                }
+                submissions.add(new Submission(values));
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error loading CSV: " + e.getMessage());
@@ -108,11 +125,9 @@ public class EvaluatorSystem extends JFrame {
 
     private void updateTableData() {
         tableModel.setRowCount(0); // Clear existing
-        for (Student s : students) {
+        for (Submission s : submissions) {
             tableModel.addRow(new Object[]{
-                s.id, s.name, s.title, s.type, s.session, 
-                s.status.equals("Pending") ? "-" : s.getTotalScore(), 
-                s.status
+                s.submissionId, s.studentName, s.title, s.type, s.evaluatorId, s.status
             });
         }
     }
@@ -125,54 +140,64 @@ public class EvaluatorSystem extends JFrame {
             return;
         }
 
-        Student student = students.get(selectedRow);
-        new GradingDialog(this, student).setVisible(true);
+        Submission submission = submissions.get(selectedRow);
+        new GradingDialog(this, submission).setVisible(true);
     }
 
     // --- Grading Window (Inner Class) ---
-    class GradingDialog extends JDialog {
-        private Student student;
-        private JSlider sliderMethodology, sliderResults, sliderPresentation;
+class GradingDialog extends JDialog {
+        private Submission submission;
+        // Added sliderClarity
+        private JSlider sliderClarity, sliderMethodology, sliderResults, sliderPresentation;
         private JLabel lblTotal;
         private JTextArea txtComments;
 
-        public GradingDialog(JFrame parent, Student s) {
-            //modal:true means you must finish the popout window first before returning to main window
-            super(parent, "Grading: " + s.name, true);
-            this.student = s;
-            setSize(500, 600);
+        public GradingDialog(JFrame parent, Submission s) {
+            super(parent, "Grading: " + s.studentName, true);
+            this.submission = s;
+            setSize(500, 700); // Increased height slightly
             setLocationRelativeTo(parent);
             setLayout(new BorderLayout(10, 10));
 
-            // Header Info
+            // --- Header Info ---
             JPanel pnlInfo = new JPanel(new GridLayout(4, 1));
             pnlInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             pnlInfo.setBackground(new Color(240, 240, 240));
-            pnlInfo.add(new JLabel("Student: " + s.name + " (" + s.id + ")"));
+            pnlInfo.add(new JLabel("Student: " + s.studentName + " (" + s.submissionId + ")"));
             pnlInfo.add(new JLabel("Title: " + s.title));
-            pnlInfo.add(new JLabel("Session: " + s.session));
+            pnlInfo.add(new JLabel("Type: " + s.type));            
             
-            // Rubric Form
-            JPanel pnlForm = new JPanel(new GridLayout(8, 1, 5, 5));
+            // --- Rubric Form ---
+            // Increased rows to 10 to fit the new slider
+            JPanel pnlForm = new JPanel(new GridLayout(10, 1, 5, 5));
             pnlForm.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            sliderMethodology = createSlider("Methodology (0-40)", 40, s.scoreMethodology);
+            // Initialize Sliders (Adjust MAX values as needed, Total should be 100)
+            sliderClarity = createSlider("Problem Clarity (0-10)", 10, s.scoreClarity);
+            sliderMethodology = createSlider("Methodology (0-30)", 30, s.scoreMethodology);
             sliderResults = createSlider("Results & Analysis (0-40)", 40, s.scoreResults);
             sliderPresentation = createSlider("Presentation Skills (0-20)", 20, s.scorePresentation);
 
-            pnlForm.add(new JLabel("Methodology (40%):"));
+            // Add to Panel
+            pnlForm.add(new JLabel("Problem Clarity (10%):"));
+            pnlForm.add(sliderClarity);
+            
+            pnlForm.add(new JLabel("Methodology (30%):"));
             pnlForm.add(sliderMethodology);
-            pnlForm.add(new JLabel("Results (40%):"));
+            
+            pnlForm.add(new JLabel("Results & Analysis (40%):"));
             pnlForm.add(sliderResults);
+            
             pnlForm.add(new JLabel("Presentation (20%):"));
             pnlForm.add(sliderPresentation);
             
             pnlForm.add(new JLabel("Evaluator Comments:"));
             txtComments = new JTextArea(3, 20);
+            txtComments.setLineWrap(true);
             txtComments.setText(s.comment.equals("N/A") ? "" : s.comment);
             pnlForm.add(new JScrollPane(txtComments));
 
-            // Footer / Actions
+            // --- Footer / Actions ---
             JPanel pnlFooter = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             lblTotal = new JLabel("Total Score: " + s.getTotalScore() + "/100  ");
             lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
@@ -190,7 +215,8 @@ public class EvaluatorSystem extends JFrame {
 
         private JSlider createSlider(String title, int max, int currentVal) {
             JSlider slider = new JSlider(0, max, currentVal);
-            slider.setMajorTickSpacing(10);
+            // Dynamic ticks based on max value
+            slider.setMajorTickSpacing(max / 5 > 0 ? max / 5 : 1); 
             slider.setMinorTickSpacing(1);
             slider.setPaintTicks(true);
             slider.setPaintLabels(true);
@@ -199,25 +225,91 @@ public class EvaluatorSystem extends JFrame {
         }
 
         private void updateTotal() {
-            int total = sliderMethodology.getValue() + sliderResults.getValue() + sliderPresentation.getValue();
+            int total = sliderClarity.getValue() + 
+                        sliderMethodology.getValue() + 
+                        sliderResults.getValue() + 
+                        sliderPresentation.getValue();
             lblTotal.setText("Total Score: " + total + "/100  ");
         }
 
         private void saveGrade() {
-            // Update student Object, but should be Submission object  
-            student.scoreMethodology = sliderMethodology.getValue();
-            student.scoreResults = sliderResults.getValue();
-            student.scorePresentation = sliderPresentation.getValue();
-            student.comment = txtComments.getText().replace("\n", " ").replace(",", ";"); // Sanitize for CSV
-            student.status = "Graded";
+            // 1. Update the Submission object in memory
+            submission.scoreClarity = sliderClarity.getValue();
+            submission.scoreMethodology = sliderMethodology.getValue();
+            submission.scoreResults = sliderResults.getValue();
+            submission.scorePresentation = sliderPresentation.getValue();
+            
+            // Sanitize comments
+            submission.comment = txtComments.getText().replace("\n", " ").replace(",", ";"); 
+            submission.status = "Graded";
 
-            // Update UI
+            // 2. Write to CSV files
+            saveEvaluationToCSV(submission);
+            updateSubmissionStatusInCSV(submission.submissionId, "Graded");
+
+            // 3. Update UI
             updateTableData();
-            
-            // In a real app, write back to CSV here
-            System.out.println("Saved Grade for " + student.name);
-            
+            System.out.println("Saved Grade for " + submission.studentName);
             dispose();
+        }
+
+        // --- Helper: Write Scores to Evaluations.csv ---
+        private void saveEvaluationToCSV(Submission s) {
+            List<String> lines = new ArrayList<>();
+            File file = new File(evaluationfilepath);
+            
+            if (file.exists()) {
+                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        // Skip existing entry for this student
+                        if (!line.startsWith(s.submissionId + ",")) {
+                            lines.add(line);
+                        }
+                    }
+                } catch (IOException e) { e.printStackTrace(); }
+            }
+
+            // Add new score
+            lines.add(s.submissionId + "," + 
+                      s.scoreClarity + "," + 
+                      s.scoreMethodology + "," + 
+                      s.scoreResults + "," + 
+                      s.scorePresentation + "," + 
+                      s.comment);
+
+            try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
+                for (String l : lines) pw.println(l);
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+
+        // --- Helper: Update Status in Submissions.csv ---
+        private void updateSubmissionStatusInCSV(String subId, String newStatus) {
+            List<String> lines = new ArrayList<>();
+            File file = new File(submissionfilepath);
+
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length > 0 && parts[0].equals(subId)) {
+                        StringBuilder sb = new StringBuilder();
+                        // Rebuild line: ID, Name, Title, Type, Evaluator, [NEW STATUS]
+                        for (int i = 0; i < 5; i++) {
+                            if (i < parts.length) sb.append(parts[i]).append(",");
+                            else sb.append("N/A,");
+                        }
+                        sb.append(newStatus);
+                        lines.add(sb.toString());
+                    } else {
+                        lines.add(line);
+                    }
+                }
+            } catch (IOException e) { e.printStackTrace(); }
+
+            try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
+                for (String l : lines) pw.println(l);
+            } catch (IOException e) { e.printStackTrace(); }
         }
     }
 
