@@ -47,10 +47,31 @@ public class LoginPage extends JPanel {
             String email = emailArea.getText();
             String password = passwordArea.getText();
           
+            if (email.isEmpty() || password.isEmpty()){
+                JOptionPane.showMessageDialog(LoginPage.this, "Please enter both email and password" , 
+                    "Error" , JOptionPane.ERROR_MESSAGE
+                );
+                 return;
+
+
+            } else if (!email.contains("@") || !email.contains(".")){
+                  JOptionPane.showMessageDialog(LoginPage.this, "Please enter a valid email address" , 
+                    "Error" , JOptionPane.ERROR_MESSAGE
+                );
+                 return;
+                 
+            } 
+            
+            else {
+
             WriteToCSV writeToCSV = new WriteToCSV();
             writeToCSV.verifyUser(email, password, mainFrame);
             JOptionPane.showMessageDialog(LoginPage.this, "Login Successful!", 
                 "success", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+
+           
     });
 
         add(Box.createVerticalStrut(10));
