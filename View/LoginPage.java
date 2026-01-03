@@ -60,13 +60,18 @@ public class LoginPage extends JPanel {
                 );
                  return;
                  
-            } 
+            } else if (password.length() < 6) {
+                 JOptionPane.showMessageDialog(LoginPage.this, "Password must be at least 6 characters long" , 
+                    "Error" , JOptionPane.ERROR_MESSAGE
+                );
+                 return;
+            }
             
             else {
 
             WriteToCSV writeToCSV = new WriteToCSV();
             writeToCSV.verifyUser(email, password, mainFrame);
-            JOptionPane.showMessageDialog(LoginPage.this, "Login Successful!", 
+            JOptionPane.showMessageDialog(LoginPage.this, "Login Submitted!", 
                 "success", JOptionPane.INFORMATION_MESSAGE);
 
             }
