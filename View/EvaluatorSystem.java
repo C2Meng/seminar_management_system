@@ -9,8 +9,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class EvaluatorSystem extends JFrame {
 
-    String submissionfilepath = "seminar_management_system/Data/examplesubmissiondata.csv";
-    String evaluationfilepath = "seminar_management_system/Data/Evaluations.csv";
+    String submissionfilepath = "Data/examplesubmissiondata.csv";
+    String evaluationfilepath = "Data/Evaluations.csv";
     // --- Data Model (should follow class diagram, subject to change) ---
     static class Submission {
 
@@ -327,6 +327,6 @@ class GradingDialog extends JDialog {
 
     public static void main(String[] args) {
         
-        SwingUtilities.invokeLater(() -> new EvaluatorSystem().setVisible(true));
+        //SwingUtilities.invokeLater(() -> new EvaluatorSystem().setVisible(true));
     }
 }
