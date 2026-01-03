@@ -2,6 +2,7 @@ package View;
 
 import Controller.Evaluator;
 import Controller.Student;
+import Controller.User;
 import MainFrame.MainFrame;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -117,15 +118,15 @@ public class SignUpPage extends JPanel{
                     }
                 else if (userType.equals("Student")){
 
-                   Student student = new Student(email , name , password , userType , mainFrame);
-                   student.registerUser(email, name, password, userType);
+                   User user = new Student(email, name, password, mainFrame);
+                   ((Student) user).registerUser(email, name, password, userType);
 
                    JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
                    "success", JOptionPane.INFORMATION_MESSAGE);
 
                 } else if (userType.equals("Evaluator")){
-                    Evaluator evaluator = new Evaluator(email , name , password , userType , mainFrame);
-                    evaluator.registerUser(email, name, password, userType);
+                    User user = new Evaluator(email, name, password, mainFrame);
+                    ((Evaluator) user).registerUser(email, name, password, userType);
 
                     JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
                    "success", JOptionPane.INFORMATION_MESSAGE);

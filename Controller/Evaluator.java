@@ -1,12 +1,13 @@
 package Controller;
 
 import InterfaceLib.Navigator;
+import InterfaceLib.Role;
 import InterfaceLib.SignIn;
 import InterfaceLib.SignUp;
-import Models.WriteToCSV;;
+import Models.WriteToCSV;
 
 
-public class Evaluator implements SignUp , SignIn{
+public class Evaluator extends User implements SignUp , SignIn{
 
     private String email;
     private String password;
@@ -17,11 +18,8 @@ public class Evaluator implements SignUp , SignIn{
     private String line;
     private Navigator navigator;
     
-    public Evaluator (String email, String name , String password , String userType , Navigator navigator ){
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        this.userType = userType;
+    public Evaluator (String email, String name , String password , Navigator navigator ){
+        super(email , name , password , Role.EVALUATOR);
         this.navigator = navigator;
     }
 
