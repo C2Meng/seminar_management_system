@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Evaluator;
 import Controller.Student;
 import MainFrame.MainFrame;
 import java.awt.Component;
@@ -94,13 +95,41 @@ public class SignUpPage extends JPanel{
                 String password = passwordArea.getText();
                 String userType = roleComboBox.getSelectedItem().toString();
 
-                if (userType.equals("Student")){
+
+                if (email.isEmpty() || name.isEmpty() || password.isEmpty()){
+                    JOptionPane.showMessageDialog(SignUpPage.this, "Please fill all fields" , 
+                        "Error" , JOptionPane.ERROR_MESSAGE
+                    ); }
+                    else if( !email.contains("@") || !email.contains(".")){
+                      JOptionPane.showMessageDialog(SignUpPage.this, "Please enter a valid email address" , 
+                        "Error" , JOptionPane.ERROR_MESSAGE );
+                        emailArea.setText("");
+                        passwordArea.setText("");
+                        nameArea.setText("");
+                     return;
+                    
+
+                    } else if ( password.length() < 6){
+                        JOptionPane.showMessageDialog(SignUpPage.this, "Password must be at least 6 characters long" , 
+                            "Error" , JOptionPane.ERROR_MESSAGE );
+                            passwordArea.setText("");
+                         return;
+                    }
+                else if (userType.equals("Student")){
+
                    Student student = new Student(email , name , password , userType , mainFrame);
                    student.registerUser(email, name, password, userType);
+
                    JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
                    "success", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    
+
+                } else if (userType.equals("Evaluator")){
+                    Evaluator evaluator = new Evaluator(email , name , password , userType , mainFrame);
+                    evaluator.registerUser(email, name, password, userType);
+
+                    JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
+                   "success", JOptionPane.INFORMATION_MESSAGE);
+                   
                 }
                
             }

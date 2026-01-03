@@ -1,5 +1,6 @@
 package Models;
 import InterfaceLib.Navigator;
+import View.EvaluatorSystem;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -63,10 +64,16 @@ public class WriteToCSV {
                 String storedRole = data[3];
 
                 if (storedEmail.equals(email) && storedPassword.equals(password)){
+
                     if (storedRole.equals("Student")){
                         navigator.goTo("StudentDashboard");
+
+
                     } else if (storedRole.equals("Evaluator")){
-                        navigator.goTo("EvaluatorDashboard");
+
+                       EvaluatorSystem evaluatorSystem = new EvaluatorSystem();
+                       evaluatorSystem.setVisible(true);
+                       
                     } 
 
 

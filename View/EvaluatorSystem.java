@@ -1,15 +1,11 @@
 package View;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-
-import Controller.Student;
-
-//import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class EvaluatorSystem extends JFrame {
 

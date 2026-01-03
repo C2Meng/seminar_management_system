@@ -17,6 +17,7 @@ public class Student implements SignUp , SignIn{
     private boolean isRegistered = false;
     private String line;
     private Navigator navigator;
+
     
     public Student (String email, String name , String password , String userType , Navigator navigator ){
         this.email = email;
@@ -30,6 +31,7 @@ public class Student implements SignUp , SignIn{
     @Override
     public void registerUser(String email , String name , String password , String userType){
          
+      
          writeToCSV.getFilePath();
          line = email + "," + name + "," + password + "," + userType;
          isRegistered = true;
@@ -59,6 +61,13 @@ public class Student implements SignUp , SignIn{
     public void deleteUser(String username , String userType){
           // Implementation for deleting a user //
     }
+
+
+    public void registerForSeminar(String seminarId){
+        // Implementation for registering a student for a seminar //
+    }
+
+    
 }
 
 
