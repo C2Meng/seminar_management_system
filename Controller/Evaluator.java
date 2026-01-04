@@ -1,5 +1,10 @@
 package Controller;
 
+import InterfaceLib.Navigator;
+import InterfaceLib.Role;
+import InterfaceLib.SignIn;
+import InterfaceLib.SignUp;
+import Models.WriteToCSV;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,12 +14,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-
-import InterfaceLib.Navigator;
-import InterfaceLib.Role;
-import InterfaceLib.SignIn;
-import InterfaceLib.SignUp;
-import Models.WriteToCSV;
 
 
 public class Evaluator extends User implements SignUp , SignIn{
@@ -57,9 +56,9 @@ public class Evaluator extends User implements SignUp , SignIn{
     @Override
     public void authUser(String email , String password ){
        writeToCSV.getFilePath();
-       boolean isAuthenticated = writeToCSV.verifyUser(email, password , navigator);
+       String isAuthenticated = writeToCSV.verifyUser(email, password , navigator);
       
-       if (isAuthenticated){
+       if (isAuthenticated != null){
            System.out.println("User authenticated successfully");
        } else {
            System.out.println("Authentication failed. Invalid email or password.");

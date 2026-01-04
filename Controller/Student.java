@@ -2,10 +2,8 @@ package Controller;
 
 import InterfaceLib.Navigator;
 import InterfaceLib.Role;
-import InterfaceLib.SignIn;
 import InterfaceLib.SignUp;
 import Models.WriteToCSV;
-import Controller.User;
 
 
 
@@ -39,13 +37,12 @@ public class Student extends User implements SignUp {
 
     }
 
+    @Override
+    public void deleteUser(String email , String password ){
+       // Authentication logic for Student //
+    }
+
  
-
-  
-
-   
-
-
     public void registerForSeminar(String seminarId){
         // Implementation for registering a student for a seminar //
     }
