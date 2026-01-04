@@ -10,9 +10,7 @@ public class Seminar {
     private String presenterName;
     private String sessionType;
 
-    public Seminar(){
-        //default constr
-    }
+  
     public Seminar(String title){
         this.title = title;
         //should assign id here, thinking abt keeping track of seminars in a dataset
