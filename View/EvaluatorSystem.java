@@ -2,8 +2,8 @@ package View;
 
 import Controller.Evaluator;
 import Controller.Submission;
+import MainFrame.MainFrame;
 import java.awt.*;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
@@ -47,12 +47,25 @@ public class EvaluatorSystem extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
 
 
+        // added the logout button to bring back to login page 
+        JButton logOutButton = new JButton("Logout");
+        logOutButton.setFont(new Font("Arial" , Font.BOLD , 14));
+        logOutButton.addActionListener(e ->{
+           MainFrame mainFrame = new MainFrame();
+           mainFrame.setVisible(true);
+           this.dispose();
+        });
+
         JButton btnGrade = new JButton("Grade Selected Student");
         btnGrade.setFont(new Font("Arial", Font.BOLD, 14));
         btnGrade.addActionListener(e -> openGradingWindow());
 
+       
+
         JPanel bottomPanel = new JPanel();
+        bottomPanel.add(logOutButton);
         bottomPanel.add(btnGrade);
+        
 
         // Laying the out 
         add(new JLabel("  My Assignments (Evaluator View)"), BorderLayout.NORTH);

@@ -69,15 +69,26 @@ public class LoginPage extends JPanel {
             
             else {
 
+           
             WriteToCSV writeToCSV = new WriteToCSV();
-            writeToCSV.verifyUser(email, password, mainFrame);
-            JOptionPane.showMessageDialog(LoginPage.this, "Login Submitted!", 
-                "success", JOptionPane.INFORMATION_MESSAGE);
+            String role =  writeToCSV.verifyUser(email, password, mainFrame);
 
-            }
+            if ("Student".equals(role)) {
+               mainFrame.showPage("StudentDashboard");
+
+            } else if ("Evaluator".equals(role)) {
+              EvaluatorSystem evaluatorSystem = new EvaluatorSystem();
+              evaluatorSystem.setVisible(true);
+              mainFrame.dispose();
+
+            } else {
+               JOptionPane.showMessageDialog(LoginPage.this, "Invalid email or password",
+                "Error", JOptionPane.ERROR_MESSAGE);
+               }
 
            
-    });
+    }
+        });
 
         add(Box.createVerticalStrut(10));
 
