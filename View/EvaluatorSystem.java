@@ -1,5 +1,7 @@
 package View;
 
+import Controller.Evaluator;
+import Controller.Submission;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -9,68 +11,22 @@ import javax.swing.table.DefaultTableModel;
 
 public class EvaluatorSystem extends JFrame {
 
-    String submissionfilepath = "Data/examplesubmissiondata.csv";
-    String evaluationfilepath = "Data/Evaluations.csv";
-    // --- Data Model (should follow class diagram, subject to change) ---
-    static class Submission {
-
-        //---Attributes from submission CSV---
-        String submissionId;
-        String studentName;
-        String title;
-        String type;
-        String evaluatorId;
-        String status; 
-
-        // Evaluation Data (Loaded separately or set during grading)
-        int scoreClarity;
-        int scoreMethodology;
-        int scoreResults;
-        int scorePresentation;
-        String comment;
-
-        //constructor  
-        public Submission(String[] data) {
-            this.submissionId = data[0];
-            this.studentName = data[1];
-            this.title = data[2];
-            this.type = data[3];
-            this.evaluatorId = data[4];
-
-            this.status = "Pending";
-            
-            this.comment = "N/A"; // Default comment
-        }
-        
-        //method to create the evaluation grade
-        public void setGrade(int c, int m, int r, int p, String comm) {
-            this.scoreClarity = c;
-            this.scoreMethodology = m;
-            this.scoreResults = r;
-            this.scorePresentation = p;
-            this.comment = comm;
-            this.status = "Graded";
-        }
-        public int getTotalScore() {
-            return scoreClarity + scoreMethodology + scoreResults + scorePresentation;
-        }
-
-    }
-
     //holds a list of submissions
     private List<Submission> submissions = new ArrayList<>();
     private JTable table;
     private DefaultTableModel tableModel;
 
+    private Evaluator controller; // evaluator controller instance
     // --- Main Dashboard UI ---
     public EvaluatorSystem() {
+        controller = new Evaluator();
         setTitle("Seminar Evaluator Portal");
         setSize(900, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Load Data
-        loadCSV(submissionfilepath);
+        // Load Data from controller
+        submissions = controller.loadSubmissions();
 
         //DefaultTableModel from >> https://docs.oracle.com/javase/8/docs/api/javax/swing/table/DefaultTableModel.html
         String[] columnNames = {"ID", "Student Name", "Title", "Type", "EvaluatorID", "Status"};
@@ -104,20 +60,20 @@ public class EvaluatorSystem extends JFrame {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    //Code Segment to Read CSV file and fill the students list
-    private void loadCSV(String filename) {
-        File file = new File(filename);
-        System.out.println("Loading CSV from: " + file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                submissions.add(new Submission(values));
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error loading CSV: " + e.getMessage());
-        }
-    }
+    //Code Segment to Read CSV file and fill the students list, this is now in Controller/Evaluator.java
+    // private void loadCSV(String filename) {
+    //     File file = new File(filename);
+    //     System.out.println("Loading CSV from: " + file.getAbsolutePath());
+    //     try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+    //         String line;
+    //         while ((line = br.readLine()) != null) {
+    //             String[] values = line.split(",");
+    //             submissions.add(new Submission(values));
+    //         }
+    //     } catch (IOException e) {
+    //         JOptionPane.showMessageDialog(this, "Error loading CSV: " + e.getMessage());
+    //     }
+    // }
 
     private void updateTableData() {
         tableModel.setRowCount(0); // Clear existing
@@ -137,19 +93,21 @@ public class EvaluatorSystem extends JFrame {
         }
 
         Submission submission = submissions.get(selectedRow);
-        new GradingDialog(this, submission).setVisible(true);
+        new GradingDialog(this, submission,controller).setVisible(true);
     }
 
     // --- Grading Window (Inner Class) ---
 class GradingDialog extends JDialog {
         private Submission submission;
+        private Evaluator controller;
         // Added sliderClarity
         private JSlider sliderClarity, sliderMethodology, sliderResults, sliderPresentation;
         private JLabel lblTotal;
         private JTextArea txtComments;
 
-        public GradingDialog(JFrame parent, Submission s) {
+        public GradingDialog(JFrame parent, Submission s,Evaluator evaluator) {
             super(parent, "Grading: " + s.studentName, true);
+            this.controller = evaluator;
             this.submission = s;
             setSize(500, 700); // Increased height slightly
             setLocationRelativeTo(parent);
@@ -229,85 +187,29 @@ class GradingDialog extends JDialog {
         }
 
         private void saveGrade() {
-            // 1. Update the Submission object in memory
+            // get the scores and comments from UI
             submission.scoreClarity = sliderClarity.getValue();
             submission.scoreMethodology = sliderMethodology.getValue();
             submission.scoreResults = sliderResults.getValue();
             submission.scorePresentation = sliderPresentation.getValue();
             
-            // Sanitize comments
+            //sanitize comments to avoid CSV issues
             submission.comment = txtComments.getText().replace("\n", " ").replace(",", ";"); 
             submission.status = "Graded";
 
-            // 2. Write to CSV files
-            saveEvaluationToCSV(submission);
-            updateSubmissionStatusInCSV(submission.submissionId, "Graded");
+            // pass the submission object to controller to save
+
+            controller.saveGrade(submission);
+            // saveEvaluationToCSV(submission);
+            // updateSubmissionStatusInCSV(submission.submissionId, "Graded");
 
             // 3. Update UI
-            updateTableData();
+            ((EvaluatorSystem) getParent()).updateTableData();
             System.out.println("Saved Grade for " + submission.studentName);
             dispose();
         }
 
-        // --- Helper: Write Scores to Evaluations.csv ---
-        private void saveEvaluationToCSV(Submission s) {
-            List<String> lines = new ArrayList<>();
-            File file = new File(evaluationfilepath);
-            
-            if (file.exists()) {
-                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        // Skip existing entry for this student
-                        if (!line.startsWith(s.submissionId + ",")) {
-                            lines.add(line);
-                        }
-                    }
-                } catch (IOException e) { e.printStackTrace(); }
-            }
 
-            // Add new score
-            lines.add(s.submissionId + "," + 
-                      s.scoreClarity + "," + 
-                      s.scoreMethodology + "," + 
-                      s.scoreResults + "," + 
-                      s.scorePresentation + "," + 
-                      s.comment);
-
-            try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
-                for (String l : lines) pw.println(l);
-            } catch (IOException e) { e.printStackTrace(); }
-        }
-
-        // --- Helper: Update Status in Submissions.csv ---
-        private void updateSubmissionStatusInCSV(String subId, String newStatus) {
-            List<String> lines = new ArrayList<>();
-            File file = new File(submissionfilepath);
-
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    String[] parts = line.split(",");
-                    if (parts.length > 0 && parts[0].equals(subId)) {
-                        StringBuilder sb = new StringBuilder();
-                        // Rebuild line: ID, Name, Title, Type, Evaluator, [NEW STATUS]
-                        for (int i = 0; i < 5; i++) {
-                            if (i < parts.length) sb.append(parts[i]).append(",");
-                            else sb.append("N/A,");
-                        }
-                        sb.append(newStatus);
-                        lines.add(sb.toString());
-                    } else {
-                        lines.add(line);
-                    }
-                }
-            } catch (IOException e) { e.printStackTrace(); }
-
-            try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
-                for (String l : lines) pw.println(l);
-            } catch (IOException e) { e.printStackTrace(); }
-        }
-    }
 
     // --- Custom Renderer for Colors ---
     // class StatusRenderer extends DefaultTableCellRenderer {
@@ -324,9 +226,10 @@ class GradingDialog extends JDialog {
     //         return c;
     //     }
     // }
+    }
 
     public static void main(String[] args) {
         
-        //SwingUtilities.invokeLater(() -> new EvaluatorSystem().setVisible(true));
+        new EvaluatorSystem().setVisible(true);
     }
 }
