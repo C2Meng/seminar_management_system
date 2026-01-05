@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
+
 public class StudentDashboard extends JPanel{
     // Student Dashboard implementation here //
     public StudentDashboard(MainFrame mainFrame){
@@ -24,6 +25,10 @@ public class StudentDashboard extends JPanel{
         JButton enterSeminarButton = new JButton("Register for Seminar"); // button to register for seminar
         enterSeminarButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(enterSeminarButton);
+
+        enterSeminarButton.addActionListener(e ->{
+            mainFrame.showPage("RegisterSeminarPage");
+        });
 
         add(Box.createVerticalStrut(10)); // spacing
 
