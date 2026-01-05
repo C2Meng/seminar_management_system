@@ -2,6 +2,7 @@ package MainFrame;
 import InterfaceLib.Navigator;
 import View.HomePage;
 import View.LoginPage;
+import View.RegisterSeminarPage;
 import View.SignUpPage;
 import View.StudentDashboard;
 import java.awt.CardLayout;
@@ -18,12 +19,16 @@ public class MainFrame extends JFrame implements Navigator {
         SignUpPage signUpPage = new SignUpPage(this);
         HomePage homePage = new HomePage(this);
         StudentDashboard studentDashboard = new StudentDashboard(this);
+        RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this);
+    
 
 
         mainPanel.add(homePage, "HomePage");
         mainPanel.add(loginPage, "LoginPage");
         mainPanel.add(signUpPage, "SignUpPage");
         mainPanel.add(studentDashboard, "StudentDashboard");
+        mainPanel.add(registerSeminarPage, "RegisterSeminarPage");
+
 
         add(mainPanel);
 
