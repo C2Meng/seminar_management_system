@@ -135,7 +135,7 @@ public class SignUpPage extends JPanel{
                 }
                 else if (userType.equals("Coordinator")){
                     User user = new Coordinator(email, name, password, mainFrame);
-                    //((Coordinator) user).registerUser(email, name, password, userType);
+                    ((Coordinator) user).registerUser(email, name, password, userType);
                     
 
                     JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
