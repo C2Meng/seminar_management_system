@@ -1,4 +1,5 @@
 package View;
+import Controller.Student;
 import MainFrame.MainFrame;
 import Models.WriteToCSV;
 import java.awt.Component;
@@ -72,8 +73,15 @@ public class LoginPage extends JPanel {
            
             WriteToCSV writeToCSV = new WriteToCSV();
             String role =  writeToCSV.verifyUser(email, password, mainFrame);
+           
+
 
             if ("Student".equals(role)) {
+               Student student = new Student(email, null, password, mainFrame);
+
+             // set the current student in main frame , showing that the student is logged in //
+             
+               mainFrame.setCurrentStudent(student);
                mainFrame.showPage("StudentDashboard");
 
             } else if ("Evaluator".equals(role)) {

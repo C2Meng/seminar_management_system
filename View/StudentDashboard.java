@@ -27,7 +27,7 @@ public class StudentDashboard extends JPanel{
         add(enterSeminarButton);
 
         enterSeminarButton.addActionListener(e ->{
-            mainFrame.showPage("RegisterSeminarPage");
+            mainFrame.goToRegisterSeminarPage();
         });
 
         add(Box.createVerticalStrut(10)); // spacing

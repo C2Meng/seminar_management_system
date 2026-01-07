@@ -25,7 +25,7 @@ public class WriteToCSV {
             // write header only if file does NOT exist
             if (!file.exists()) {
                 try (FileWriter writer = new FileWriter(file)) {
-                    writer.append("email,name,password,role\n"); // header
+                    writer.append("id,email,name,password,role\n"); // header
                     System.out.println("CSV file created with headers.");
                 }
             } else {
@@ -47,6 +47,10 @@ public class WriteToCSV {
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public void setFilePath(String filePath){
+        this.filePath = filePath;
     }
 
 
@@ -78,4 +82,6 @@ public class WriteToCSV {
 
         return null;
     }
+
+    
 }
