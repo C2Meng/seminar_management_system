@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Coordinator;
 import Controller.Evaluator;
 import Controller.Student;
 import Controller.User;
@@ -127,6 +128,15 @@ public class SignUpPage extends JPanel{
                 } else if (userType.equals("Evaluator")){
                     User user = new Evaluator(email, name, password, mainFrame);
                     ((Evaluator) user).registerUser(email, name, password, userType);
+
+                    JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
+                   "success", JOptionPane.INFORMATION_MESSAGE);
+                   
+                }
+                else if (userType.equals("Coordinator")){
+                    User user = new Coordinator(email, name, password, mainFrame);
+                    ((Coordinator) user).registerUser(email, name, password, userType);
+                    
 
                     JOptionPane.showMessageDialog(SignUpPage.this, "Registration Successful! Please login to enter", 
                    "success", JOptionPane.INFORMATION_MESSAGE);
