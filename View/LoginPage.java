@@ -80,8 +80,15 @@ public class LoginPage extends JPanel {
               EvaluatorSystem evaluatorSystem = new EvaluatorSystem();
               evaluatorSystem.setVisible(true);
               mainFrame.dispose();
+            }
+              else if ("Coordinator".equals(role)) {
+              //redirect to coordinator frame
+              mainFrame.showPage("CoordinatorDashboard");
+              //set visible
+              //mainFrame.dispose(); close login page
 
             } else {
+                
                JOptionPane.showMessageDialog(LoginPage.this, "Invalid email or password",
                 "Error", JOptionPane.ERROR_MESSAGE);
                }

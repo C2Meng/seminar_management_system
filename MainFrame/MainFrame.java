@@ -1,5 +1,6 @@
 package MainFrame;
 import InterfaceLib.Navigator;
+import View.CoordinatorDashboard;
 import View.HomePage;
 import View.LoginPage;
 import View.RegisterSeminarPage;
@@ -20,6 +21,7 @@ public class MainFrame extends JFrame implements Navigator {
         HomePage homePage = new HomePage(this);
         StudentDashboard studentDashboard = new StudentDashboard(this);
         RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this);
+        CoordinatorDashboard coordinatorDashboard = new CoordinatorDashboard(this);
     
 
 
@@ -28,6 +30,7 @@ public class MainFrame extends JFrame implements Navigator {
         mainPanel.add(signUpPage, "SignUpPage");
         mainPanel.add(studentDashboard, "StudentDashboard");
         mainPanel.add(registerSeminarPage, "RegisterSeminarPage");
+        mainPanel.add(coordinatorDashboard, "CoordinatorDashboard");
 
 
         add(mainPanel);
