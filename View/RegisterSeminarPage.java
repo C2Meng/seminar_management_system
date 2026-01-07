@@ -2,14 +2,15 @@ package View;
 import MainFrame.MainFrame;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.io.File;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 
 public class RegisterSeminarPage extends JPanel {
 
@@ -62,6 +63,25 @@ public class RegisterSeminarPage extends JPanel {
 
         add(Box.createVerticalStrut(10)); // spacing
 
+
+        JLabel attachmentLabel = new JLabel("Attachment: ");
+        attachmentLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(attachmentLabel);
+
+        add(Box.createVerticalStrut(10)); // spacing
+
+        JTextField attachmentField = new JTextField();
+        attachmentField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        attachmentField.setMaximumSize(new Dimension(200, 80));
+        add(attachmentField);
+
+        JButton browseButton = new JButton("Browse");
+        browseButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(browseButton);
+
+        add(Box.createVerticalStrut(10)); // spacing
+
+
         JLabel presentationLabel = new JLabel("Presentation Type: ");
         presentationLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         presentationLabel.setMaximumSize(new Dimension(200 , 80));
@@ -77,6 +97,28 @@ public class RegisterSeminarPage extends JPanel {
         JButton submitButton = new JButton("Submit");
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(submitButton);
+
+        add(Box.createVerticalStrut(10)); // spacing
+
+        JButton backButton = new JButton("Back");
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(backButton);
+
+        backButton.addActionListener(e -> {
+            mainFrame.showPage("StudentDashboard");
+        });
+
+
+        browseButton.addActionListener( e->{
+            JFileChooser fileChoose = new JFileChooser();
+            fileChoose.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChoose.setDialogTitle("Select File");
+            int result = fileChoose.showOpenDialog(RegisterSeminarPage.this);
+            if (result == JFileChooser.APPROVE_OPTION){
+                File selectedFile = fileChoose.getSelectedFile();
+                attachmentField.setText(selectedFile.getAbsolutePath());
+            }
+        });
 
 
 
