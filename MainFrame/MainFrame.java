@@ -1,9 +1,12 @@
 package MainFrame;
 import Controller.Student;
 import InterfaceLib.Navigator;
+import View.CoordinatorDashboard;
 import View.HomePage;
 import View.LoginPage;
+import View.ManageSeminarPage;
 import View.RegisterSeminarPage;
+import View.ReportPage;
 import View.SignUpPage;
 import View.StudentDashboard;
 import java.awt.CardLayout;
@@ -22,6 +25,10 @@ public class MainFrame extends JFrame implements Navigator {
         HomePage homePage = new HomePage(this);
         StudentDashboard studentDashboard = new StudentDashboard(this);
         RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this , currentStudent);
+        CoordinatorDashboard coordinatorDashboard = new CoordinatorDashboard(this);
+        ManageSeminarPage manageSeminarPage = new ManageSeminarPage(this);
+        ReportPage reportPage = new ReportPage(this);
+    
     
 
 
@@ -30,6 +37,10 @@ public class MainFrame extends JFrame implements Navigator {
         mainPanel.add(signUpPage, "SignUpPage");
         mainPanel.add(studentDashboard, "StudentDashboard");
         mainPanel.add(registerSeminarPage, "RegisterSeminarPage");
+        mainPanel.add(coordinatorDashboard, "CoordinatorDashboard");
+        mainPanel.add(manageSeminarPage, "ManageSeminarPage");
+        mainPanel.add(reportPage, "ReportPage");
+       
 
 
         add(mainPanel);
