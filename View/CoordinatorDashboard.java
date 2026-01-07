@@ -14,6 +14,60 @@ public class CoordinatorDashboard extends JPanel {
         JLabel label = new JLabel("Coordinator Dashboard Page");
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(label);
-        
+
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(Box.createVerticalGlue());
+
+
+        //buttons
+
+        //make a separate page
+        JButton manageSeminars = new JButton("Manage Seminar");
+        manageSeminars.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(manageSeminars);
+
+         manageSeminars.addActionListener( e ->{
+            mainFrame.showPage("ManageSeminarPage");
+        });
+
+
+        add(Box.createVerticalStrut(10));
+
+        //use jdialog
+        JButton assignAttendees = new JButton("Assign Evaluators & Presenters");
+        assignAttendees.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(assignAttendees);
+
+        add(Box.createVerticalStrut(10));
+
+        //separate page
+        JButton report = new JButton("Reports");
+        report.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(report);
+
+        report.addActionListener( e ->{
+            mainFrame.showPage("ReportPage");
+        });
+
+        add(Box.createVerticalStrut(10));
+
+        //jdialog
+        JButton award = new JButton("Awards");
+        award.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(award);
+
+        add(Box.createVerticalStrut(10));
+
+        JButton logout = new JButton("Logout");
+        logout.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(logout);
+
+        logout.addActionListener( e ->{
+            mainFrame.showPage("HomePage");
+        });
+
+
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(Box.createVerticalGlue()); // push content to center
     }
 }
