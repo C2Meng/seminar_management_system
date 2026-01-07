@@ -1,4 +1,5 @@
 package View;
+import Controller.Student;
 import MainFrame.MainFrame;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,10 +10,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class RegisterSeminarPage extends JPanel {
+
+     private Student student;
 
      private String[] presentationType = {"Poster" , "Oral"};
 
@@ -26,7 +30,7 @@ public class RegisterSeminarPage extends JPanel {
 
 
 
-     public RegisterSeminarPage(MainFrame mainFrame){
+     public RegisterSeminarPage(MainFrame mainFrame , Student student){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         JLabel label = new JLabel("Register Seminar Page");
        
@@ -117,8 +121,31 @@ public class RegisterSeminarPage extends JPanel {
             if (result == JFileChooser.APPROVE_OPTION){
                 File selectedFile = fileChoose.getSelectedFile();
                 attachmentField.setText(selectedFile.getAbsolutePath());
-            }
+            } 
         });
+
+
+        submitButton.addActionListener(e ->{
+              
+             String title = titleField.getText();
+             String abstractText = abstractField.getText();
+             String attachment = attachmentField.getText();
+             String presentationType = (String) presentationTypeComboBox.getSelectedItem();
+
+
+             if ( title.isEmpty() || abstractText.isEmpty() || attachment.isEmpty() || presentationType.isEmpty()){
+                JOptionPane.showMessageDialog(mainFrame, "Please fill in all fields. " , "Error" , JOptionPane.ERROR_MESSAGE);
+             }
+
+             String seminarId = "SEM" + System.currentTimeMillis(); // Simple unique ID generation
+             student.registerForSeminar(seminarId , title , abstractText , attachment , presentationType);
+             JOptionPane.showMessageDialog(mainFrame, "Seminar registered successfully!" , "Success" , JOptionPane.INFORMATION_MESSAGE);
+             mainFrame.showPage("StudentDashboard");
+
+             
+            }
+          
+        );
 
 
 

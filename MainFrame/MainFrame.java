@@ -1,4 +1,5 @@
 package MainFrame;
+import Controller.Student;
 import InterfaceLib.Navigator;
 import View.CoordinatorDashboard;
 import View.HomePage;
@@ -12,6 +13,7 @@ import javax.swing.*;
 public class MainFrame extends JFrame implements Navigator {
     private CardLayout cardLayout = new CardLayout();
     private JPanel mainPanel = new JPanel(cardLayout);
+    private Student currentStudent;
 
     
     public  MainFrame(){
@@ -20,7 +22,7 @@ public class MainFrame extends JFrame implements Navigator {
         SignUpPage signUpPage = new SignUpPage(this);
         HomePage homePage = new HomePage(this);
         StudentDashboard studentDashboard = new StudentDashboard(this);
-        RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this);
+        RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this , currentStudent);
         CoordinatorDashboard coordinatorDashboard = new CoordinatorDashboard(this);
     
 
@@ -40,6 +42,25 @@ public class MainFrame extends JFrame implements Navigator {
         setSize(800 , 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
+// ===================================== method to set current student when logged in ========================================= //
+    public void setCurrentStudent(Student student){
+        this.currentStudent = student;
+    }
+
+
+
+// ==================================== method to go to register seminar page ========================================== //
+
+       public void goToRegisterSeminarPage() {
+
+        // create a new register seminar page with current student , showing that the student is logged in //
+        RegisterSeminarPage page = new RegisterSeminarPage(this, currentStudent);
+        mainPanel.add(page, "RegisterSeminarPage");
+        showPage("RegisterSeminarPage");
+    }
+
+
 
     
     @Override
