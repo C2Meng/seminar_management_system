@@ -12,7 +12,7 @@ public class Session {
     private Seminar seminar;
      private List<Evaluator> evaluators = new ArrayList<>();
     private List<Student> presenters = new ArrayList<>();
-
+    //this creates a
     public Session(String sID, int sTime, int eTime){
         this.sessionID = sID;
         this.startTime = sTime;

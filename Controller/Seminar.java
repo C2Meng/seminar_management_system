@@ -64,10 +64,10 @@ public class Seminar {
    
     public void addSession(Session session) {
         session.setSeminar(this); // Link the session back to this seminar
-        this.sessionsList.add(session); // Add to this list
+        this.sessionsList.add(session); // Add session to the seminar's session list
     }
 
     
 
-    //to add removers
+    //to add removers 
 }
