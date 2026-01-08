@@ -49,13 +49,10 @@ public class Coordinator extends User implements SignUp {
 
     
 
-    Seminar createSeminar(String title){
-        return null;
+  
 
-    }
-
-    void assignEvaluators(Evaluator name, Seminar title){
-
+    void assignEvaluators(Evaluator name, Seminar idSeminar){
+        
     }
 
     void nominateAward(Award winner){
