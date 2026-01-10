@@ -27,7 +27,7 @@ public class StudentDashboard extends JPanel{
         add(enterSeminarButton);
 
         enterSeminarButton.addActionListener(e ->{
-            mainFrame.showPage("RegisterSeminarPage");
+            mainFrame.goToRegisterSeminarPage();
         });
 
         add(Box.createVerticalStrut(10)); // spacing
@@ -35,6 +35,10 @@ public class StudentDashboard extends JPanel{
         JButton viewSeminarsButton = new JButton("View Registered Seminars"); // button to view registered seminars
         viewSeminarsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(viewSeminarsButton);
+
+        viewSeminarsButton.addActionListener(e -> {
+            mainFrame.goToViewRegisteredSeminarsPage();
+        });
 
         add(Box.createVerticalStrut(10)); // spacing
 

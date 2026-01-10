@@ -13,14 +13,18 @@ public class Student extends User implements SignUp {
     private String password;
     private String name;
     private String userType;
+    private String seminarId;
+    private String title;
+    private String abstractText;
     private WriteToCSV writeToCSV = new WriteToCSV();
-    private boolean isRegistered = false;
+    public boolean isRegistered = false;
     private String line;
     private Navigator navigator;
     
 
     public Student (String email, String name , String password , Navigator navigator ){
         super(email , name , password , Role.STUDENT);
+        this.email = email;
         this.navigator = navigator;
     }
 
@@ -31,8 +35,8 @@ public class Student extends User implements SignUp {
       
          writeToCSV.getFilePath();
          line = email + "," + name + "," + password + "," + userType;
-         isRegistered = true;
          writeToCSV.writeData(line);
+         isRegistered = true;
          navigator.goTo("LoginPage");
 
     }
@@ -42,9 +46,14 @@ public class Student extends User implements SignUp {
        // Authentication logic for Student //
     }
 
+ // =================================== method to register for seminar =========================================== //
  
-    public void registerForSeminar(String seminarId){
-        // Implementation for registering a student for a seminar //
+    public void registerForSeminar(String seminarId , String title , String abstractText , String attachment , String presentationType){
+        // Seminar registration logic for Student //
+        writeToCSV.setFilePath("Data/SeminarRegistrations.csv");
+        String line = email + "," + seminarId + "," + title + "," + abstractText + "," + attachment + "," + presentationType;
+        writeToCSV.writeData(line);
+
     }
 
 
