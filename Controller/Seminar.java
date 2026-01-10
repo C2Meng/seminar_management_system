@@ -1,4 +1,8 @@
+
 package Controller;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Seminar {
 
@@ -9,24 +13,21 @@ public class Seminar {
     private String description;
     private String presenterName;
     private String sessionType;
-
-  
-    public Seminar(String title){
-        this.title = title;
-        //should assign id here, thinking abt keeping track of seminars in a dataset
-    }
-
+    private ArrayList<Seminar> seminarsList = new ArrayList<>();
+    private ArrayList<Session> sessionsList;
     
+  
+   
+    //create a seminar first, then PC have to fill in the rest of the details
     public Seminar(int id, String title){
         this.seminarID = id;
         this.title = title;
+        this.sessionsList = new ArrayList<>();
+        seminarsList.add(this);
+        
         
     }
 
-    public Seminar(String title, String presenterName){
-        this.title = title;
-        this.presenterName = presenterName;
-    }
 
     public void setTitle(String title){
         this.title = title;
@@ -52,11 +53,21 @@ public class Seminar {
         return this.description;
     }
 
-    public void setSession(String sessionType){
+    public void setSessionType(String sessionType){
         this.sessionType = sessionType;
     }
 
     public String getSession(){
         return this.sessionType;
     }
+
+   
+    public void addSession(Session session) {
+        session.setSeminar(this); // Link the session back to this seminar
+        this.sessionsList.add(session); // Add session to the seminar's session list
+    }
+
+    
+
+    //to add removers 
 }
