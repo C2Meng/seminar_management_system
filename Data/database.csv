@@ -1,4 +1,5 @@
 email,name,password,role
 eva1@gmail.com,123,123456,Evaluator
-
 icey@gmail.com,icey,123456,Coordinator
+student@gmail.com,123,123456,Student
+coordinator@gmail.com,123,123456,Coordinator
