@@ -24,6 +24,7 @@ public class Student extends User implements SignUp {
 
     public Student (String email, String name , String password , Navigator navigator ){
         super(email , name , password , Role.STUDENT);
+        this.email = email;
         this.navigator = navigator;
     }
 
@@ -50,7 +51,7 @@ public class Student extends User implements SignUp {
     public void registerForSeminar(String seminarId , String title , String abstractText , String attachment , String presentationType){
         // Seminar registration logic for Student //
         writeToCSV.setFilePath("Data/SeminarRegistrations.csv");
-        String line = seminarId + "," + title + "," + abstractText + "," + attachment + "," + presentationType;
+        String line = email + "," + seminarId + "," + title + "," + abstractText + "," + attachment + "," + presentationType;
         writeToCSV.writeData(line);
 
     }

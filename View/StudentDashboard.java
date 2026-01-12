@@ -36,6 +36,10 @@ public class StudentDashboard extends JPanel{
         viewSeminarsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(viewSeminarsButton);
 
+        viewSeminarsButton.addActionListener(e -> {
+            mainFrame.goToViewRegisteredSeminarsPage();
+        });
+
         add(Box.createVerticalStrut(10)); // spacing
 
         JButton logoutButton = new JButton("Logout");
