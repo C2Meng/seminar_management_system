@@ -15,6 +15,7 @@ public class Seminar {
     private String venue;
     private String startTime;
     private String endTime;
+    private String date;
     private ArrayList<Seminar> seminarsList = new ArrayList<>();
     private ArrayList<Session> sessionsList;
 
@@ -79,10 +80,18 @@ public class Seminar {
         return this.startTime;
     }
 
-
     public String getEndTime() {
         return this.endTime;
     }
+
+    public void setDate(String d) {
+        this.date = d;
+    }
+
+    public String getDate() {
+        return this.date;
+    }
+
 
 
 

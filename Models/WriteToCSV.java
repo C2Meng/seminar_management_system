@@ -14,6 +14,8 @@ public class WriteToCSV {
     // =========================== FILE PATHS =========================== //
     private String filePath = "Data/database.csv";       // Stores Users
     private String seminarFilePath = "Data/seminar.csv"; // Stores Seminars
+    private String sessionFilePath = "Data/session.csv"; // Stores Sessions
+
 
     // =========================== USER MANAGEMENT (EXISTING CODE) =========================== //
 
@@ -101,7 +103,7 @@ public class WriteToCSV {
         try (FileWriter writer = new FileWriter(seminarFilePath, true)) {
             // Write header if file is new
             if (!fileExists) {
-                writer.append("ID,Title,Description,Venue,StartTime,EndTime\n"); 
+                writer.append("ID,Title,Description,Venue,Date,StartTime,EndTime\n"); 
             }
 
             // Format: ID,Title,Description,Presenter,SessionType
@@ -109,6 +111,7 @@ public class WriteToCSV {
                           seminar.getTitle() + "," +
                           seminar.getDescription() + "," +
                           seminar.getVenue() + "," +
+                          seminar.getDate() + "," +
                           seminar.getStartTime() + "," +
                           seminar.getEndTime();
             
@@ -145,8 +148,9 @@ public class WriteToCSV {
                         // Check bounds to avoid ArrayIndexOutOfBoundsException
                         if(data.length > 2) s.setDescription(data[2]);
                         if(data.length > 3) s.setVenue(data[3]);
-                        if(data.length > 4) s.setStartTime(data[4]);
-                        if(data.length > 5) s.setEndTime(data[5]);
+                        if(data.length > 4) s.setDate(data[4]);
+                        if(data.length > 5) s.setStartTime(data[5]);
+                        if(data.length > 6) s.setEndTime(data[6]);
                         
                         list.add(s);
                     } catch (NumberFormatException e) {
@@ -164,13 +168,14 @@ public class WriteToCSV {
     public void updateSeminarCSV(ArrayList<Seminar> seminars) {
         // false = overwrite mode (clears file content)
         try (FileWriter writer = new FileWriter(seminarFilePath, false)) { 
-            writer.append("ID,Title,Description,Venue,StartTime,EndTime\n"); // Re-write Header
+            writer.append("ID,Title,Description,Venue,Date,StartTime,EndTime\n"); // Re-write Header
             
             for (Seminar s : seminars) {
                 String line = s.getSeminarID() + "," +
                               s.getTitle() + "," +
                               s.getDescription() + "," +
                               s.getVenue() + "," +
+                              s.getDate() + "," +
                               s.getStartTime() + "," +
                               s.getEndTime();
                 writer.append(line + "\n");

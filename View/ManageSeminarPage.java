@@ -22,7 +22,7 @@ public class ManageSeminarPage extends JPanel {
         
         for (Seminar s : seminarList) {
             // Add row to table model
-            Object[] row = {s.getSeminarID(), s.getTitle(),s.getDescription(), s.getVenue(), s.getStartTime(), s.getEndTime()};
+            Object[] row = {s.getSeminarID(), s.getTitle(),s.getDescription(), s.getVenue(), s.getDate(), s.getStartTime(), s.getEndTime()};
             tableModel.addRow(row);
         }
 
@@ -40,7 +40,7 @@ public class ManageSeminarPage extends JPanel {
 
         
 
-        String[] columnNames = { "ID", "Seminar Name", "Description", "Venue", "Start Time", "End Time"};
+        String[] columnNames = { "ID", "Seminar Name", "Description", "Venue", "Date", "Start Time", "End Time"};
         tableModel = new DefaultTableModel(columnNames,0);
         seminarTable = new JTable(tableModel);
 
@@ -74,6 +74,8 @@ public class ManageSeminarPage extends JPanel {
         String description = JOptionPane.showInputDialog(this, "Enter Description");
                 //add desc word count limit
         String venue = JOptionPane.showInputDialog(this, "Enter the Venue");
+
+        String date = JOptionPane.showInputDialog(this, "Enter the date of the seminar");
                 
         String startTime = JOptionPane.showInputDialog(this, "Enter the start time");
 
@@ -86,6 +88,7 @@ public class ManageSeminarPage extends JPanel {
         newSem.setDescription(description);
         newSem.setTitle(title);
         newSem.setVenue(venue);
+        newSem.setDate(date);
         newSem.setStartTime(startTime);
         newSem.setEndTime(endTime);
 
