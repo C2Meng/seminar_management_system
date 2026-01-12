@@ -1,27 +1,123 @@
 package View;
-import Controller.Student;
+import Controller.Seminar;
 import MainFrame.MainFrame;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.io.File;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import Models.WriteToCSV;
+import java.awt.*;
+import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 
 public class ManageSeminarPage extends JPanel {
 
+        private JTable seminarTable;
+        private DefaultTableModel tableModel;
+        private WriteToCSV csvModel = new WriteToCSV();
+        //list of seminars
+        private ArrayList<Seminar> seminarList; 
+        
+        private void refreshTableData() {
+        seminarList = csvModel.readSeminars(); // Read latest from file
+        tableModel.setRowCount(0); // Clear table
+        
+        for (Seminar s : seminarList) {
+            // Add row to table model
+            Object[] row = {s.getSeminarID(), s.getTitle(),s.getDescription(), s.getVenue(), s.getStartTime(), s.getEndTime()};
+            tableModel.addRow(row);
+        }
 
-     public ManageSeminarPage(MainFrame mainFrame){
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        JLabel label = new JLabel("Manage Seminar Page");
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(label);
+        }
+
+        
+
+
+        public ManageSeminarPage(MainFrame mainFrame){
+        setLayout(new BorderLayout());
+        JLabel label = new JLabel("Manage Seminars" );
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        add(label, BorderLayout.NORTH);
+
+
+        
+
+        String[] columnNames = { "ID", "Seminar Name", "Description", "Venue", "Start Time", "End Time"};
+        tableModel = new DefaultTableModel(columnNames,0);
+        seminarTable = new JTable(tableModel);
+
+        add(new JScrollPane(seminarTable), BorderLayout.CENTER);
+
+        //refreshes table
+        refreshTableData();
+
+        //a jpanel to hold multiple buttons
+        JPanel buttonPanel = new JPanel();
+        JButton createButton = new JButton("Create");
+        JButton createSession = new JButton( "Create Session");
+        JButton delButton = new JButton("Delete");
+        JButton backButton = new JButton("Back");
+
+        buttonPanel.add(createButton);
+        buttonPanel.add(createSession);
+        buttonPanel.add(delButton);
+        buttonPanel.add(backButton); 
+        add(buttonPanel, BorderLayout.NORTH);
+        
+        //back button redirects PC to coordinator dashboard
+        backButton.addActionListener(e -> mainFrame.showPage("CoordinatorDashboard"));
+
+        createButton.addActionListener(e ->{
+
+        // JOptionPane.showInputDialog: Pops up a small text box for the user to type into.        
+        String title = JOptionPane.showInputDialog(this, "Enter Seminar Title");
+        if (title == null || title.trim().isEmpty()) return;
+
+        String description = JOptionPane.showInputDialog(this, "Enter Description");
+                //add desc word count limit
+        String venue = JOptionPane.showInputDialog(this, "Enter the Venue");
+                
+        String startTime = JOptionPane.showInputDialog(this, "Enter the start time");
+
+        String endTime = JOptionPane.showInputDialog(this, "Enter the end time");
+        
+        int newID = seminarList.size() + 1; //id generation
+
+        //create the seminar object from seminar.java
+        Seminar newSem = new Seminar(newID, title);
+        newSem.setDescription(description);
+        newSem.setTitle(title);
+        newSem.setVenue(venue);
+        newSem.setStartTime(startTime);
+        newSem.setEndTime(endTime);
+
+        csvModel.writeSeminar(newSem); //write to csv file
+
+
+        refreshTableData();
+
+        JOptionPane.showMessageDialog(this, "Seminar Created Successfully!");
+
+
+        });    
+
+        delButton.addActionListener(e->{
+        int selectedRow = seminarTable.getSelectedRow();
+        if (selectedRow == -1){
+                JOptionPane.showMessageDialog(this, "Please select a seminar to remove."); 
+        }
+
+        seminarList.remove(selectedRow);
+        csvModel.updateSeminarCSV(seminarList);
+        refreshTableData();
+        JOptionPane.showMessageDialog(this, "Seminar deleted Successfully!");
+
+        });
+
+
+        }
+        
+        
+        
+      
+        
 }
 
-}

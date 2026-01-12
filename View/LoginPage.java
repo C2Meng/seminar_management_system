@@ -95,7 +95,8 @@ public class LoginPage extends JPanel {
               //set visible
               //mainFrame.dispose(); close login page
 
-            } else {
+            } 
+            else {
                 
                JOptionPane.showMessageDialog(LoginPage.this, "Invalid email or password",
                 "Error", JOptionPane.ERROR_MESSAGE);

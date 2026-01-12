@@ -10,34 +10,35 @@ public class Session {
     private int endTime;
 
     private Seminar seminar;
-     private List<Evaluator> evaluators = new ArrayList<>();
+    private List<Evaluator> evaluators = new ArrayList<>();
     private List<Student> presenters = new ArrayList<>();
-    //this creates a
-    public Session(String sID, int sTime, int eTime){
+
+    // this creates a
+    public Session(String sID, int sTime, int eTime) {
         this.sessionID = sID;
         this.startTime = sTime;
         this.endTime = eTime;
     };
 
-    public Seminar getSeminar(){
+    public Seminar getSeminar() {
         return seminar;
     }
 
-    public void setSeminar(Seminar seminar){
+    public void setSeminar(Seminar seminar) {
         this.seminar = seminar;
     }
-    
-    public void addEvaluator(Evaluator evaluator){
+
+    public void addEvaluator(Evaluator evaluator) {
 
         this.evaluators.add(evaluator);
     }
 
-    public void addPresenter(Student student){
+    public void addPresenter(Student student) {
 
         this.presenters.add(student);
     }
 
-    // Getters for the lists 
+    // Getters for the lists
     public List<Student> getPresenters() {
         return presenters;
     }
@@ -46,5 +47,17 @@ public class Session {
         return evaluators;
     }
 
-    //to add removers later
+    // removers
+    public void removePresenter(Student student) {
+        if (student != null) {
+            presenters.remove(student);
+        }
+    }
+
+    public void removeEvaluator(Evaluator evaluator) {
+        if (evaluator != null) {
+            evaluators.remove(evaluator);
+        }
+    }
+
 }
