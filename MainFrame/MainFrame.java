@@ -6,6 +6,7 @@ import View.LoginPage;
 import View.RegisterSeminarPage;
 import View.SignUpPage;
 import View.StudentDashboard;
+import View.ViewRegisteredSeminarsPage;
 import java.awt.CardLayout;
 import javax.swing.*;
 
@@ -22,6 +23,8 @@ public class MainFrame extends JFrame implements Navigator {
         HomePage homePage = new HomePage(this);
         StudentDashboard studentDashboard = new StudentDashboard(this);
         RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this , currentStudent);
+       
+    
     
 
 
@@ -30,6 +33,7 @@ public class MainFrame extends JFrame implements Navigator {
         mainPanel.add(signUpPage, "SignUpPage");
         mainPanel.add(studentDashboard, "StudentDashboard");
         mainPanel.add(registerSeminarPage, "RegisterSeminarPage");
+       
 
 
         add(mainPanel);
@@ -55,6 +59,15 @@ public class MainFrame extends JFrame implements Navigator {
         RegisterSeminarPage page = new RegisterSeminarPage(this, currentStudent);
         mainPanel.add(page, "RegisterSeminarPage");
         showPage("RegisterSeminarPage");
+    }
+
+// ==================================== method to go to view registered seminars page ========================================== //
+
+    public void goToViewRegisteredSeminarsPage() {
+        // create a new view registered seminars page with current student
+        ViewRegisteredSeminarsPage page = new ViewRegisteredSeminarsPage(this, currentStudent);
+        mainPanel.add(page, "ViewRegisteredSeminarsPage");
+        showPage("ViewRegisteredSeminarsPage");
     }
 
 
