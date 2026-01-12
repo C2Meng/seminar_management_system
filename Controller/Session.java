@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Session {
-
-    private String sessionID;
-    private int startTime;
-    private int endTime;
-
+    
     private Seminar seminar;
+    
+    private String sessionID;
+    private String startTime;
+    private String endTime;
+    private int sessionType;
+
     private List<Evaluator> evaluators = new ArrayList<>();
     private List<Student> presenters = new ArrayList<>();
 
     // this creates a
-    public Session(String sID, int sTime, int eTime) {
+    public Session(String sID, String sTime, String eTime) {
         this.sessionID = sID;
         this.startTime = sTime;
         this.endTime = eTime;
@@ -24,18 +26,34 @@ public class Session {
         return seminar;
     }
 
-    public void setSeminar(Seminar seminar) {
-        this.seminar = seminar;
+    public void setSeminar(Seminar s) {
+        this.seminar = s;
     }
 
-    public void addEvaluator(Evaluator evaluator) {
-
-        this.evaluators.add(evaluator);
+     public void setStartTime(String start) {
+        this.startTime = start;
     }
 
-    public void addPresenter(Student student) {
+     public void setEndTime(String end) {
+        this.endTime = end;
+    }
 
-        this.presenters.add(student);
+     public String getStartTime() {
+        return this.startTime;
+    }
+
+     public String getEndTime() {
+        return this.endTime;
+    }
+
+    public void addEvaluator(Evaluator e) {
+
+        this.evaluators.add(e);
+    }
+
+    public void addPresenter(Student s) {
+
+        this.presenters.add(s);
     }
 
     // Getters for the lists

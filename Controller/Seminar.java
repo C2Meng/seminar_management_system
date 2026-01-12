@@ -24,18 +24,16 @@ public class Seminar {
         this.seminarID = id;
         this.title = title;
         this.sessionsList = new ArrayList<>();
-       
 
     }
 
-    public int getSeminarID(){
+    public int getSeminarID() {
         return this.seminarID;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
-    
 
     public String getTitle() {
         return this.title;
@@ -76,6 +74,7 @@ public class Seminar {
     public void setEndTime(String end) {
         this.endTime = end;
     }
+
     public String getStartTime() {
         return this.startTime;
     }
@@ -92,18 +91,18 @@ public class Seminar {
         return this.date;
     }
 
-
-
-
-
     public String getSession() {
         return this.sessionType;
     }
 
     public void addSession(Session session) {
-        session.setSeminar(this); // Link the session back to this seminar
-        this.sessionsList.add(session); // Add session to the seminar's session list
+    session.setSeminar(this); 
+    if (!this.sessionsList.contains(session)) {
+        this.sessionsList.add(session);
     }
+
+   
+}
 
     // to add removers
     // Remove seminar by Seminar object
