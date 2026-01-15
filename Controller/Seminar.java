@@ -95,14 +95,21 @@ public class Seminar {
         return this.sessionType;
     }
 
-    public void addSession(Session session) {
-    session.setSeminar(this); 
-    if (!this.sessionsList.contains(session)) {
-        this.sessionsList.add(session);
+    public ArrayList<Session> getSessionList() {
+        return this.sessionsList;
     }
 
-   
-}
+    public void clearSessions() {
+        this.sessionsList.clear();
+    }
+
+    public void addSession(Session session) {
+        session.setSeminar(this);
+        if (!this.sessionsList.contains(session)) {
+            this.sessionsList.add(session);
+        }
+
+    }
 
     // to add removers
     // Remove seminar by Seminar object
@@ -128,7 +135,7 @@ public class Seminar {
             return;
 
         if (sessionsList.remove(session)) {
-            session.setSeminar(null); // break bidirectional link
+            session.setSeminar(this); // break bidirectional link
         }
     }
 

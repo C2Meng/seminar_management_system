@@ -7,27 +7,55 @@ public class Session {
     
     private Seminar seminar;
     
-    private String sessionID;
+    private int sessionID;
     private String startTime;
     private String endTime;
-    private int sessionType;
+    private String sessionType;
 
     private List<Evaluator> evaluators = new ArrayList<>();
     private List<Student> presenters = new ArrayList<>();
 
-    // this creates a
-    public Session(String sID, String sTime, String eTime) {
+
+
+    // sessopm constructor
+    public Session(Seminar sem ){
+        this.seminar = sem;
+       
+    }
+    
+    public Session(Seminar sem, int sID,String sType, String sTime, String eTime) {
+        this.seminar = sem;
         this.sessionID = sID;
+        this.sessionType = sType;
         this.startTime = sTime;
         this.endTime = eTime;
     };
+
+    public int getSessionID() {
+        return this.sessionID;
+    }
 
     public Seminar getSeminar() {
         return seminar;
     }
 
-    public void setSeminar(Seminar s) {
-        this.seminar = s;
+    //gets the id of the super class (in this case seminarID)
+    public int getSeminarID(){
+        return this.seminar.getSeminarID();
+    }
+    
+    
+
+    public void setSessionType(String sType) {
+        this.sessionType = sType;
+    }
+
+    public String getSessionType() {
+        return sessionType;
+    }
+
+    public void setSeminar(Seminar sem) {
+        this.seminar = sem;
     }
 
      public void setStartTime(String start) {
