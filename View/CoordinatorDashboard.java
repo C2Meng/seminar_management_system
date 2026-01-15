@@ -30,13 +30,7 @@ public class CoordinatorDashboard extends JPanel {
             mainFrame.showPage("ManageSeminarPage");
         });
 
-
-        add(Box.createVerticalStrut(10));
-
-        //use jdialog
-        JButton assignAttendees = new JButton("Assign Evaluators & Presenters");
-        assignAttendees.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(assignAttendees);
+        
 
         add(Box.createVerticalStrut(10));
 
