@@ -49,9 +49,5 @@ public class HomePage extends JPanel{
 
        add(signUpButton, gbc);
 
-
-        
-
-       
     }
 }

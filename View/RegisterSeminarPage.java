@@ -67,10 +67,22 @@ public class RegisterSeminarPage extends JPanel {
 
         add(Box.createVerticalStrut(10)); // spacing
 
+        JLabel supervisorLabel = new JLabel("Supervisor:");
+        supervisorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(supervisorLabel);
+
+
+        JTextField supervisorField = new JTextField();
+        supervisorField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        supervisorField.setMaximumSize(new Dimension(200, 80));
+        add(supervisorField);
+
+
 
         JLabel attachmentLabel = new JLabel("Attachment: ");
         attachmentLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(attachmentLabel);
+
 
         add(Box.createVerticalStrut(10)); // spacing
 
@@ -130,6 +142,7 @@ public class RegisterSeminarPage extends JPanel {
              String title = titleField.getText();
              String abstractText = abstractField.getText();
              String attachment = attachmentField.getText();
+             String supervisor = supervisorField.getText();
              String presentationType = (String) presentationTypeComboBox.getSelectedItem();
 
 
@@ -138,7 +151,7 @@ public class RegisterSeminarPage extends JPanel {
              }
 
              String seminarId = "SEM" + System.currentTimeMillis(); // Simple unique ID generation
-             student.registerForSeminar(seminarId , title , abstractText , attachment , presentationType);
+             student.registerForSeminar(seminarId , title , abstractText , attachment , supervisor, presentationType);
              JOptionPane.showMessageDialog(mainFrame, "Seminar registered successfully!" , "Success" , JOptionPane.INFORMATION_MESSAGE);
              mainFrame.showPage("StudentDashboard");
 

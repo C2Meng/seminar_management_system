@@ -28,7 +28,7 @@ public class ViewRegisteredSeminarsPage extends JPanel {
         add(Box.createVerticalStrut(10)); // spacing
 
         // Create table to display registered seminars
-        String[] columnNames = {"Seminar ID", "Title", "Abstract", "Attachment", "Presentation Type"};
+        String[] columnNames = {"Seminar ID", "Title", "Abstract", "Attachment", "Supervisor" , "Presentation Type"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         JTable seminarsTable = new JTable(tableModel);
 
@@ -61,13 +61,14 @@ public class ViewRegisteredSeminarsPage extends JPanel {
             // Read all lines and filter by student email
             while (currentLine != null) {
                 String[] data = currentLine.split(",");
-                if (data.length >= 6 && data[0].trim().equals(studentEmail)) {
+                if (data.length >= 7 && data[0].trim().equals(studentEmail)) {
                     tableModel.addRow(new Object[]{
                             data[1].trim(), // Seminar ID
                             data[2].trim(), // Title
                             data[3].trim(), // Abstract
                             data[4].trim(), // Attachment
-                            data[5].trim()  // Presentation Type
+                            data[5].trim(), // Supervisor
+                            data[6].trim()  // Presentation Type
                     });
                 }
                 currentLine = br.readLine();
