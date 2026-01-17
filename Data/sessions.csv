@@ -1,0 +1,6 @@
+seminarID,sessionID,sessionType,startTime,endTime,presenter,evaluator
+2,1,Poster,2pm,4pm,alice,Jones
+3,1,Poster,2pm,4pm,Amir,Jones
+3,2,Poster,2pm,4pm,Alice,Jane
+2,2,Poster,9pm,10pm,Amir,Wong
+1,1,Oral,3pm,4pm,Amir,Wong

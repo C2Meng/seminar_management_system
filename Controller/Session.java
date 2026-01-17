@@ -11,6 +11,8 @@ public class Session {
     private String startTime;
     private String endTime;
     private String sessionType;
+    private String evalName;
+    private String stuName;
 
     private List<Evaluator> evaluators = new ArrayList<>();
     private List<Student> presenters = new ArrayList<>();
@@ -29,6 +31,7 @@ public class Session {
         this.sessionType = sType;
         this.startTime = sTime;
         this.endTime = eTime;
+
     };
 
     public int getSessionID() {
@@ -64,33 +67,32 @@ public class Session {
 
      public void setEndTime(String end) {
         this.endTime = end;
-    }
+    };
+
+    public void setEvaluator(String eval){
+        this.evalName = eval;
+    };
+
+    public void setPresenter(String stu){
+        this.stuName = stu;
+    };
 
      public String getStartTime() {
         return this.startTime;
-    }
+    };
 
      public String getEndTime() {
         return this.endTime;
-    }
+    };
 
-    public void addEvaluator(Evaluator e) {
-
-        this.evaluators.add(e);
-    }
-
-    public void addPresenter(Student s) {
-
-        this.presenters.add(s);
-    }
-
+    
     // Getters for the lists
-    public List<Student> getPresenters() {
-        return presenters;
+    public String getPresenter() {
+        return stuName;
     }
 
-    public List<Evaluator> getEvaluators() {
-        return evaluators;
+    public String getEvaluator() {
+        return evalName;
     }
 
     // removers

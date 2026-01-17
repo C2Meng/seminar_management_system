@@ -7,7 +7,6 @@ import java.util.List;
 public class Seminar {
 
     private int seminarID;
-    private static int nextID = 1;
     private String title;
     private String description;
     private String presenterName;

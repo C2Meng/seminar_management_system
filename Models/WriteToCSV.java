@@ -9,6 +9,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WriteToCSV {
 
@@ -59,6 +62,48 @@ public class WriteToCSV {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // filter database for evaluators and students, adding the names to respective
+    // arraylist
+    public Map<String,ArrayList<String>> readData() {
+        ArrayList<String> evalName = new ArrayList<>();
+        ArrayList<String> stuName = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                // icey@gmail.com,icey,123456,Coordinator 0,1,2,3
+                String[] data = line.split(",");
+                if (data.length < 4)
+                    continue;
+
+                // Index 2 = Name, Index  = Role
+                String name = data[1].trim();
+                String role = data[3].trim();
+
+                if (role.equalsIgnoreCase("Evaluator")) {
+                    evalName.add(name);
+                }
+
+                else if (role.equalsIgnoreCase("Student")) {
+                    stuName.add(name);
+                }
+
+            }
+
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       Map<String, ArrayList<String>> userData = new HashMap<>();
+        userData.put("evaluatorNameList", evalName);
+        userData.put("studentNameList", stuName);
+        return userData;
+        //code source: https://stackoverflow.com/questions/12947659/how-can-i-return-2-arraylist-from-same-method
     }
 
     // Verifies user credentials for Login
@@ -245,11 +290,15 @@ public class WriteToCSV {
                         int tempInt = Integer.parseInt(tempStr);
 
                         Session s = new Session(sessionSem, tempInt, data[2], data[3], data[4]);
-                        // if(data.length > 5) session.addPresenter(data[5]);
-                        // if(data.length > 6) session.addEvaluator(data[6]);
 
-                        // If you saved presenters/evaluators in columns 5 and 6:
-                        // You can load them here if needed, or leave them for now.
+                        if(data.length>4){
+                            s.setPresenter(data[5]);
+                            s.setEvaluator(data[6]);
+                        }
+
+                        
+
+                  
                         sessions.add(s);
                     }
                 }
@@ -271,9 +320,10 @@ public class WriteToCSV {
                     session.getSessionID() + "," +
                     session.getSessionType() + "," +
                     session.getStartTime() + "," +
-                    session.getEndTime();
-            // presenter + "," +
-            // evaluator;
+                    session.getEndTime() + "," +
+                    session.getPresenter() + "," +
+                    session.getEvaluator();
+            
 
             writer.append(line + "\n");
         } catch (IOException e) {
@@ -281,47 +331,79 @@ public class WriteToCSV {
         }
     }
 
+   public void updateSession(Session session, int seminarID) {
+    ArrayList<String> allLines = new ArrayList<>();
+    try (BufferedReader reader = new BufferedReader(new FileReader(sessionFilePath))) {
+        String line;
+        while ((line = reader.readLine()) != null) allLines.add(line);
+    } catch (IOException e) { e.printStackTrace(); }
+
+    try (FileWriter writer = new FileWriter(sessionFilePath, false)) {
+        for (String line : allLines) {
+            String[] data = line.split(",");
+
+            // 1. Skip logic for header or invalid lines
+            if (data.length < 2 || data[0].equalsIgnoreCase("seminarID")) {
+                writer.write(line + "\n");
+                continue;
+            }
+
+            try {
+                // 2. Safely parse IDs now that we know it's not the header
+                int rowSemID = Integer.parseInt(data[0].trim());
+                int rowSessID = Integer.parseInt(data[1].trim());
+
+                // 3. MATCH BOTH IDs: Ensure we only update the specific session
+                if (rowSemID == seminarID && rowSessID == session.getSessionID()) {
+                    writer.write(seminarID + "," + 
+                                 session.getSessionID() + "," + 
+                                 session.getSessionType() + "," + 
+                                 session.getStartTime() + "," + 
+                                 session.getEndTime() + "," + 
+                                 session.getPresenter() + "," + 
+                                 session.getEvaluator() + "\n");
+                } else {
+                    writer.write(line + "\n");
+                }
+            } catch (NumberFormatException e) {
+                // In case of any other corrupted numeric data, just preserve the line
+                writer.write(line + "\n");
+            }
+        }
+    } catch (IOException e) { e.printStackTrace(); }
+}
+
     // --- SESSION: Delete (Rewrite Method) ---
-    public void deleteSession(int sessionIDToDelete) {
-        ArrayList<String> allLines = new ArrayList<>();
-        File file = new File(sessionFilePath);
+    public void deleteSession(int seminarID, int sessionIDToDelete) {
+    ArrayList<String> allLines = new ArrayList<>();
+    try (BufferedReader br = new BufferedReader(new FileReader(sessionFilePath))) {
+        String line;
+        while ((line = br.readLine()) != null) allLines.add(line);
+    } catch (IOException e) { e.printStackTrace(); }
 
-        // 1. Read ALL lines into memory
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                allLines.add(line);
+    try (FileWriter writer = new FileWriter(sessionFilePath, false)) {
+        for (String line : allLines) {
+            String[] data = line.split(",");
+
+            // Skip header check if data is too small
+            if (data.length < 2) {
+                writer.write(line + "\n");
+                continue;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        // 2. Rewrite file, skipping the deleted line
-        try (FileWriter writer = new FileWriter(file, false)) { // false = Overwrite mode
-            for (String line : allLines) {
-                String[] data = line.split(",");
+            try {
+                int currentSemID = Integer.parseInt(data[0].trim());
+                int currentSessID = Integer.parseInt(data[1].trim());
 
-          
-
-                // If it's the header, write it back and skip parsing
-                if (data[1].equalsIgnoreCase("SessionID")) {
-                    writer.append(line + "\n");
-                    continue; // skip to next line
+                // ONLY delete if BOTH IDs match
+                if (currentSemID == seminarID && currentSessID == sessionIDToDelete) {
+                    continue; // Skip this line (Delete)
                 }
-
-                //  Parse the ID safely
-                int tempInt = Integer.parseInt(data[1].trim());
-               
-                 
-
-                // 3. Write lines whose ID does NOT match the one to delete
-                if (tempInt != sessionIDToDelete) {
-                    writer.append(line + "\n");
-                }
+            } catch (NumberFormatException e) {
+                // This handles the Header row
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            writer.write(line + "\n");
         }
-    }
-
+    } catch (IOException e) { e.printStackTrace(); }
+}
 }
