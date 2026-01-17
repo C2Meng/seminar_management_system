@@ -3,12 +3,17 @@ package Models;
 import Controller.Seminar;
 import Controller.Session;
 import InterfaceLib.Navigator;
+import MainFrame.MainFrame;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 public class WriteToCSV {
 
@@ -16,6 +21,7 @@ public class WriteToCSV {
     private String filePath = "Data/database.csv"; // Stores Users
     private String seminarFilePath = "Data/seminar.csv"; // Stores Seminars
     private String sessionFilePath = "Data/sessions.csv"; // Stores Sessions
+
 
     // =========================== USER MANAGEMENT (EXISTING CODE)
     // =========================== //
@@ -321,6 +327,87 @@ public class WriteToCSV {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+
+    public void generateSeminarReport(){
+
+        
+        ArrayList<String> seminarList = new ArrayList<>(); // to store seminar data
+        File file = new File("Data/seminar.csv"); // 
+        file.getParentFile().mkdirs(); // ensure folder exists
+
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))){ // read seminar data
+
+            String line; // to hold each line
+            while((line = br.readLine())!= null){
+                seminarList.add(line); // add line to seminar list
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        } 
+
+
+        try (FileWriter writer = new FileWriter("Data/seminar_report.txt"  , false)){ // write report to text file
+
+            writer.append("==================  Seminar Report ==================\n\n");
+
+            int totalSeminars = seminarList.size() - 1; // exclude header
+            writer.write("Total Seminars: " + totalSeminars + "\n\n");
+            writer.write("-----------------------------------------------------\n");
+
+
+
+            // write each seminar's details
+            for (String seminar : seminarList.subList(1, seminarList.size())){ // skip header from csv file
+                String data[] = seminar.split(",");
+
+            writer.write("Seminar ID   : " + data[0] + "\n");
+            writer.write("Title        : " + data[1] + "\n");
+            writer.write("Description  : " + data[2] + "\n");
+            writer.write("Venue        : " + data[3] + "\n");
+            writer.write("Date         : " + data[4] + "\n");
+            writer.write("Start Time   : " + data[5] + "\n");
+            writer.write("End Time     : " + data[6] + "\n");
+            writer.write("-----------------------------------------------------\n");
+            }
+
+        System.out.println("Report generated successfully."); // confirmation message
+
+            
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void saveSeminarReportToFile(File destination , MainFrame mainFrame) {
+            try {
+            Files.copy(
+                    Paths.get("Data/seminar_report.txt"), // getting the generated report
+                    destination.toPath(), // destination chosen by user
+                    StandardCopyOption.REPLACE_EXISTING // overwrite if file exists
+            );
+
+            JOptionPane.showMessageDialog(
+                    mainFrame,
+                    "File saved successfully!",
+                    "Saved",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    mainFrame,
+                    "Failed to save file.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
