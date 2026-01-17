@@ -1,8 +1,10 @@
 
 package Controller;
 
+import MainFrame.MainFrame;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import javax.swing.JFileChooser;
 
 public class Seminar {
 
@@ -137,6 +139,19 @@ public class Seminar {
         if (sessionsList.remove(session)) {
             session.setSeminar(this); // break bidirectional link
         }
+    }
+
+    public void exportReport(MainFrame mainFrame) {
+        JFileChooser fileChooser = new JFileChooser();
+                   fileChooser.setSelectedFile(new File("seminar_report.txt")); // default file name
+                   int userSelection = fileChooser.showSaveDialog(mainFrame);
+                   if (userSelection == JFileChooser.APPROVE_OPTION) {
+                          File fileToSave = fileChooser.getSelectedFile();
+                          System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+                     } else {
+                            System.out.println("Save command cancelled by user.");
+                     }
+
     }
 
 }
