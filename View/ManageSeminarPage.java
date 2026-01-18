@@ -32,7 +32,9 @@ public class ManageSeminarPage extends JPanel {
         setLayout(new BorderLayout());
 
         // --- Header Section ---
+
         JPanel topPanel = new JPanel(new BorderLayout());
+        add(Box.createVerticalStrut(15));
         JLabel label = new JLabel("Manage Seminars");
         label.setFont(new Font("Arial", Font.BOLD, 16));
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -42,11 +44,13 @@ public class ManageSeminarPage extends JPanel {
         JPanel buttonPanel = new JPanel();
         JButton createButton = new JButton("Create");
         JButton sessionButton = new JButton("Sessions");
+        JButton scheduleButton = new JButton("Generate Schedule");
         JButton delButton = new JButton("Delete");
         JButton backButton = new JButton("Back");
 
         buttonPanel.add(createButton);
         buttonPanel.add(sessionButton);
+        buttonPanel.add(scheduleButton);
         buttonPanel.add(delButton);
         buttonPanel.add(backButton);
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -66,7 +70,8 @@ public class ManageSeminarPage extends JPanel {
 
         createButton.addActionListener(e -> {
             String title = JOptionPane.showInputDialog(this, "Enter Seminar Title");
-            if (title == null || title.trim().isEmpty()) return;
+            if (title == null || title.trim().isEmpty())
+                return;
 
             String description = JOptionPane.showInputDialog(this, "Enter Description");
             String venue = JOptionPane.showInputDialog(this, "Enter the Venue");
@@ -86,6 +91,9 @@ public class ManageSeminarPage extends JPanel {
             csvModel.writeSeminar(newSem);
             refreshTableData();
             JOptionPane.showMessageDialog(this, "Seminar Created Successfully!");
+        });
+
+        scheduleButton.addActionListener(e -> {
         });
 
         delButton.addActionListener(e -> {
@@ -126,7 +134,8 @@ public class ManageSeminarPage extends JPanel {
             viewDialog.setSize(800, 400);
             viewDialog.setLayout(new BorderLayout());
 
-            String[] columns = { "Seminar ID","Session ID", "Type", "Start Time", "End Time", "Evaluator", "Presenter" };
+            String[] columns = { "Seminar ID", "Session ID", "Type", "Start Time", "End Time", "Evaluator",
+                    "Presenter" };
             DefaultTableModel sessionModel = new DefaultTableModel(columns, 0);
             JTable sessionTable = new JTable(sessionModel);
             viewDialog.add(new JScrollPane(sessionTable), BorderLayout.CENTER);
@@ -143,7 +152,7 @@ public class ManageSeminarPage extends JPanel {
                             sess.getStartTime(),
                             sess.getEndTime(),
                             sess.getEvaluator(), // Now reads from correct column
-                            sess.getPresenter()  // Now reads from correct column
+                            sess.getPresenter() // Now reads from correct column
                     });
                 }
             };
@@ -166,10 +175,12 @@ public class ManageSeminarPage extends JPanel {
 
             addSessionBtn.addActionListener(ev -> {
                 ArrayList<Session> currentSessList = csvModel.readSessions(tempSession);
-                int newSessionID = (currentSessList.isEmpty()) ? 1 : currentSessList.get(currentSessList.size()-1).getSessionID() + 1;
+                int newSessionID = (currentSessList.isEmpty()) ? 1
+                        : currentSessList.get(currentSessList.size() - 1).getSessionID() + 1;
 
                 String sessionType = JOptionPane.showInputDialog(viewDialog, "Enter Session Type (Oral/Poster):");
-                if (sessionType == null || sessionType.trim().isEmpty()) return;
+                if (sessionType == null || sessionType.trim().isEmpty())
+                    return;
 
                 String startTime = JOptionPane.showInputDialog(viewDialog, "Enter Start Time:");
                 String endTime = JOptionPane.showInputDialog(viewDialog, "Enter End Time:");
@@ -191,7 +202,7 @@ public class ManageSeminarPage extends JPanel {
                 }
                 int currentseminarID = (int) sessionModel.getValueAt(selectedSessionRow, 0);
                 int sessID = (int) sessionModel.getValueAt(selectedSessionRow, 1);
-                
+
                 csvModel.deleteSession(currentseminarID, sessID);
                 refreshSessionList.run();
                 JOptionPane.showMessageDialog(viewDialog, "Successfully deleted the session!");
@@ -204,7 +215,7 @@ public class ManageSeminarPage extends JPanel {
                     JOptionPane.showMessageDialog(viewDialog, "Please select a session first!");
                     return;
                 }
-                
+
                 // Get User Data
                 Map<String, ArrayList<String>> userData = csvModel.readData();
                 ArrayList<String> evaluators = userData.get("evaluatorNameList");
@@ -220,27 +231,32 @@ public class ManageSeminarPage extends JPanel {
                 // 2. Select Evaluator
                 String[] evalColumns = { "Evaluators" };
                 DefaultTableModel evalModel = new DefaultTableModel(evalColumns, 0);
-                for (String name : evaluators) evalModel.addRow(new Object[] { name });
+                for (String name : evaluators)
+                    evalModel.addRow(new Object[] { name });
                 JTable evalTable = new JTable(evalModel);
 
                 int evalResult = JOptionPane.showConfirmDialog(viewDialog, new JScrollPane(evalTable),
                         "Select Evaluator", JOptionPane.OK_CANCEL_OPTION);
-                if (evalResult != JOptionPane.OK_OPTION || evalTable.getSelectedRow() == -1) return;
+                if (evalResult != JOptionPane.OK_OPTION || evalTable.getSelectedRow() == -1)
+                    return;
                 String selectedEval = (String) evalModel.getValueAt(evalTable.getSelectedRow(), 0);
 
                 // 3. Select Presenter
                 String[] stuColumns = { "Students" };
                 DefaultTableModel stuModel = new DefaultTableModel(stuColumns, 0);
-                for (String name : students) stuModel.addRow(new Object[] { name });
+                for (String name : students)
+                    stuModel.addRow(new Object[] { name });
                 JTable stuTable = new JTable(stuModel);
 
                 int studResult = JOptionPane.showConfirmDialog(viewDialog, new JScrollPane(stuTable),
                         "Select Presenter (Student)", JOptionPane.OK_CANCEL_OPTION);
-                if (studResult != JOptionPane.OK_OPTION || stuTable.getSelectedRow() == -1) return;
+                if (studResult != JOptionPane.OK_OPTION || stuTable.getSelectedRow() == -1)
+                    return;
                 String selectedStu = (String) stuModel.getValueAt(stuTable.getSelectedRow(), 0);
 
                 // 4. Create a complete Session object with the new assignments
-               Session updatedSession = new Session(new Seminar(currentseminarID, ""), sessID, currentType, currentStart, currentEnd);
+                Session updatedSession = new Session(new Seminar(currentseminarID, ""), sessID, currentType,
+                        currentStart, currentEnd);
                 updatedSession.setEvaluator(selectedEval);
                 updatedSession.setPresenter(selectedStu);
 
@@ -248,7 +264,7 @@ public class ManageSeminarPage extends JPanel {
                 csvModel.updateSession(updatedSession, currentseminarID);
 
                 // 6. Refresh UI
-                refreshSessionList.run(); 
+                refreshSessionList.run();
                 JOptionPane.showMessageDialog(viewDialog, "Assignment Saved!");
             });
 

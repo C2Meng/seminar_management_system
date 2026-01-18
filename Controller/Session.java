@@ -1,5 +1,6 @@
 package Controller;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +14,8 @@ public class Session {
     private String sessionType;
     private String evalName;
     private String stuName;
+    private Award assignedAward;
 
-    private List<Evaluator> evaluators = new ArrayList<>();
-    private List<Student> presenters = new ArrayList<>();
 
 
 
@@ -95,17 +95,12 @@ public class Session {
         return evalName;
     }
 
-    // removers
-    public void removePresenter(Student student) {
-        if (student != null) {
-            presenters.remove(student);
-        }
+   public void setAward(Award award) {
+        this.assignedAward = award;
     }
 
-    public void removeEvaluator(Evaluator evaluator) {
-        if (evaluator != null) {
-            evaluators.remove(evaluator);
-        }
+    public Award getAward(){
+        return assignedAward;
     }
 
 }
