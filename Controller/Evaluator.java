@@ -71,7 +71,8 @@ public class Evaluator extends User implements SignUp , SignIn{
     public List<Submission> loadSubmissions() {
         List<Submission> list = new ArrayList<>();
         File file = new File(submissionfilepath);
-        
+
+
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -103,25 +104,42 @@ private void writeEvaluationToCSV(Submission s) {
         List<String> lines = new ArrayList<>();
         File file = new File(evaluationfilepath);
 
+
+        if (!file.exists()){
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))){;
+                bw.write("SubmissionID,ScoreClarity,ScoreMethodology,ScoreResults,ScorePresentation,Comment");
+            
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
+
+
+        }
+
+        
         if (file.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                String line;
+
                 while ((line = br.readLine()) != null) {
                     if (!line.startsWith(s.submissionId + ",")) {
                         lines.add(line);
                     }
                 }
             } catch (IOException e) { e.printStackTrace(); }
-        }
+        } 
+
+        
 
         lines.add(s.submissionId + "," + s.scoreClarity + "," + s.scoreMethodology + "," + 
                   s.scoreResults + "," + s.scorePresentation + "," + s.comment);
 
         //lines[] array will contain = { 1, 10, 9, 8, 7, "Good job" } for example
         //then we write all lines back to the file
-
+       
         
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+
+            
             for (String l : lines) {
                 bw.write(String.valueOf(l));
                 bw.newLine(); // Explicitly adds the new line character

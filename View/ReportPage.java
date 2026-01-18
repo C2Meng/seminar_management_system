@@ -37,30 +37,27 @@ public class ReportPage extends JPanel {
 
                 int choice = JOptionPane.showConfirmDialog(mainFrame, "Seminar report generated! Do you want to save it to your device?" , "Success" , JOptionPane.YES_NO_OPTION);
 
-                
-
-
+        
                 if (choice == JOptionPane.YES_OPTION) {
 
     // Open file chooser for user to pick save location
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setSelectedFile(new File("seminar_report.txt")); // default name
 
-    int option = fileChooser.showSaveDialog(mainFrame);
+    int option = fileChooser.showSaveDialog(mainFrame); // parent component
 
     if (option == JFileChooser.APPROVE_OPTION) {
-        File destination = fileChooser.getSelectedFile();
+        File destination = fileChooser.getSelectedFile(); // get the selected file
  
-        WriteToCSV writer = new WriteToCSV();
-        writer.saveSeminarReportToFile(destination , mainFrame);
+        WriteToCSV writer = new WriteToCSV(); // create instance to use the method
+        writer.saveSeminarReportToFile(destination , mainFrame); // save the report to the chosen file
     
-    } 
+    } else { 
+        // user cancelled the save dialog
+        JOptionPane.showMessageDialog(mainFrame, "Save operation cancelled." , "Cancelled" , JOptionPane.INFORMATION_MESSAGE);
+    }
 }
 
-
-
-      
- 
         });
 
         add(Box.createVerticalStrut(10)); // spacing
