@@ -40,7 +40,7 @@ public class Evaluator extends User implements SignUp , SignIn{
         super(null,null,null, Role.EVALUATOR);
     }
 
-
+    
     @Override
     public void registerUser(String email , String name , String password , String userType){
          
@@ -208,4 +208,3 @@ private void writeEvaluationToCSV(Submission s) {
           // Implementation for deleting a user //
     }
 }
-
