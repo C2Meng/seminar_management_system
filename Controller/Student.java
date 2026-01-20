@@ -20,6 +20,7 @@ public class Student extends User implements SignUp {
     public boolean isRegistered = false;
     private String line;
     private Navigator navigator;
+    private String filePath = "Data/Submission.csv";
     
 
     public Student (String email, String name , String password , Navigator navigator ){
@@ -114,7 +115,7 @@ public class Student extends User implements SignUp {
  
     public void registerForSeminar(String seminarId , String title , String abstractText , String attachment , String supervisor , String presentationType){
         // Seminar registration logic for Student //
-        writeToCSV.setFilePath("Data/SeminarRegistrations.csv");
+        writeToCSV.setFilePath(filePath);
         String line = email + "," + seminarId + "," + title + "," + abstractText + "," + attachment + "," + supervisor + "," + presentationType;
         writeToCSV.writeData(line);
 
@@ -122,5 +123,4 @@ public class Student extends User implements SignUp {
 
 
 }
-
 

@@ -29,7 +29,7 @@ public class EvaluatorSystem extends JFrame {
         submissions = controller.loadSubmissions();
 
         //DefaultTableModel from >> https://docs.oracle.com/javase/8/docs/api/javax/swing/table/DefaultTableModel.html
-        String[] columnNames = {"ID", "Student Name", "Title", "Type", "EvaluatorID", "Status"};
+        String[] columnNames = {"Student Email", "Seminar ID", "Title", "Abstract", "FilePath", "Status"};
         tableModel = new DefaultTableModel(columnNames, 0)
         {
             @Override
@@ -132,7 +132,7 @@ class GradingDialog extends JDialog {
             pnlInfo.setBackground(new Color(240, 240, 240));
             pnlInfo.add(new JLabel("Student: " + s.studentName + " (" + s.submissionId + ")"));
             pnlInfo.add(new JLabel("Title: " + s.title));
-            pnlInfo.add(new JLabel("Type: " + s.type));            
+            pnlInfo.add(new JLabel("Abstract: " + s.type));            
             
             // --- Rubric Form ---
             // Increased rows to 10 to fit the new slider
