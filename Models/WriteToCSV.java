@@ -93,6 +93,7 @@ public class WriteToCSV {
                     continue;
 
                 // Index 2 = Name, Index  = Role
+                
                 String name = data[1].trim();
                 String role = data[3].trim();
 
@@ -117,6 +118,57 @@ public class WriteToCSV {
         return userData;
         //code source: https://stackoverflow.com/questions/12947659/how-can-i-return-2-arraylist-from-same-method
     }
+
+    //get user information via userID
+    public ArrayList<String> readUser(int userID) {
+        return readUserInternal(String.valueOf(userID), true);
+    }
+
+    public ArrayList<String> readUser(String name) {
+        return readUserInternal(name, false);
+    }
+    private ArrayList<String> readUserInternal(String value, boolean searchByID) {
+
+    ArrayList<String> userInfo = new ArrayList<>();
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+
+        String line;
+
+        // Skip header
+        reader.readLine();
+
+        while ((line = reader.readLine()) != null) {
+
+            String[] data = line.split(",");
+            if (data.length < 5) {
+                continue;
+            }
+            boolean match;
+            if (searchByID) {
+                match = data[0].equals(value); // id
+            } else {
+                match = data[2].equalsIgnoreCase(value); // name
+            }
+            if (match) {
+                // [0]=id, [1]=email, [2]=name, [3]=role
+                userInfo.add(data[0]);
+                userInfo.add(data[1]);
+                userInfo.add(data[2]);
+                userInfo.add(data[4]);
+                break;
+            }
+        }
+        if (userInfo.isEmpty()) {
+            System.out.println("Error: User not found (" +
+                    (searchByID ? "id=" : "name=") + value + ")");
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return userInfo;
+}
+    //arrayList<String> userinfo = new csvModel.readUser; userid = userinfo.get(0), etc
 
     // Verifies user credentials for Login
     public String verifyUser(String email, String password, Navigator navigator) {
