@@ -21,11 +21,22 @@ public class Seminar {
     private ArrayList<Session> sessionsList;
 
     // create a seminar first, then PC have to fill in the rest of the details
+
+    public Seminar(String id , String title){
+        this.seminarID = Integer.parseInt(id);
+        this.title = title;
+    }
+
     public Seminar(int id, String title) {
         this.seminarID = id;
         this.title = title;
         this.sessionsList = new ArrayList<>();
 
+    }
+
+    @Override
+    public String toString() {
+        return title + (" (ID: " + seminarID + ")");
     }
 
     public int getSeminarID() {

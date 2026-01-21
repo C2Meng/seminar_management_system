@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 
@@ -64,7 +63,7 @@ public class WriteToCSV {
         try (FileWriter writer = new FileWriter(filePath, true)) {
 
             if (new File(filePath).length() == 0) {
-                writer.append("Email , Seminar ID , Title , Abstract , Attachment , Supervisor , Presentation Type\n");
+                writer.append("Submission ID , Seminar ID , User ID , Title , Abstract , Attachment , Supervisor , Presentation Type\n");
             } 
 
              writer.append(line + "\n");
