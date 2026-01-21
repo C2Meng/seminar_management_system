@@ -59,6 +59,7 @@ public class WriteToCSV {
         }
     }
 
+    // helpp
     public void writeData(String line) {
         try (FileWriter writer = new FileWriter(filePath, true)) {
 
