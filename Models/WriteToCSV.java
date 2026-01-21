@@ -60,11 +60,17 @@ public class WriteToCSV {
         }
     }
 
-    // Writes a new USER to the database
     public void writeData(String line) {
         try (FileWriter writer = new FileWriter(filePath, true)) {
-            writer.append(line + "\n");
-            System.out.println("User data written successfully");
+
+            if (new File(filePath).length() == 0) {
+                writer.append("Email , Seminar ID , Title , Abstract , Attachment , Supervisor , Presentation Type\n");
+            } 
+
+             writer.append(line + "\n");
+            System.out.println("User seminar proposal written successfully");
+            
+
         } catch (IOException e) {
             e.printStackTrace();
         }

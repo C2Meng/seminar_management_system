@@ -40,7 +40,7 @@ public class Evaluator extends User implements SignUp , SignIn{
         super(null,null,null, Role.EVALUATOR);
     }
 
-
+    
     @Override
     public void registerUser(String email , String name , String password , String userType){
          
@@ -72,9 +72,17 @@ public class Evaluator extends User implements SignUp , SignIn{
         List<Submission> list = new ArrayList<>();
         File file = new File(submissionfilepath);
 
+        if (!file.exists()){
+            try ( BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+                bw.write("SubmissionID,StudentName,Title,Abstract,FilePath,Status");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 list.add(new Submission(values));
@@ -116,7 +124,7 @@ private void writeEvaluationToCSV(Submission s) {
 
         }
 
-        
+
         if (file.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 
@@ -200,4 +208,3 @@ private void writeEvaluationToCSV(Submission s) {
           // Implementation for deleting a user //
     }
 }
-
