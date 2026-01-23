@@ -1,6 +1,7 @@
 package Controller;
 
 import InterfaceLib.Role;
+import java.util.UUID;
 
 public class User {
      protected String id;
@@ -12,11 +13,20 @@ public class User {
 
 
        public User(String email, String name, String password, Role role) {
+        this.id = generateUserId();
         this.email = email;
         this.name = name;
         this.password = password;
         this.role = role;
     }
+
+     private String generateUserId() {
+        return UUID.randomUUID().toString();
+     }
+
+     public String getId(){
+        return id;
+     }
 
      public Role getRole(){
         return role;

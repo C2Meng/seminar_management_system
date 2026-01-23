@@ -62,6 +62,8 @@ public class Student extends User implements SignUp {
         return userType;
     }
 
+    
+
     public String getUserType(){
         return this.userType;
     }
@@ -98,9 +100,7 @@ public class Student extends User implements SignUp {
     public void registerUser(String email , String name , String password , String userType){
          
       
-         writeToCSV.getFilePath();
-         line = email + "," + name + "," + password + "," + userType;
-         writeToCSV.writeData(line);
+         writeToCSV.registerUser(this.id, email, name, password, userType);
          isRegistered = true;
          navigator.goTo("LoginPage");
 
@@ -113,13 +113,7 @@ public class Student extends User implements SignUp {
 
  // =================================== method to register for seminar =========================================== //
  
-    public void registerForSeminar(String seminarId , String title , String abstractText , String attachment , String supervisor , String presentationType){
-        // Seminar registration logic for Student //
-        writeToCSV.setFilePath(filePath);
-        String line = email + "," + seminarId + "," + title + "," + abstractText + "," + attachment + "," + supervisor + "," + presentationType;
-        writeToCSV.writeData(line);
 
-    }
 
 
 }

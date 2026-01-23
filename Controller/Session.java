@@ -15,6 +15,8 @@ public class Session {
     private String evalName;
     private String stuName;
     private Award assignedAward;
+    private String presenterID;
+    private String evaluatorID;
 
 
 
@@ -102,5 +104,22 @@ public class Session {
     public Award getAward(){
         return assignedAward;
     }
+   
 
+
+    public void setPresenterID(String id) {
+        this.presenterID = id;
+    }
+
+    public String getPresenterID() {
+        return presenterID;
+    }
+
+    public void setEvaluatorID(String id) {
+        this.evaluatorID = id;
+    }
+
+    public String getEvaluatorID() {
+        return evaluatorID;
+    }
 }

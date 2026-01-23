@@ -1,4 +1,5 @@
 package View;
+import Controller.Seminar;
 import Controller.Student;
 import MainFrame.MainFrame;
 import java.awt.Component;
@@ -21,6 +22,27 @@ public class RegisterSeminarPage extends JPanel {
      private String[] presentationType = {"Poster" , "Oral"};
 
      public JComboBox <String> presentationTypeComboBox = new JComboBox<>();
+
+     private JComboBox<Seminar> seminarDropdown = new JComboBox<>();
+
+     private void loadSeminarsFromCSV(){
+        String csvFile = "Data/seminar.csv";
+        String line;
+        try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(csvFile))){
+            br.readLine();
+
+            while ((line = br.readLine()) != null){
+                String[] values = line.split(",");
+                if (values.length >= 2){
+                    seminarDropdown.addItem(new Seminar(values[0].trim(), values[1].trim()));
+                }
+
+            }
+        } catch (Exception e) {
+            System.out.println("Error reading Seminar.csv: " + e.getMessage());
+        }
+
+     }
 
      private void getPresentationTypes(){
          for ( String presentation : presentationType){
@@ -109,6 +131,15 @@ public class RegisterSeminarPage extends JPanel {
         presentationTypeComboBox.setMaximumSize(new Dimension(200 , 80));
         add(Box.createVerticalStrut(10)); // spacing
 
+        JLabel selectSeminarLabel = new JLabel("Select Seminar to Apply:");
+        selectSeminarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(selectSeminarLabel);
+
+        seminarDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
+        seminarDropdown.setMaximumSize(new Dimension(300, 30));
+        loadSeminarsFromCSV(); // Fill the dropdown with data from your image
+        add(seminarDropdown);
+
 
         JButton submitButton = new JButton("Submit");
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -138,20 +169,22 @@ public class RegisterSeminarPage extends JPanel {
 
 
         submitButton.addActionListener(e ->{
-              
+             Seminar selectedSeminar = (Seminar) seminarDropdown.getSelectedItem();
              String title = titleField.getText();
              String abstractText = abstractField.getText();
              String attachment = attachmentField.getText();
              String supervisor = supervisorField.getText();
+             String currentUserId = "1"; // Replace with actual user ID retrieval logic
              String presentationType = (String) presentationTypeComboBox.getSelectedItem();
 
 
-             if ( title.isEmpty() || abstractText.isEmpty() || attachment.isEmpty() || presentationType.isEmpty()){
+             if ( selectedSeminar == null || title.isEmpty() || abstractText.isEmpty() || attachment.isEmpty() || presentationType.isEmpty()){
                 JOptionPane.showMessageDialog(mainFrame, "Please fill in all fields. " , "Error" , JOptionPane.ERROR_MESSAGE);
              }
 
-             String seminarId = "SEM" + System.currentTimeMillis(); // Simple unique ID generation
-             student.registerForSeminar(seminarId , title , abstractText , attachment , supervisor, presentationType);
+             String seminarIdStr = String.valueOf(selectedSeminar.getSeminarID());
+
+             String submissionID = "SEM" + System.currentTimeMillis(); // Simple unique ID generation
              JOptionPane.showMessageDialog(mainFrame, "Seminar registered successfully!" , "Success" , JOptionPane.INFORMATION_MESSAGE);
              mainFrame.showPage("StudentDashboard");
 
