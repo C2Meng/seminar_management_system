@@ -1,5 +1,8 @@
 user_id,email,name,password,role
-e8d254bd-490c-44de-a9f0-df950d516135,user1@gmail.com,User1,123456,Student
-bf193e04-febf-453c-9cb3-9320221b92cd,eva1@gmail.com,eva1,123456,Evaluator
-cd9cca65-8d03-4cbe-9e2c-fd6154f26959,pro1@gmail.com,pro1,123456,Coordinator
-877192ad-6b8f-4ee2-a5b8-9a1de0a7bcc6,stu1@gmail.com,stu1@gmail.com,123456,Student
+e8d254bd-490c-44de-a9f0-df950d516135,user@gmail.com,Qian Bei,123456,Student
+bf193e04-febf-453c-9cb3-9320221b92cd,evaluator@gmail.com,Syed,123456,Evaluator
+cd9cca65-8d03-4cbe-9e2c-fd6154f26959,coordinator@gmail.com,Chuan Meng,123456,Coordinator
+877192ad-6b8f-4ee2-a5b8-9a1de0a7bcc6,student@gmail.com,Raziq,123456,Student
+a1b2c3d4-e5f6-4g7h-8i9j-k1l2m3n4o5p6,ali@gmail.com,Ali Abu,123456,Student
+f47ac10b-58cc-4372-a567-0e02b2c3d479,sarah@gmail.com,Sarah Connor,123456,Student
+550e8400-e29b-41d4-a716-446655440000,deepa@gmail.com,Deepa Raj,123456,Student

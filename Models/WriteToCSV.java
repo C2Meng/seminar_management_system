@@ -23,6 +23,7 @@ public class WriteToCSV {
     private String userFilePath = "Data/User.csv"; // Stores Users with user_id
     private String seminarFilePath = "Data/seminar.csv"; // Stores Seminars
     private String sessionFilePath = "Data/sessions.csv"; // Stores Sessions
+    private String submissionFilePath = "Data/Submission.csv"; // Stores Sessions
 
 
     // =========================== USER MANAGEMENT (EXISTING CODE)
@@ -165,9 +166,10 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
 }
 
     //get user information via userID
-    public ArrayList<String> readUser(int userID) {
-        return readUserInternal(String.valueOf(userID), true);
-    }
+    public ArrayList<String> readUserByID(String userID) {
+    // This forces the internal reader to search Column 0 (ID) instead of Column 2 (Name)
+    return readUserInternal(userID, true); 
+}
 
     public ArrayList<String> readUser(String name) {
         return readUserInternal(name, false);
@@ -243,6 +245,37 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
 
         return null;
     }
+    //read submissions.csv to return user id of students who submitted for a particular seminar
+    public ArrayList<String> readSubmission(int SeminarID){
+            ArrayList<String> submissionUserID = new ArrayList<>();
+            File file = new File(submissionFilePath);
+
+            
+    if (file.exists()) {
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip header
+            while ((line = br.readLine()) != null) {
+                // Using -1 to keep empty trailing fields if any
+                // Submission ID , Seminar ID , User ID , Title , Abstract , Attachment , Supervisor , Presentation Type
+                String[] data = line.split(",", -1); 
+                
+                int ID = Integer.parseInt(data[1]);
+                if(ID == SeminarID){
+                    submissionUserID.add(data[2]); // add user id to list
+                }
+
+                
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+        return submissionUserID;
+    }
+
+
 
     // =========================== SEMINAR MANAGEMENT =========================== //
 
