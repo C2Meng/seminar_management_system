@@ -1,2 +1,4 @@
 ID,Title,Description,Venue,Date,StartTime,EndTime
-1,Artificial Intelligence,Seminars on Artificial Intelligence (AI) generally cover foundational concepts, machine learning, neural networks, and ethical considerations,MPH1005,24/01/2026,8AM,12PM
+1,Artificial Intelligence,the field of AI,MPH1005,24/01/2026,2PM,4PM
+2,Software Engineering,The field of SE is big,MPH2005,24/01/2026,4PM,6PM
+3,Data Science,Data Science,MPH3005,24/01/2026,6PM,8PM
