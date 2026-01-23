@@ -113,13 +113,7 @@ public class Student extends User implements SignUp {
 
  // =================================== method to register for seminar =========================================== //
  
-    public void registerForSeminar(String submissionID, String seminarId , String currentUserId ,  String title , String abstractText , String attachment , String supervisor , String presentationType){
-        // Seminar registration logic for Student //
-        writeToCSV.setFilePath(filePath);
-        String line = submissionID  + "," + seminarId + "," + currentUserId + "," + title + "," + abstractText + "," + attachment + "," + supervisor + "," + presentationType;
-        writeToCSV.writeData(line);
 
-    }
 
 
 }

@@ -13,6 +13,8 @@ public class Session {
     private String sessionType;
     private String evalName;
     private String stuName;
+    private String presenterID;
+    private String evaluatorID;
 
     private List<Evaluator> evaluators = new ArrayList<>();
     private List<Student> presenters = new ArrayList<>();
@@ -107,5 +109,19 @@ public class Session {
             evaluators.remove(evaluator);
         }
     }
+    public void setPresenterID(String id) {
+        this.presenterID = id;
+    }
 
+    public String getPresenterID() {
+        return presenterID;
+    }
+
+    public void setEvaluatorID(String id) {
+        this.evaluatorID = id;
+    }
+
+    public String getEvaluatorID() {
+        return evaluatorID;
+    }
 }

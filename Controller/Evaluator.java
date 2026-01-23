@@ -18,7 +18,6 @@ import java.util.List;
 
 public class Evaluator extends User implements SignUp , SignIn{
 
-    String submissionfilepath = "Data/examplesubmissiondata.csv";
     String evaluationfilepath = "Data/Evaluations.csv";
 
 
@@ -53,7 +52,6 @@ public class Evaluator extends User implements SignUp , SignIn{
 
     @Override
     public void authUser(String email , String password ){
-       writeToCSV.getFilePath();
        String isAuthenticated = writeToCSV.verifyUser(email, password , navigator);
       
        if (isAuthenticated != null){

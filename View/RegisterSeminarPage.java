@@ -185,7 +185,6 @@ public class RegisterSeminarPage extends JPanel {
              String seminarIdStr = String.valueOf(selectedSeminar.getSeminarID());
 
              String submissionID = "SEM" + System.currentTimeMillis(); // Simple unique ID generation
-             student.registerForSeminar( submissionID , seminarIdStr , currentUserId , title , abstractText , attachment , supervisor, presentationType);
              JOptionPane.showMessageDialog(mainFrame, "Seminar registered successfully!" , "Success" , JOptionPane.INFORMATION_MESSAGE);
              mainFrame.showPage("StudentDashboard");
 

@@ -197,60 +197,102 @@ public class ManageSeminarPage extends JPanel {
                 JOptionPane.showMessageDialog(viewDialog, "Successfully deleted the session!");
             });
 
-            // ====================== ASSIGN ATTENDEES LOGIC ====================== //
-            assignAttendeesButton.addActionListener(ev -> {
-                int selectedSessionRow = sessionTable.getSelectedRow();
-                if (selectedSessionRow == -1) {
-                    JOptionPane.showMessageDialog(viewDialog, "Please select a session first!");
-                    return;
-                }
-                
-                // Get User Data
-                Map<String, ArrayList<String>> userData = csvModel.readData();
-                ArrayList<String> evaluators = userData.get("evaluatorNameList");
-                ArrayList<String> students = userData.get("studentNameList");
+// ====================== ASSIGN ATTENDEES LOGIC ====================== //
+assignAttendeesButton.addActionListener(ev -> {
+    int selectedSessionRow = sessionTable.getSelectedRow();
+    if (selectedSessionRow == -1) {
+        JOptionPane.showMessageDialog(viewDialog, "Please select a session first!");
+        return;
+    }
 
-                // 1. Get existing details from the table so we don't lose them during update
-                int currentseminarID = (int) sessionModel.getValueAt(selectedSessionRow, 0);
-                int sessID = (int) sessionModel.getValueAt(selectedSessionRow, 1);
-                String currentType = (String) sessionModel.getValueAt(selectedSessionRow, 2);
-                String currentStart = (String) sessionModel.getValueAt(selectedSessionRow, 3);
-                String currentEnd = (String) sessionModel.getValueAt(selectedSessionRow, 4);
+    // --- 1. Get User Data (Names AND IDs) ---
+    // Make sure your csvModel.readData() actually populates these specific keys!
+    Map<String, ArrayList<String>> userData = csvModel.readData();
+    
+    ArrayList<String> evalNames = userData.get("evaluatorNameList");
+    ArrayList<String> evalIDs   = userData.get("evaluatorIDList"); // Retrieve IDs
+    
+    ArrayList<String> studNames = userData.get("studentNameList");
+    ArrayList<String> studIDs   = userData.get("studentIDList");   // Retrieve IDs
 
-                // 2. Select Evaluator
-                String[] evalColumns = { "Evaluators" };
-                DefaultTableModel evalModel = new DefaultTableModel(evalColumns, 0);
-                for (String name : evaluators) evalModel.addRow(new Object[] { name });
-                JTable evalTable = new JTable(evalModel);
+    // --- 2. Get existing details from the table ---
+    int currentseminarID = (int) sessionModel.getValueAt(selectedSessionRow, 0);
+    int sessID = (int) sessionModel.getValueAt(selectedSessionRow, 1);
+    String currentType = (String) sessionModel.getValueAt(selectedSessionRow, 2);
+    String currentStart = (String) sessionModel.getValueAt(selectedSessionRow, 3);
+    String currentEnd = (String) sessionModel.getValueAt(selectedSessionRow, 4);
 
-                int evalResult = JOptionPane.showConfirmDialog(viewDialog, new JScrollPane(evalTable),
-                        "Select Evaluator", JOptionPane.OK_CANCEL_OPTION);
-                if (evalResult != JOptionPane.OK_OPTION || evalTable.getSelectedRow() == -1) return;
-                String selectedEval = (String) evalModel.getValueAt(evalTable.getSelectedRow(), 0);
+    // --- 3. Select Evaluator ---
+    // We add two columns: ID and Name
+    String[] evalColumns = { "ID", "Name" };
+    DefaultTableModel evalModel = new DefaultTableModel(evalColumns, 0) {
+        @Override // Make cells uneditable
+        public boolean isCellEditable(int row, int column) { return false; }
+    };
 
-                // 3. Select Presenter
-                String[] stuColumns = { "Students" };
-                DefaultTableModel stuModel = new DefaultTableModel(stuColumns, 0);
-                for (String name : students) stuModel.addRow(new Object[] { name });
-                JTable stuTable = new JTable(stuModel);
+    // Loop by index to grab both ID and Name
+    if (evalNames != null && evalIDs != null) {
+        for (int i = 0; i < evalNames.size(); i++) {
+            evalModel.addRow(new Object[] { evalIDs.get(i), evalNames.get(i) });
+        }
+    }
 
-                int studResult = JOptionPane.showConfirmDialog(viewDialog, new JScrollPane(stuTable),
-                        "Select Presenter (Student)", JOptionPane.OK_CANCEL_OPTION);
-                if (studResult != JOptionPane.OK_OPTION || stuTable.getSelectedRow() == -1) return;
-                String selectedStu = (String) stuModel.getValueAt(stuTable.getSelectedRow(), 0);
+    JTable evalTable = new JTable(evalModel);
+    
+    int evalResult = JOptionPane.showConfirmDialog(viewDialog, new JScrollPane(evalTable),
+            "Select Evaluator", JOptionPane.OK_CANCEL_OPTION);
+    
+    if (evalResult != JOptionPane.OK_OPTION || evalTable.getSelectedRow() == -1) return;
 
-                // 4. Create a complete Session object with the new assignments
-               Session updatedSession = new Session(new Seminar(currentseminarID, ""), sessID, currentType, currentStart, currentEnd);
-                updatedSession.setEvaluator(selectedEval);
-                updatedSession.setPresenter(selectedStu);
+    // Retrieve both ID and Name from the selected row
+    String selectedEvalIDStr = (String) evalModel.getValueAt(evalTable.getSelectedRow(), 0);
+    String selectedEvalName  = (String) evalModel.getValueAt(evalTable.getSelectedRow(), 1);
 
-                // 5. Save to CSV
-                csvModel.updateSession(updatedSession, currentseminarID);
+    // --- 4. Select Presenter ---
+    String[] stuColumns = { "ID", "Name" };
+    DefaultTableModel stuModel = new DefaultTableModel(stuColumns, 0) {
+        @Override 
+        public boolean isCellEditable(int row, int column) { return false; }
+    };
 
-                // 6. Refresh UI
-                refreshSessionList.run(); 
-                JOptionPane.showMessageDialog(viewDialog, "Assignment Saved!");
-            });
+    if (studNames != null && studIDs != null) {
+        for (int i = 0; i < studNames.size(); i++) {
+            stuModel.addRow(new Object[] { studIDs.get(i), studNames.get(i) });
+        }
+    }
+
+    JTable stuTable = new JTable(stuModel);
+
+    int studResult = JOptionPane.showConfirmDialog(viewDialog, new JScrollPane(stuTable),
+            "Select Presenter (Student)", JOptionPane.OK_CANCEL_OPTION);
+    
+    if (studResult != JOptionPane.OK_OPTION || stuTable.getSelectedRow() == -1) return;
+
+    String selectedStuIDStr = (String) stuModel.getValueAt(stuTable.getSelectedRow(), 0);
+    String selectedStuName  = (String) stuModel.getValueAt(stuTable.getSelectedRow(), 1);
+
+    // --- 5. Create Session object with Assignments ---
+    Session updatedSession = new Session(new Seminar(currentseminarID, ""), sessID, currentType, currentStart, currentEnd);
+    
+    // Set Names
+    updatedSession.setEvaluator(selectedEvalName);
+    updatedSession.setPresenter(selectedStuName);
+    
+    // Set IDs (Parse String to Int)
+    try {
+        updatedSession.setEvaluatorID(selectedEvalIDStr);
+        updatedSession.setPresenterID(selectedStuIDStr);
+    } catch (NumberFormatException ex) {
+        System.out.println("Error parsing IDs selected from table");
+        ex.printStackTrace();
+    }
+
+    // --- 6. Save and Refresh ---
+    csvModel.updateSession(updatedSession, currentseminarID);
+
+    refreshSessionList.run(); 
+    JOptionPane.showMessageDialog(viewDialog, "Assignment Saved!");
+});
 
             viewDialog.setLocationRelativeTo(this);
             viewDialog.setVisible(true);
