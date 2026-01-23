@@ -21,6 +21,7 @@ public class WriteToCSV {
 
     // =========================== FILE PATHS =========================== //
     private String filePath = "Data/database.csv"; // Stores Users
+    private String userFilePath = "Data/User.csv"; // Stores Users with user_id
     private String seminarFilePath = "Data/seminar.csv"; // Stores Seminars
     private String sessionFilePath = "Data/sessions.csv"; // Stores Sessions
 
@@ -34,6 +35,55 @@ public class WriteToCSV {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public String getUserFilePath() {
+        return userFilePath;
+    }
+
+    public void setUserFilePath(String userFilePath) {
+        this.userFilePath = userFilePath;
+    }
+
+    // Creates the USER.csv database file
+    public void createUserFile() {
+        try {
+            File file = new File(userFilePath);
+
+            // create folder if missing
+            file.getParentFile().mkdirs();
+
+            // write header only if file does NOT exist
+            if (!file.exists()) {
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.append("user_id,email,name,password,role\n"); // header
+                    System.out.println("User.csv file created with headers.");
+                }
+            } else {
+                System.out.println("User.csv file already exists, skipping header creation.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Register user with user_id
+    public void registerUser(String userId, String email, String name, String password, String role) {
+        try {
+            // Ensure User.csv exists
+            createUserFile();
+
+            File file = new File(userFilePath);
+            String line = userId + "," + email + "," + name + "," + password + "," + role;
+
+            try (FileWriter writer = new FileWriter(file, true)) {
+                writer.append(line + "\n");
+                System.out.println("User registered successfully with ID: " + userId);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Creates the USER database file
@@ -82,19 +132,20 @@ public class WriteToCSV {
         ArrayList<String> evalName = new ArrayList<>();
         ArrayList<String> stuName = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(userFilePath))) {
 
             String line;
+            reader.readLine(); // Skip header
 
             while ((line = reader.readLine()) != null) {
-                // icey@gmail.com,icey,123456,Coordinator 0,1,2,3
+                // user_id,email,name,password,role
                 String[] data = line.split(",");
-                if (data.length < 4)
+                if (data.length < 5)
                     continue;
 
-                // Index 2 = Name, Index  = Role
-                String name = data[1].trim();
-                String role = data[3].trim();
+                // Index 2 = Name, Index 4 = Role
+                String name = data[2].trim();
+                String role = data[4].trim();
 
                 if (role.equalsIgnoreCase("Evaluator")) {
                     evalName.add(name);
@@ -120,19 +171,19 @@ public class WriteToCSV {
 
     // Verifies user credentials for Login
     public String verifyUser(String email, String password, Navigator navigator) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(userFilePath))) {
             String currentLine;
             br.readLine(); // Skip header
             while ((currentLine = br.readLine()) != null) {
                 String[] data = currentLine.split(",");
                 // Ensure the line has enough data to prevent crashes on empty lines
-                if (data.length < 4)
+                if (data.length < 5)
                     continue;
 
-                String storedEmail = data[0];
-                // Index 1 is usually name, Index 2 is password based on your registerUser logic
-                String storedPassword = data[2];
-                String storedRole = data[3];
+                // Format: user_id,email,name,password,role
+                String storedEmail = data[1].trim();
+                String storedPassword = data[3].trim();
+                String storedRole = data[4].trim();
 
                 if (storedEmail.equals(email) && storedPassword.equals(password)) {
                     return storedRole;

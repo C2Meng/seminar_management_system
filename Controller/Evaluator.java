@@ -45,10 +45,8 @@ public class Evaluator extends User implements SignUp , SignIn{
     public void registerUser(String email , String name , String password , String userType){
          
       
-         writeToCSV.getFilePath();
-         line = email + "," + name + "," + password + "," + userType;
+         writeToCSV.registerUser(this.id, email, name, password, userType);
          isRegistered = true;
-         writeToCSV.writeData(line);
          navigator.goTo("LoginPage");
 
     }

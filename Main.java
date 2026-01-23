@@ -8,6 +8,7 @@ public class Main {
 
         WriteToCSV writeToCSV = new WriteToCSV();
         writeToCSV.createFile();
+        writeToCSV.createUserFile();
         
         MainFrame mainFrame = new MainFrame();
         mainFrame.setVisible(true);
