@@ -176,7 +176,7 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
 
     ArrayList<String> userInfo = new ArrayList<>();
 
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+    try (BufferedReader reader = new BufferedReader(new FileReader(userFilePath))) {
 
         String line;
 
