@@ -19,6 +19,7 @@ import java.util.List;
 public class Evaluator extends User implements SignUp , SignIn{
 
     String evaluationfilepath = "Data/Evaluations.csv";
+    String submissionfilepath = "Data/Submission.csv";
 
 
     private String email;
@@ -52,7 +53,7 @@ public class Evaluator extends User implements SignUp , SignIn{
 
     @Override
     public void authUser(String email , String password ){
-       String isAuthenticated = writeToCSV.verifyUser(email, password , navigator);
+       String[] isAuthenticated = writeToCSV.verifyUser(email, password , navigator);
       
        if (isAuthenticated != null){
            System.out.println("User authenticated successfully");

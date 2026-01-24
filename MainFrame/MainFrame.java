@@ -17,6 +17,7 @@ public class MainFrame extends JFrame implements Navigator {
     private CardLayout cardLayout = new CardLayout();
     private JPanel mainPanel = new JPanel(cardLayout);
     private Student currentStudent;
+    private String currentUserID;
 
     
     public  MainFrame(){
@@ -24,11 +25,7 @@ public class MainFrame extends JFrame implements Navigator {
         LoginPage loginPage = new LoginPage(this);
         SignUpPage signUpPage = new SignUpPage(this);
         HomePage homePage = new HomePage(this);
-        StudentDashboard studentDashboard = new StudentDashboard(this);
-        RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this , currentStudent);
-        CoordinatorDashboard coordinatorDashboard = new CoordinatorDashboard(this);
-        ManageSeminarPage manageSeminarPage = new ManageSeminarPage(this);
-        ReportPage reportPage = new ReportPage(this);
+      
     
        
     
@@ -38,11 +35,7 @@ public class MainFrame extends JFrame implements Navigator {
         mainPanel.add(homePage, "HomePage");
         mainPanel.add(loginPage, "LoginPage");
         mainPanel.add(signUpPage, "SignUpPage");
-        mainPanel.add(studentDashboard, "StudentDashboard");
-        mainPanel.add(registerSeminarPage, "RegisterSeminarPage");
-        mainPanel.add(coordinatorDashboard, "CoordinatorDashboard");
-        mainPanel.add(manageSeminarPage, "ManageSeminarPage");
-        mainPanel.add(reportPage, "ReportPage");
+       
 
 
         add(mainPanel);
@@ -56,6 +49,16 @@ public class MainFrame extends JFrame implements Navigator {
 // ===================================== method to set current student when logged in ========================================= //
     public void setCurrentStudent(Student student){
         this.currentStudent = student;
+    }
+
+
+// ===================================== method to set current user ID when logged in ========================================= //
+    public void setCurrentUserID(String userID){
+        this.currentUserID = userID;
+    }
+
+    public String getCurrentUserID(){
+        return this.currentUserID;
     }
 
 
@@ -92,6 +95,43 @@ public class MainFrame extends JFrame implements Navigator {
 
 
     public void showPage(String pageName){
+
+        if (pageName.equals("StudentDashboard")) {
+            // Recreate StudentDashboard to ensure it has the latest data
+            StudentDashboard studentDashboard = new StudentDashboard(this);
+            mainPanel.add(studentDashboard, "StudentDashboard");
+        }
+
+         if (pageName.equals("CoordinatorDashboard")) {
+            // Recreate CoordinatorDashboard to ensure it has the latest data
+            CoordinatorDashboard coordinatorDashboard = new CoordinatorDashboard(this , currentUserID);
+            mainPanel.add(coordinatorDashboard, "CoordinatorDashboard");
+        }
+
+         if (pageName.equals("ManageSeminarPage")) {
+            // Recreate ManageSeminarPage to ensure it has the latest data
+            ManageSeminarPage manageSeminarPage = new ManageSeminarPage(this , currentUserID);
+            mainPanel.add(manageSeminarPage, "ManageSeminarPage");
+        }
+
+        if (pageName.equals("ReportPage")) {
+            // Recreate ReportPage to ensure it has the latest data
+            ReportPage reportPage = new ReportPage(this);
+            mainPanel.add(reportPage, "ReportPage");
+        }
+
+        if (pageName.equals("RegisterSeminarPage")) {
+            // Recreate RegisterSeminarPage to ensure it has the latest data
+            RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this , currentStudent);
+            mainPanel.add(registerSeminarPage, "RegisterSeminarPage");
+        }
+
+         if (pageName.equals("ViewRegisteredSeminarsPage")) {
+            // Recreate ViewRegisteredSeminarsPage to ensure it has the latest data
+            ViewRegisteredSeminarsPage viewRegisteredSeminarsPage = new ViewRegisteredSeminarsPage(this , currentStudent);
+            mainPanel.add(viewRegisteredSeminarsPage, "ViewRegisteredSeminarsPage");
+        } 
+        
         cardLayout.show(mainPanel, pageName);
     }
 }

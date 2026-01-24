@@ -15,10 +15,12 @@ public class EvaluatorSystem extends JFrame {
     private List<Submission> submissions = new ArrayList<>();
     private JTable table;
     private DefaultTableModel tableModel;
+    private String evaluatorID;
 
     private Evaluator controller; // evaluator controller instance
     // --- Main Dashboard UI ---
-    public EvaluatorSystem() {
+    public EvaluatorSystem(String evaluatorID) {
+        this.evaluatorID = evaluatorID;
         controller = new Evaluator();
         setTitle("Seminar Evaluator Portal");
         setSize(900, 500);
@@ -27,6 +29,9 @@ public class EvaluatorSystem extends JFrame {
 
         // Load Data from controller
         submissions = controller.loadSubmissions();
+
+        System.out.println("Loaded " + submissions.size() + " submissions for evaluator " + evaluatorID);
+
 
         //DefaultTableModel from >> https://docs.oracle.com/javase/8/docs/api/javax/swing/table/DefaultTableModel.html
         String[] columnNames = {"Student Email", "Seminar ID", "Title", "Abstract", "FilePath", "Status"};
@@ -243,6 +248,6 @@ class GradingDialog extends JDialog {
 
     public static void main(String[] args) {
         
-        new EvaluatorSystem().setVisible(true);
+        new EvaluatorSystem("none").setVisible(true);
     }
 }
