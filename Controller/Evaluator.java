@@ -19,6 +19,7 @@ import java.util.List;
 public class Evaluator extends User implements SignUp , SignIn{
 
     String evaluationfilepath = "Data/Evaluations.csv";
+    String submissionfilepath = "";
 
 
     private String email;

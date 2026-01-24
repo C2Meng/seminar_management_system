@@ -1,2 +1,5 @@
 seminarID,sessionID,sessionType,startTime,endTime,presenter,presenterID,evaluator,evaluatorID
-1,1,oral,11,12,User1,e8d254bd-490c-44de-a9f0-df950d516135,eva1,bf193e04-febf-453c-9cb3-9320221b92cd
+1,1,Oral,2pm,4pm,Sarah Connor,f47ac10b-58cc-4372-a567-0e02b2c3d479,Syed,bf193e04-febf-453c-9cb3-9320221b92cd
+1,2,Poster,4pm,6pm,Sarah Connor,f47ac10b-58cc-4372-a567-0e02b2c3d479,Syed,bf193e04-febf-453c-9cb3-9320221b92cd
+2,1,POSTER,2PM,4PM,TBD,TBD,TBD,TBD
+3,1,POSTER,2PM,4PM,TBD,TBD,TBD,TBD
