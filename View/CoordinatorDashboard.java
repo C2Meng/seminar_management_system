@@ -1,15 +1,11 @@
 package View;
 
-import Controller.Coordinator;
 import MainFrame.MainFrame;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 public class CoordinatorDashboard extends JPanel {
-    public CoordinatorDashboard(MainFrame mainFrame){
+    public CoordinatorDashboard(MainFrame mainFrame , String currentUserID){
         // Coordinator dashboard implementation here //
         add(Box.createVerticalStrut(15));
         JLabel label = new JLabel("Coordinator Dashboard Page");
@@ -19,6 +15,11 @@ public class CoordinatorDashboard extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(Box.createVerticalGlue());
 
+        JLabel welcomeLabel = new JLabel("Welcome to the Coordinator Dashboard! User with ID " + currentUserID);
+        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(welcomeLabel);
+
+        add(Box.createVerticalStrut(10)); // spacing
 
         //buttons
 

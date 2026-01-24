@@ -72,11 +72,17 @@ public class LoginPage extends JPanel {
 
            
             WriteToCSV writeToCSV = new WriteToCSV();
-            String role =  writeToCSV.verifyUser(email, password, mainFrame);
+            String[] userData =  writeToCSV.verifyUser(email, password, mainFrame);
+
+
+            if (userData != null) {
+            String userId = userData[0]; // The UUID from column 1
+            String userRole = userData[1];   // The Role from column 5
            
 
+            mainFrame.setCurrentUserID( userId ); // set current user ID in main frame
 
-            if ("Student".equals(role)) {
+            if ("Student".equals(userRole)) {
                Student student = new Student(email, null, password, mainFrame);
 
              // set the current student in main frame , showing that the student is logged in //
@@ -84,12 +90,12 @@ public class LoginPage extends JPanel {
                mainFrame.setCurrentStudent(student);
                mainFrame.showPage("StudentDashboard");
 
-            } else if ("Evaluator".equals(role)) {
-              EvaluatorSystem evaluatorSystem = new EvaluatorSystem();
+            } else if ("Evaluator".equals(userRole)) {
+              EvaluatorSystem evaluatorSystem = new EvaluatorSystem(userId);
               evaluatorSystem.setVisible(true);
               mainFrame.dispose();
             }
-              else if ("Coordinator".equals(role)) {
+              else if ("Coordinator".equals(userRole)) {
               //redirect to coordinator frame
               mainFrame.showPage("CoordinatorDashboard");
               //set visible
@@ -104,8 +110,9 @@ public class LoginPage extends JPanel {
 
            
     }
+     }
         });
-
+       
         add(Box.createVerticalStrut(10));
 
 // =================================================DISPLAY SIGN UP====================================================== //

@@ -21,7 +21,12 @@ public class StudentDashboard extends JPanel{
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(Box.createVerticalGlue()); // push content to center
 
+        JLabel welcomeLabel = new JLabel("Welcome to the Student Dashboard! User with ID" + mainFrame.getCurrentUserID());  
+        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(welcomeLabel);
         
+        add(Box.createVerticalStrut(10)); // spacing
+
         JButton enterSeminarButton = new JButton("Register for Seminar"); // button to register for seminar
         enterSeminarButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(enterSeminarButton);

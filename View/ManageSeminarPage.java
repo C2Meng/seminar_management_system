@@ -28,7 +28,7 @@ public class ManageSeminarPage extends JPanel {
         }
     }
 
-    public ManageSeminarPage(MainFrame mainFrame) {
+    public ManageSeminarPage(MainFrame mainFrame , String currentUserID) {
         setLayout(new BorderLayout());
 
         // --- Header Section ---
@@ -47,6 +47,10 @@ public class ManageSeminarPage extends JPanel {
         JButton scheduleButton = new JButton("Generate Schedule");
         JButton delButton = new JButton("Delete");
         JButton backButton = new JButton("Back");
+
+        System.out.println("Current User ID in ManageSeminarPage: " + currentUserID);
+
+     
 
         buttonPanel.add(createButton);
         buttonPanel.add(sessionButton);
@@ -332,6 +336,7 @@ public class ManageSeminarPage extends JPanel {
                 JOptionPane.showMessageDialog(viewDialog, "Assignment Saved!");
             });
 
+       
             viewDialog.setLocationRelativeTo(this);
             viewDialog.setVisible(true);
         });

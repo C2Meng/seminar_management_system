@@ -218,7 +218,7 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
     //arrayList<String> userinfo = new csvModel.readUser; userid = userinfo.get(0), etc
 
     // Verifies user credentials for Login
-    public String verifyUser(String email, String password, Navigator navigator) {
+    public String[] verifyUser(String email, String password, Navigator navigator) {
         try (BufferedReader br = new BufferedReader(new FileReader(userFilePath))) {
             String currentLine;
             br.readLine(); // Skip header
@@ -229,13 +229,16 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
                     continue;
 
                 // Format: user_id,email,name,password,role
+                String userId = data[0].trim();
                 String storedEmail = data[1].trim();
                 String storedPassword = data[3].trim();
                 String storedRole = data[4].trim();
 
                 if (storedEmail.equals(email) && storedPassword.equals(password)) {
-                    return storedRole;
+                    return new String[]{userId, storedRole};
                 }
+
+               
             }
             // If loop finishes without return, credentials are invalid
             System.out.println("Invalid email or password.");
