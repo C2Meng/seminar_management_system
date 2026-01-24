@@ -1,178 +1,160 @@
 package View;
 
 import Controller.Evaluator;
+import Controller.Session;
 import Controller.Submission;
 import MainFrame.MainFrame;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class EvaluatorSystem extends JFrame {
 
-    //holds a list of submissions
-    private List<Submission> submissions = new ArrayList<>();
+    private List<Session> sessions = new ArrayList<>();
+    private Set<String> gradedSessionIDs = new HashSet<>();
     private JTable table;
     private DefaultTableModel tableModel;
     private String evaluatorID;
+    private Evaluator controller; 
 
-    private Evaluator controller; // evaluator controller instance
-    // --- Main Dashboard UI ---
     public EvaluatorSystem(String evaluatorID) {
         this.evaluatorID = evaluatorID;
         controller = new Evaluator();
-        setTitle("Seminar Evaluator Portal");
-        setSize(900, 500);
+        
+        setTitle("Seminar Evaluator - Session View");
+        setSize(1000, 500); // Widened for Title column
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Load Data from controller
-        submissions = controller.loadSubmissions();
+        loadData();
 
-        System.out.println("Loaded " + submissions.size() + " submissions for evaluator " + evaluatorID);
-
-
-        //DefaultTableModel from >> https://docs.oracle.com/javase/8/docs/api/javax/swing/table/DefaultTableModel.html
-        String[] columnNames = {"Student Email", "Seminar ID", "Title", "Abstract", "FilePath", "Status"};
-        tableModel = new DefaultTableModel(columnNames, 0)
-        {
+        // Added "Project Title" column
+        String[] columnNames = {"Session ID", "Date/Time", "Student Name", "Project Title", "Status"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; } //if removed, cells become editable
+            public boolean isCellEditable(int row, int column) { return false; }
         };
         
         updateTableData();
 
         table = new JTable(tableModel);
         table.setRowHeight(30);
+        // Set column width for Title to be wider
+        table.getColumnModel().getColumn(3).setPreferredWidth(250);
         
-        // Custom Renderer to color the Status column
-       // table.getColumnModel().getColumn(6).setCellRenderer(new StatusRenderer());
+        table.getColumnModel().getColumn(4).setCellRenderer(new StatusRenderer());
 
         JScrollPane scrollPane = new JScrollPane(table);
 
-
-        // added the logout button to bring back to login page 
         JButton logOutButton = new JButton("Logout");
-        logOutButton.setFont(new Font("Arial" , Font.BOLD , 14));
-        logOutButton.addActionListener(e ->{
+        logOutButton.addActionListener(e -> {
            MainFrame mainFrame = new MainFrame();
            mainFrame.setVisible(true);
            this.dispose();
         });
 
-        JButton btnGrade = new JButton("Grade Selected Student");
+        JButton btnGrade = new JButton("Grade Selected Session");
         btnGrade.setFont(new Font("Arial", Font.BOLD, 14));
         btnGrade.addActionListener(e -> openGradingWindow());
-
-       
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(logOutButton);
         bottomPanel.add(btnGrade);
-        
 
-        // Laying the out 
-        add(new JLabel("  My Assignments (Evaluator View)"), BorderLayout.NORTH);
+        add(new JLabel("  My Assigned Sessions"), BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
     }
-
-    //Code Segment to Read CSV file and fill the students list, this is now in Controller/Evaluator.java
-    // private void loadCSV(String filename) {
-    //     File file = new File(filename);
-    //     System.out.println("Loading CSV from: " + file.getAbsolutePath());
-    //     try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-    //         String line;
-    //         while ((line = br.readLine()) != null) {
-    //             String[] values = line.split(",");
-    //             submissions.add(new Submission(values));
-    //         }
-    //     } catch (IOException e) {
-    //         JOptionPane.showMessageDialog(this, "Error loading CSV: " + e.getMessage());
-    //     }
-    // }
+    
+    private void loadData() {
+        sessions = controller.loadSessions(evaluatorID);
+        gradedSessionIDs = controller.loadGradedSessionIDs();
+    }
 
     private void updateTableData() {
-        tableModel.setRowCount(0); // Clear existing
-        for (Submission s : submissions) {
+        tableModel.setRowCount(0); 
+        for (Session s : sessions) {
+            String timeStr = s.getStartTime() + " - " + s.getEndTime();
+            String status = gradedSessionIDs.contains(String.valueOf(s.getSessionID())) ? "Graded" : "Pending";
+            
+            // s.getProjectTitle() pulls from the linked Submission object
             tableModel.addRow(new Object[]{
-                s.submissionId, s.studentName, s.title, s.type, s.evaluatorId, s.status
+                s.getSessionID(), 
+                timeStr, 
+                s.getPresenter(), 
+                s.getProjectTitle(),
+                status
             });
         }
     }
 
-
     private void openGradingWindow() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a student to grade.");
+            JOptionPane.showMessageDialog(this, "Please select a session to grade.");
             return;
         }
-
-        Submission submission = submissions.get(selectedRow);
-        new GradingDialog(this, submission,controller).setVisible(true);
+        Session selectedSession = sessions.get(selectedRow);
+        new GradingDialog(this, selectedSession, controller).setVisible(true);
     }
 
-    // --- Grading Window (Inner Class) ---
-class GradingDialog extends JDialog {
-        private Submission submission;
+    class GradingDialog extends JDialog {
+        private Session session;
         private Evaluator controller;
-        // Added sliderClarity
         private JSlider sliderClarity, sliderMethodology, sliderResults, sliderPresentation;
         private JLabel lblTotal;
         private JTextArea txtComments;
 
-        public GradingDialog(JFrame parent, Submission s,Evaluator evaluator) {
-            super(parent, "Grading: " + s.studentName, true);
+        public GradingDialog(JFrame parent, Session s, Evaluator evaluator) {
+            super(parent, "Grading: " + s.getPresenter(), true);
             this.controller = evaluator;
-            this.submission = s;
-            setSize(500, 700); // Increased height slightly
+            this.session = s;
+            setSize(600, 750);
             setLocationRelativeTo(parent);
             setLayout(new BorderLayout(10, 10));
 
             // --- Header Info ---
-            JPanel pnlInfo = new JPanel(new GridLayout(4, 1));
+            JPanel pnlInfo = new JPanel(new GridLayout(5, 1));
             pnlInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             pnlInfo.setBackground(new Color(240, 240, 240));
-            pnlInfo.add(new JLabel("Student: " + s.studentName + " (" + s.submissionId + ")"));
-            pnlInfo.add(new JLabel("Title: " + s.title));
-            pnlInfo.add(new JLabel("Abstract: " + s.type));            
+            pnlInfo.add(new JLabel("Session ID: " + s.getSessionID()));
+            pnlInfo.add(new JLabel("Student: " + s.getPresenter()));
+            pnlInfo.add(new JLabel("Title: " + s.getProjectTitle()));
             
+            // Show Abstract from the linked submission
+            String abstractText = (s.getSubmission() != null) ? s.getSubmission().getAbstractText() : "N/A";
+            pnlInfo.add(new JLabel("Abstract Snippet: " + (abstractText.length() > 50 ? abstractText.substring(0, 50) + "..." : abstractText)));
+
             // --- Rubric Form ---
-            // Increased rows to 10 to fit the new slider
             JPanel pnlForm = new JPanel(new GridLayout(10, 1, 5, 5));
             pnlForm.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            // Initialize Sliders (Adjust MAX values as needed, Total should be 100)
-            sliderClarity = createSlider("Problem Clarity (0-10)", 10, s.scoreClarity);
-            sliderMethodology = createSlider("Methodology (0-30)", 30, s.scoreMethodology);
-            sliderResults = createSlider("Results & Analysis (0-40)", 40, s.scoreResults);
-            sliderPresentation = createSlider("Presentation Skills (0-20)", 20, s.scorePresentation);
+            sliderClarity = createSlider(10);
+            sliderMethodology = createSlider(30);
+            sliderResults = createSlider(40);
+            sliderPresentation = createSlider(20);
 
-            // Add to Panel
             pnlForm.add(new JLabel("Problem Clarity (10%):"));
             pnlForm.add(sliderClarity);
-            
             pnlForm.add(new JLabel("Methodology (30%):"));
             pnlForm.add(sliderMethodology);
-            
             pnlForm.add(new JLabel("Results & Analysis (40%):"));
             pnlForm.add(sliderResults);
-            
             pnlForm.add(new JLabel("Presentation (20%):"));
             pnlForm.add(sliderPresentation);
             
             pnlForm.add(new JLabel("Evaluator Comments:"));
             txtComments = new JTextArea(3, 20);
             txtComments.setLineWrap(true);
-            txtComments.setText(s.comment.equals("N/A") ? "" : s.comment);
             pnlForm.add(new JScrollPane(txtComments));
 
-            // --- Footer / Actions ---
             JPanel pnlFooter = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            lblTotal = new JLabel("Total Score: " + s.getTotalScore() + "/100  ");
-            lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
+            lblTotal = new JLabel("Total Score: 0/100  ");
             
             JButton btnSave = new JButton("Submit Evaluation");
             btnSave.addActionListener(e -> saveGrade());
@@ -185,69 +167,35 @@ class GradingDialog extends JDialog {
             add(pnlFooter, BorderLayout.SOUTH);
         }
 
-        private JSlider createSlider(String title, int max, int currentVal) {
-            JSlider slider = new JSlider(0, max, currentVal);
-            // Dynamic ticks based on max value
+        private JSlider createSlider(int max) {
+            JSlider slider = new JSlider(0, max, 0);
             slider.setMajorTickSpacing(max / 5 > 0 ? max / 5 : 1); 
-            slider.setMinorTickSpacing(1);
             slider.setPaintTicks(true);
             slider.setPaintLabels(true);
-            slider.addChangeListener(e -> updateTotal());
+            slider.addChangeListener(e -> {
+                int total = sliderClarity.getValue() + sliderMethodology.getValue() + sliderResults.getValue() + sliderPresentation.getValue();
+                lblTotal.setText("Total Score: " + total + "/100  ");
+            });
             return slider;
         }
 
-        private void updateTotal() {
-            int total = sliderClarity.getValue() + 
-                        sliderMethodology.getValue() + 
-                        sliderResults.getValue() + 
-                        sliderPresentation.getValue();
-            lblTotal.setText("Total Score: " + total + "/100  ");
-        }
-
         private void saveGrade() {
-            // get the scores and comments from UI
-            submission.scoreClarity = sliderClarity.getValue();
-            submission.scoreMethodology = sliderMethodology.getValue();
-            submission.scoreResults = sliderResults.getValue();
-            submission.scorePresentation = sliderPresentation.getValue();
-            
-            //sanitize comments to avoid CSV issues
-            submission.comment = txtComments.getText().replace("\n", " ").replace(",", ";"); 
-            submission.status = "Graded";
-
-            // pass the submission object to controller to save
-
-            controller.saveGrade(submission);
-            // saveEvaluationToCSV(submission);
-            // updateSubmissionStatusInCSV(submission.submissionId, "Graded");
-
-            // 3. Update UI
+            String comment = txtComments.getText().replace("\n", " ").replace(",", ";");
+            if(comment.isEmpty()) comment = "N/A";
+            controller.saveGrade(session, sliderClarity.getValue(), sliderMethodology.getValue(), sliderResults.getValue(), sliderPresentation.getValue(), comment);
+            ((EvaluatorSystem) getParent()).gradedSessionIDs.add(String.valueOf(session.getSessionID()));
             ((EvaluatorSystem) getParent()).updateTableData();
-            System.out.println("Saved Grade for " + submission.studentName);
             dispose();
         }
-
-
-
-    // --- Custom Renderer for Colors ---
-    // class StatusRenderer extends DefaultTableCellRenderer {
-    //     @Override
-    //     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-    //         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-    //         String status = (String) value;
-    //         if ("Graded".equals(status)) {
-    //             c.setForeground(new Color(0, 128, 0)); // Dark Green
-    //             c.setFont(c.getFont().deriveFont(Font.BOLD));
-    //         } else {
-    //             c.setForeground(Color.RED);
-    //         }
-    //         return c;
-    //     }
-    // }
     }
 
-    public static void main(String[] args) {
-        
-        new EvaluatorSystem("none").setVisible(true);
+    class StatusRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+            Component comp = super.getTableCellRendererComponent(t, v, s, f, r, c);
+            if ("Graded".equals(v)) comp.setForeground(new Color(0, 128, 0));
+            else comp.setForeground(Color.RED);
+            return comp;
+        }
     }
 }

@@ -13,14 +13,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class Evaluator extends User implements SignUp , SignIn{
 
     String evaluationfilepath = "Data/Evaluations.csv";
     String submissionfilepath = "Data/Submission.csv";
-
+    String sessionfilepath = "Data/Sessions.csv";
 
     private String email;
     private String password;
@@ -91,102 +95,180 @@ public class Evaluator extends User implements SignUp , SignIn{
     }
 
 
-    public void saveGrade(Submission s) {
-        s.status = "Graded";
+public void saveGrade(Session s, int clarity, int method, int result, int pres, String comment) {
+        // Logic to append/update Evaluations.csv
+        List<String> lines = new ArrayList<>();
+        File file = new File(evaluationfilepath);
+        String sID = String.valueOf(s.getSessionID());
 
-        writeEvaluationToCSV(s);
+        // Header Check
+        if (!file.exists()) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+                bw.write("SessionID,ScoreClarity,ScoreMethodology,ScoreResults,ScorePresentation,Comment");
+                bw.newLine();
+            } catch (IOException e) { e.printStackTrace(); }
+        }
 
-        updateSubmissionStatusInCSV(s.submissionId, "Graded");
+        // Read existing to avoid duplicates (Update logic)
+        if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    // If line starts with this SessionID, skip it (we will replace it)
+                    if (!line.startsWith(sID + ",")) {
+                        lines.add(line);
+                    }
+                }
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+
+        // Add the new grade
+        lines.add(sID + "," + clarity + "," + method + "," + result + "," + pres + "," + comment);
+
+        // Write back
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            for (String l : lines) {
+                bw.write(l);
+                bw.newLine();
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+        updateSubmissionStatus(s.getSubmission().getSubmissionId(), "Graded");
+        System.out.println("Grade saved for Session ID: " + sID);
     }
 
 
 
     // how to read and write in java: https://www.w3schools.com/java/java_bufferedreader.asp
-private void writeEvaluationToCSV(Submission s) {
 
-        // Logic to append/update Evaluations.csv
-        // (Copied from your original saveEvaluationToCSV method)
-        List<String> lines = new ArrayList<>();
-        File file = new File(evaluationfilepath);
+private void updateSubmissionStatus(String targetSubmissionId, String newStatus) {
+    List<String> lines = new ArrayList<>();
+    File file = new File(submissionfilepath);
 
+    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        String line;
+        // Read header
+        String header = br.readLine();
+        if (header != null) lines.add(header);
 
-        if (!file.exists()){
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))){;
-                bw.write("SubmissionID,ScoreClarity,ScoreMethodology,ScoreResults,ScorePresentation,Comment");
+        while ((line = br.readLine()) != null) {
+            String[] parts = line.split(",");
             
-            } catch (Exception e) {
-               e.printStackTrace();
-            }
-
-
-        }
-
-
-        if (file.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-
-                while ((line = br.readLine()) != null) {
-                    if (!line.startsWith(s.submissionId + ",")) {
-                        lines.add(line);
-                    }
+            // Check if this is the row to update (Match SubmissionID at Index 0)
+            if (parts.length > 0 && parts[0].trim().equals(targetSubmissionId)) {
+                
+                // Rebuild the line with the new status
+                StringBuilder sb = new StringBuilder();
+                
+                // Append existing parts up to the status column (indices 0-7)
+                for (int i = 0; i < parts.length && i < 8; i++) {
+                    sb.append(parts[i]).append(",");
                 }
-            } catch (IOException e) { e.printStackTrace(); }
-        } 
+                
+                // If original line was short (missing columns), fill gaps
+                int currentLength = parts.length;
+                while (currentLength < 8) {
+                    sb.append(",");
+                    currentLength++;
+                }
 
-        
-
-        lines.add(s.submissionId + "," + s.scoreClarity + "," + s.scoreMethodology + "," + 
-                  s.scoreResults + "," + s.scorePresentation + "," + s.comment);
-
-        //lines[] array will contain = { 1, 10, 9, 8, 7, "Good job" } for example
-        //then we write all lines back to the file
-       
-        
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-
-            
-            for (String l : lines) {
-                bw.write(String.valueOf(l));
-                bw.newLine(); // Explicitly adds the new line character
+                // Append the new status (Index 8)
+                sb.append(newStatus);
+                
+                lines.add(sb.toString());
+            } else {
+                // Keep original line
+                lines.add(line);
             }
-        } catch (IOException e) { 
-            e.printStackTrace(); 
         }
+    } catch (IOException e) { e.printStackTrace(); }
 
-        // try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
-        //     for (String l : lines) pw.println(l);
-        // } catch (IOException e) { e.printStackTrace(); }
-    }
+    // Write back to file
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+        for (String l : lines) {
+            bw.write(l);
+            bw.newLine();
+        }
+    } catch (IOException e) { e.printStackTrace(); }
+}
+    public List<Session> loadSessions(String myEvaluatorID) {
+        List<Session> sessionList = new ArrayList<>();
+        
+        // 1. Load Submissions into a Map for quick lookup (Key: UserID)
+        Map<String, Submission> submissionMap = loadSubmissionsMap();
 
-    private void updateSubmissionStatusInCSV(String subId, String newStatus) {
-        // Logic to update Submissions.csv
-        // (Copied from your original updateSubmissionStatusInCSV method)
-        List<String> lines = new ArrayList<>();
-        File file = new File(submissionfilepath);
+        File file = new File(sessionfilepath);
+        if (!file.exists()) return sessionList;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
+            br.readLine(); // Skip Header
+            
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length > 0 && parts[0].equals(subId)) {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < 5; i++) {
-                        if (i < parts.length) sb.append(parts[i]).append(",");
-                        else sb.append("N/A,");
+                String[] data = line.split(",");
+                if (data.length < 9) continue;
+
+                String csvEvaluatorID = data[8].trim();
+
+                // Only load sessions for THIS evaluator
+                if (csvEvaluatorID.equals(myEvaluatorID)) {
+                    
+                    int sID = Integer.parseInt(data[1].trim());
+                    Session session = new Session(null, sID, data[2].trim(), data[3].trim(), data[4].trim());
+                    session.setPresenter(data[5].trim()); 
+                    String pID = data[6].trim();
+                    session.setPresenterID(pID);
+                    session.setEvaluatorID(csvEvaluatorID);
+
+                    // LINKAGE: Find the submission matching this Student/Presenter ID
+                    if (submissionMap.containsKey(pID)) {
+                        session.setSubmission(submissionMap.get(pID));
                     }
-                    sb.append(newStatus);
-                    lines.add(sb.toString());
-                } else {
-                    lines.add(line);
+
+                    sessionList.add(session);
                 }
             }
         } catch (IOException e) { e.printStackTrace(); }
-
-        try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
-            for (String l : lines) pw.println(l);
-        } catch (IOException e) { e.printStackTrace(); }
+        return sessionList;
     }
+    // Helper to get a list of IDs that are already in Evaluations.csv
+    public Set<String> loadGradedSessionIDs() {
+        Set<String> gradedIds = new HashSet<>();
+        File file = new File(evaluationfilepath);
+        if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length > 0 && !parts[0].equals("SessionID")) {
+                        gradedIds.add(parts[0].trim());
+                    }
+                }
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+        return gradedIds;
+    }
+    private Map<String, Submission> loadSubmissionsMap() {
+        Map<String, Submission> map = new HashMap<>();
+        File file = new File(submissionfilepath);
+        if (!file.exists()) return map;
 
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip Header
+            // Columns: SubmissionID, SeminarID, UserID, Title, Abstract, Attachment, Supervisor, Type
+            while ((line = br.readLine()) != null) {
+                // Use a regex split to handle potential commas in Titles/Abstracts if quoted, 
+                // but for simple CSV:
+                String[] values = line.split(","); 
+                if (values.length >= 3) {
+                    Submission s = new Submission(values);
+                    // Map Key = User ID (Index 2)
+                    map.put(s.getUserId(), s);
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+        return map;
+    }
 //------------------End of Evaluator System Methods------------------
 
 

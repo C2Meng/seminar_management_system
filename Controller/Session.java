@@ -18,7 +18,7 @@ public class Session {
     private String presenterID;
     private String evaluatorID;
 
-
+    private Submission submission;
 
 
     // sessopm constructor
@@ -121,5 +121,11 @@ public class Session {
 
     public String getEvaluatorID() {
         return evaluatorID;
+    }
+    public void setSubmission(Submission s) { this.submission = s; }
+    public Submission getSubmission() { return submission; }
+
+    public String getProjectTitle() {
+        return (submission != null) ? submission.getTitle() : "No Submission Found";
     }
 }

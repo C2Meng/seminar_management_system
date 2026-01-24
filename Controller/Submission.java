@@ -2,41 +2,38 @@ package Controller;
 
 public class Submission {
 
-    // --- Attributes ---
-    public String submissionId;
-    public String studentName;
-    public String title;
-    public String type;
-    public String evaluatorId;
-    public String status;
-
-    // Evaluation Data
-    public int scoreClarity;
-    public int scoreMethodology;
-    public int scoreResults;
-    public int scorePresentation;
-    public String comment;
-
-    // --- Constructor ---
+private String submissionId;
+    private int seminarId;
+    private String userId; // Links to Session's PresenterID
+    private String title;
+    private String abstractText;
+    private String attachment;
+    private String supervisor;
+    private String presentationType;
+    
+    // Grading fields (Not in CSV, but used for logic)
+    private String status = "Pending"; 
+    
     public Submission(String[] data) {
-        this.submissionId = data[0];
-        this.studentName = data[1];
-        this.title = data[2];
-        this.type = data[3];
-        this.evaluatorId = data[4];
+        // Safe parsing in case of missing columns
+        this.submissionId = (data.length > 0) ? data[0].trim() : "";
+        this.seminarId = (data.length > 1) ? Integer.parseInt(data[1].trim()) : 0;
+        this.userId = (data.length > 2) ? data[2].trim() : "";
+        this.title = (data.length > 3) ? data[3].trim() : "";
+        this.abstractText = (data.length > 4) ? data[4].trim() : "";
+        this.attachment = (data.length > 5) ? data[5].trim() : "";
+        this.supervisor = (data.length > 6) ? data[6].trim() : "";
+        this.presentationType = (data.length > 7) ? data[7].trim() : "";
 
-        //  if status exists in CSV, else default to Pending
-        if (data.length > 5) {
-            this.status = data[5];
+        if (data.length > 8 && !data[8].trim().isEmpty()) {
+            this.status = data[8].trim();
         } else {
             this.status = "Pending";
         }
-
-        this.comment = "N/A"; 
     }
-
-    // --- Helper Methods ---
-    public int getTotalScore() {
-        return scoreClarity + scoreMethodology + scoreResults + scorePresentation;
-    }
+    public String getStatus() { return status; }
+    public String getSubmissionId() { return submissionId; }
+    public String getUserId() { return userId; }
+    public String getTitle() { return title; }
+    public String getAbstractText() { return abstractText; }    
 }

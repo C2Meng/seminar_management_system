@@ -1,6 +1,7 @@
-Submission ID,Seminar ID,User ID,Title,Abstract,Attachment,Supervisor,Presentation Type
-SUB-001,1,550e8400-e29b-41d4-a716-446655440000,Machine Learning Basics,Description here,C:\Docs\file.pdf,Mr Hafiz,Oral
-SUB-002,1,f47ac10b-58cc-4372-a567-0e02b2c3d479,Quantum Cryptography,Description here,C:\Docs\file.pdf,Dr Smith,Poster
-SUB-003,2,a1b2c3d4-e5f6-4g7h-8i9j-k1l2m3n4o5p6,UI/UX in 2026,Description here,C:\Docs\file.pdf,Ms Sarah,Oral
-SUB-004,2,f47ac10b-58cc-4372-a567-0e02b2c3d479,Database Optimization,Description here,C:\Docs\file.pdf,Dr Brown,Oral
-SUB-005,3,550e8400-e29b-41d4-a716-446655440000,Ethical Hacking,Description here,C:\Docs\file.pdf,Mr Hafiz,Poster
+Submission ID,Seminar ID,User ID,Title,Abstract,Attachment,Supervisor,Presentation Type,Status
+Sub-001,1,550e8400-e29b-41d4-a716-446655440000,Machine Learning Basics,Description here,C:\Docs\file.pdf,Mr Hafiz,Poster,
+SUB-002,1,f47ac10b-58cc-4372-a567-0e02b2c3d479,Quantum Cryptography,Description here,C:\Docs\file.pdf,Dr Smith,Poster,
+SUB-003,2,a1b2c3d4-e5f6-4g7h-8i9j-k1l2m3n4o5p6,UI/UX in 2026,Description here,C:\Docs\file.pdf,Ms Sarah,Oral,
+SUB-004,2,f47ac10b-58cc-4372-a567-0e02b2c3d479,Database Optimization,Description here,C:\Docs\file.pdf,Dr Brown,Oral,Graded
+SUB-005,3,550e8400-e29b-41d4-a716-446655440000,Ethical Hacking,Description here,C:\Docs\file.pdf,Mr Hafiz,Poster,
+,,,,,,,,
