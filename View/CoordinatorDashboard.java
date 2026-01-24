@@ -7,6 +7,7 @@ import javax.swing.*;
 public class CoordinatorDashboard extends JPanel {
     public CoordinatorDashboard(MainFrame mainFrame , String currentUserID){
         // Coordinator dashboard implementation here //
+        add(Box.createVerticalStrut(15));
         JLabel label = new JLabel("Coordinator Dashboard Page");
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(label);
@@ -30,9 +31,7 @@ public class CoordinatorDashboard extends JPanel {
          manageSeminars.addActionListener( e ->{
             mainFrame.showPage("ManageSeminarPage");
         });
-
         
-
         add(Box.createVerticalStrut(10));
 
         //separate page
@@ -50,6 +49,10 @@ public class CoordinatorDashboard extends JPanel {
         JButton award = new JButton("Awards");
         award.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(award);
+
+        award.addActionListener( e ->{
+            mainFrame.showPage("AwardPage");
+        });
 
         add(Box.createVerticalStrut(10));
 

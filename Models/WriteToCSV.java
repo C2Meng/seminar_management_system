@@ -23,6 +23,7 @@ public class WriteToCSV {
     private String userFilePath = "Data/User.csv"; // Stores Users with user_id
     private String seminarFilePath = "Data/seminar.csv"; // Stores Seminars
     private String sessionFilePath = "Data/sessions.csv"; // Stores Sessions
+    private String submissionFilePath = "Data/Submission.csv"; // Stores Sessions
 
 
     // =========================== USER MANAGEMENT (EXISTING CODE)
@@ -164,6 +165,58 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
     return map;
 }
 
+    //get user information via userID
+    public ArrayList<String> readUserByID(String userID) {
+    // This forces the internal reader to search Column 0 (ID) instead of Column 2 (Name)
+    return readUserInternal(userID, true); 
+}
+
+    public ArrayList<String> readUser(String name) {
+        return readUserInternal(name, false);
+    }
+    private ArrayList<String> readUserInternal(String value, boolean searchByID) {
+
+    ArrayList<String> userInfo = new ArrayList<>();
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(userFilePath))) {
+
+        String line;
+
+        // Skip header
+        reader.readLine();
+
+        while ((line = reader.readLine()) != null) {
+
+            String[] data = line.split(",");
+            if (data.length < 5) {
+                continue;
+            }
+            boolean match;
+            if (searchByID) {
+                match = data[0].equals(value); // id
+            } else {
+                match = data[2].equalsIgnoreCase(value); // name
+            }
+            if (match) {
+                // [0]=id, [1]=email, [2]=name, [3]=role
+                userInfo.add(data[0]);
+                userInfo.add(data[1]);
+                userInfo.add(data[2]);
+                userInfo.add(data[4]);
+                break;
+            }
+        }
+        if (userInfo.isEmpty()) {
+            System.out.println("Error: User not found (" +
+                    (searchByID ? "id=" : "name=") + value + ")");
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return userInfo;
+}
+    //arrayList<String> userinfo = new csvModel.readUser; userid = userinfo.get(0), etc
+
     // Verifies user credentials for Login
     public String[] verifyUser(String email, String password, Navigator navigator) {
         try (BufferedReader br = new BufferedReader(new FileReader(userFilePath))) {
@@ -195,6 +248,37 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
 
         return null;
     }
+    //read submissions.csv to return user id of students who submitted for a particular seminar
+    public ArrayList<String> readSubmission(int SeminarID){
+            ArrayList<String> submissionUserID = new ArrayList<>();
+            File file = new File(submissionFilePath);
+
+            
+    if (file.exists()) {
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip header
+            while ((line = br.readLine()) != null) {
+                // Using -1 to keep empty trailing fields if any
+                // Submission ID , Seminar ID , User ID , Title , Abstract , Attachment , Supervisor , Presentation Type
+                String[] data = line.split(",", -1); 
+                
+                int ID = Integer.parseInt(data[1]);
+                if(ID == SeminarID){
+                    submissionUserID.add(data[2]); // add user id to list
+                }
+
+                
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+        return submissionUserID;
+    }
+
+
 
     // =========================== SEMINAR MANAGEMENT =========================== //
 
