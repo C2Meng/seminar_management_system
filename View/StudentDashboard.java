@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 
 public class StudentDashboard extends JPanel{
     // Student Dashboard implementation here //
-    public StudentDashboard(MainFrame mainFrame){
+    public StudentDashboard(MainFrame mainFrame , String currentUserID){
         JLabel label = new JLabel("Student Dashboard Page");
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(label);
@@ -21,9 +21,13 @@ public class StudentDashboard extends JPanel{
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(Box.createVerticalGlue()); // push content to center
 
-        JLabel welcomeLabel = new JLabel("Welcome to the Student Dashboard! User with ID" + mainFrame.getCurrentUserID());  
+        JLabel welcomeLabel = new JLabel("Welcome to the Student Dashboard! User with ID" );  
         welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(welcomeLabel);
+
+        JLabel userIDLabel = new JLabel("Your User ID: " + currentUserID);
+        userIDLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(userIDLabel);
         
         add(Box.createVerticalStrut(10)); // spacing
 

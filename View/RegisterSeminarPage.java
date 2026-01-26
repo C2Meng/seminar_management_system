@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 public class RegisterSeminarPage extends JPanel {
 
      private Student student;
+     private MainFrame mainFrame;
 
      private String[] presentationType = {"Poster" , "Oral"};
 
@@ -52,7 +53,10 @@ public class RegisterSeminarPage extends JPanel {
 
 
 
-     public RegisterSeminarPage(MainFrame mainFrame , Student student){
+     public RegisterSeminarPage(MainFrame mainFrame , String currentUserID){
+        this.mainFrame = mainFrame;
+        this.student = mainFrame.getCurrentStudent();
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         JLabel label = new JLabel("Register Seminar Page");
        
@@ -135,6 +139,10 @@ public class RegisterSeminarPage extends JPanel {
         selectSeminarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(selectSeminarLabel);
 
+        JLabel userIDLabel = new JLabel("Your User ID: " + currentUserID);
+        userIDLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(userIDLabel);
+
         seminarDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
         seminarDropdown.setMaximumSize(new Dimension(300, 30));
         loadSeminarsFromCSV(); // Fill the dropdown with data from your image
@@ -168,30 +176,37 @@ public class RegisterSeminarPage extends JPanel {
         });
 
 
-        submitButton.addActionListener(e ->{
-             Seminar selectedSeminar = (Seminar) seminarDropdown.getSelectedItem();
-             String title = titleField.getText();
-             String abstractText = abstractField.getText();
-             String attachment = attachmentField.getText();
-             String supervisor = supervisorField.getText();
-             String currentUserId = "1"; // Replace with actual user ID retrieval logic
-             String presentationType = (String) presentationTypeComboBox.getSelectedItem();
+      submitButton.addActionListener(e -> {
+    Seminar selectedSeminar = (Seminar) seminarDropdown.getSelectedItem();
+    String title = titleField.getText().trim();
+    String abstractText = abstractField.getText().trim();
+    String attachment = attachmentField.getText().trim();
+    String supervisor = supervisorField.getText().trim();
+    String presentationType = (String) presentationTypeComboBox.getSelectedItem();
+    String graded = "Pending";
 
+    // 1. Validation
+    if (selectedSeminar == null) {
+        JOptionPane.showMessageDialog(mainFrame, "Please select a seminar.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    if (title.isEmpty() || abstractText.isEmpty() || attachment.isEmpty() || supervisor.isEmpty()) {
+        JOptionPane.showMessageDialog(mainFrame, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-             if ( selectedSeminar == null || title.isEmpty() || abstractText.isEmpty() || attachment.isEmpty() || presentationType.isEmpty()){
-                JOptionPane.showMessageDialog(mainFrame, "Please fill in all fields. " , "Error" , JOptionPane.ERROR_MESSAGE);
-             }
-
-             String seminarIdStr = String.valueOf(selectedSeminar.getSeminarID());
-
-             String submissionID = "SEM" + System.currentTimeMillis(); // Simple unique ID generation
-             JOptionPane.showMessageDialog(mainFrame, "Seminar registered successfully!" , "Success" , JOptionPane.INFORMATION_MESSAGE);
-             mainFrame.showPage("StudentDashboard");
-
-             
-            }
-          
-        );
+    // 2. Data Preparation
+    String seminarIdStr = String.valueOf(selectedSeminar.getSeminarID());
+    String submissionID = "SUB-" + System.currentTimeMillis(); 
+    String studentID = currentUserID;
+    // 3. Call Controller
+    student.registerSeminar(submissionID, seminarIdStr, studentID , title, abstractText, attachment, supervisor, presentationType, graded);
+    
+    // 4. Feedback
+    JOptionPane.showMessageDialog(mainFrame, "Seminar registered successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+    mainFrame.showPage("StudentDashboard");
+});
 
 
 

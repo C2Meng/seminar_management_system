@@ -111,6 +111,19 @@ public class Student extends User implements SignUp {
        // Authentication logic for Student //
     }
 
+
+   public void registerSeminar(String submissionID, String seminarId,String studentID , String title, String abstractText, String attachment, String supervisor, String presentationType, String graded) {
+    // Pass everything to the Model
+    writeToCSV.registerSeminar(submissionID, seminarId, studentID, title, abstractText, attachment, supervisor, presentationType, graded);
+    
+    // Redirect if needed (ensure "StudentDashboard" matches your MainFrame routing)
+    if (navigator != null) {
+        navigator.goTo("StudentDashboard");
+    }
+}
+
+
+
  // =================================== method to register for seminar =========================================== //
  
 
