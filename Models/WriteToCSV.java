@@ -264,9 +264,18 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
                 // Submission ID , Seminar ID , User ID , Title , Abstract , Attachment , Supervisor , Presentation Type
                 String[] data = line.split(",", -1); 
                 
-                int ID = Integer.parseInt(data[1]);
-                if(ID == SeminarID){
-                    submissionUserID.add(data[2]); // add user id to list
+
+                // checks if seminarID matches and adds student user id to arraylist
+                if (data.length >= 2 && !data[1].trim().isEmpty()) {
+                    try {
+                        int ID = Integer.parseInt(data[1].trim()); // .trim() is vital!
+                        if (ID == SeminarID) {
+                            submissionUserID.add(data[2]); // add student user id to list
+                        }
+                    } catch (NumberFormatException e) {
+                        // Log the error and skip this specific line instead of crashing the whole UI
+                        System.err.println("Skipping row with invalid ID format: " + data[1]);
+                    }
                 }
 
                 
@@ -279,6 +288,46 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
     }
 
 
+
+  // =========================== SEMINAR REGISTRATION FOR STUDENT =========================== //
+public void registerSeminar(String submitID, String seminarId, String studentID, String title, String abstractText, String attachment, String supervisor, String presentationType, String graded) {
+    try {
+        File file = new File(submissionFilePath);
+
+        // Ensure directory and file exist with the correct header
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            try (FileWriter writer = new FileWriter(file)) {
+                // Header defines the structure: SubmissionID is index 0
+                writer.append("SubmissionID,SeminarID,UserID,Title,Abstract,Attachment,Supervisor,PresentationType,Graded\n");
+            }
+        }
+
+        // Data Cleaning: Replace commas with semicolons to avoid breaking CSV columns
+        String safeTitle = title.replace(",", ";");
+        String safeAbstract = abstractText.replace(",", ";");
+
+        // Construct the row string using the submitID passed from your page
+        String line = submitID + "," + 
+                      seminarId + "," + 
+                      studentID + "," + 
+                      safeTitle + "," + 
+                      safeAbstract + "," + 
+                      attachment + "," + 
+                      supervisor + "," + 
+                      presentationType + "," + 
+                      graded;
+
+        // Append the line to the CSV
+        try (FileWriter writer = new FileWriter(file, true)) {
+            writer.append(line + "\n");
+            System.out.println("Submission successful! Saved ID: " + submitID);
+        }
+    } catch (IOException e) {
+        System.err.println("Error writing submission to CSV: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
 
     // =========================== SEMINAR MANAGEMENT =========================== //
 

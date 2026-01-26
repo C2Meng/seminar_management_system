@@ -51,6 +51,10 @@ public class MainFrame extends JFrame implements Navigator {
         this.currentStudent = student;
     }
 
+    public Student getCurrentStudent(){
+        return this.currentStudent;
+    }
+
 
 // ===================================== method to set current user ID when logged in ========================================= //
     public void setCurrentUserID(String userID){
@@ -68,7 +72,7 @@ public class MainFrame extends JFrame implements Navigator {
        public void goToRegisterSeminarPage() {
 
         // create a new register seminar page with current student , showing that the student is logged in //
-        RegisterSeminarPage page = new RegisterSeminarPage(this, currentStudent);
+        RegisterSeminarPage page = new RegisterSeminarPage(this, currentUserID);
         mainPanel.add(page, "RegisterSeminarPage");
         showPage("RegisterSeminarPage");
     }
@@ -77,7 +81,7 @@ public class MainFrame extends JFrame implements Navigator {
 
     public void goToViewRegisteredSeminarsPage() {
         // create a new view registered seminars page with current student
-        ViewRegisteredSeminarsPage page = new ViewRegisteredSeminarsPage(this, currentStudent);
+        ViewRegisteredSeminarsPage page = new ViewRegisteredSeminarsPage(this, currentUserID);
         mainPanel.add(page, "ViewRegisteredSeminarsPage");
         showPage("ViewRegisteredSeminarsPage");
     }
@@ -98,7 +102,7 @@ public class MainFrame extends JFrame implements Navigator {
 
         if (pageName.equals("StudentDashboard")) {
             // Recreate StudentDashboard to ensure it has the latest data
-            StudentDashboard studentDashboard = new StudentDashboard(this);
+            StudentDashboard studentDashboard = new StudentDashboard(this , currentUserID);
             mainPanel.add(studentDashboard, "StudentDashboard");
         }
 
@@ -122,13 +126,13 @@ public class MainFrame extends JFrame implements Navigator {
 
         if (pageName.equals("RegisterSeminarPage")) {
             // Recreate RegisterSeminarPage to ensure it has the latest data
-            RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this , currentStudent);
+            RegisterSeminarPage registerSeminarPage = new RegisterSeminarPage(this , currentUserID);
             mainPanel.add(registerSeminarPage, "RegisterSeminarPage");
         }
 
          if (pageName.equals("ViewRegisteredSeminarsPage")) {
             // Recreate ViewRegisteredSeminarsPage to ensure it has the latest data
-            ViewRegisteredSeminarsPage viewRegisteredSeminarsPage = new ViewRegisteredSeminarsPage(this , currentStudent);
+            ViewRegisteredSeminarsPage viewRegisteredSeminarsPage = new ViewRegisteredSeminarsPage(this , currentUserID);
             mainPanel.add(viewRegisteredSeminarsPage, "ViewRegisteredSeminarsPage");
         } 
         
