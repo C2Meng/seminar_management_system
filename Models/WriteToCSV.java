@@ -262,20 +262,17 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
             while ((line = br.readLine()) != null) {
                 // Using -1 to keep empty trailing fields if any
                 // Submission ID , Seminar ID , User ID , Title , Abstract , Attachment , Supervisor , Presentation Type
-                String[] data = line.split(",", -1); 
+                String[] data = line.split(",", -1);
                 
 
-                // checks if seminarID matches and adds student user id to arraylist
-                if (data.length >= 2 && !data[1].trim().isEmpty()) {
-                    try {
-                        int ID = Integer.parseInt(data[1].trim()); // .trim() is vital!
-                        if (ID == SeminarID) {
-                            submissionUserID.add(data[2]); // add student user id to list
-                        }
-                    } catch (NumberFormatException e) {
-                        // Log the error and skip this specific line instead of crashing the whole UI
-                        System.err.println("Skipping row with invalid ID format: " + data[1]);
-                    }
+                // Skip invalid or incomplete rows
+                if (data.length < 9) {
+                    continue;
+                }
+                                
+                int ID = Integer.parseInt(data[1]);
+                if(ID == SeminarID){
+                    submissionUserID.add(data[2]); // add user id to list
                 }
 
                 
