@@ -1,14 +1,3 @@
-Submission ID,Seminar ID,User ID,Title,Abstract,Attachment,Supervisor,Presentation Type,Status
-Sub-001,1,550e8400-e29b-41d4-a716-446655440000,Machine Learning Basics,Description here,C:\Docs\file.pdf,Mr Hafiz,Poster,
-SUB-002,1,f47ac10b-58cc-4372-a567-0e02b2c3d479,Quantum Cryptography,Description here,C:\Docs\file.pdf,Dr Smith,Poster,
-SUB-003,2,a1b2c3d4-e5f6-4g7h-8i9j-k1l2m3n4o5p6,UI/UX in 2026,Description here,C:\Docs\file.pdf,Ms Sarah,Oral,
-SUB-004,2,f47ac10b-58cc-4372-a567-0e02b2c3d479,Database Optimization,Description here,C:\Docs\file.pdf,Dr Brown,Oral,Graded
-SUB-005,3,550e8400-e29b-41d4-a716-446655440000,Ethical Hacking,Description here,C:\Docs\file.pdf,Mr Hafiz,Poster,
-<<<<<<< HEAD
-,,,,,,,,
-SUB-1769419685696,4,3916a4df-7c0f-4fec-8587-265ee63a3d33,Hello,Hi,C:\Users\User\Documents\MMU_STUDIES\SecondYearSecondSem\OOAD\Lectures\Lec01 Introduction (1).pptx,Mr Hafiz,Poster,Pending
-SUB-1769420348594,4,Hello,Hi,C:\Users\User\Documents\MMU_STUDIES\SecondYearSecondSem\OOAD\Lectures\Lec01 Introduction (1).pdf,Mr Nigga,Poster,Pending,aed91b3f-0897-4ca9-ac63-1179e3795a3e
-SUB-1769421832163,1,877192ad-6b8f-4ee2-a5b8-9a1de0a7bcc6,hi,hi,C:\Users\User\Documents\MMU_STUDIES\SecondYearSecondSem\OOAD\Lectures\Lec01 Introduction (1).pdf,Mr Raju,Poster,Pending
-=======
-
->>>>>>> 46c7d4084b49b86b7f1f93455d50ca83ad0375d6
+SubmissionID,SeminarID,UserID,Title,Abstract,Attachment,Supervisor,PresentationType,Graded
+SUB-1769427095953,1,550e8400-e29b-41d4-a716-446655440000,h,h,C:\Users\User\Documents\MMU_STUDIES\SecondYearSecondSem\Operating_System\Lectures\Week3.pdf,h,Poster,Graded
+SUB-1769427955665,4,e8d254bd-490c-44de-a9f0-df950d516135,Qian Bei Paper,Qian Bei Abstract,C:\Users\User\Documents\MMU_STUDIES\SecondYearSecondSem\OOAD\Lectures\Lec01 Introduction (1).pptx,Mr Hafiz,Poster,Graded
