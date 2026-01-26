@@ -262,8 +262,14 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
             while ((line = br.readLine()) != null) {
                 // Using -1 to keep empty trailing fields if any
                 // Submission ID , Seminar ID , User ID , Title , Abstract , Attachment , Supervisor , Presentation Type
-                String[] data = line.split(",", -1); 
+                String[] data = line.split(",", -1);
                 
+
+                // Skip invalid or incomplete rows
+                if (data.length < 9) {
+                    continue;
+                }
+                                
                 int ID = Integer.parseInt(data[1]);
                 if(ID == SeminarID){
                     submissionUserID.add(data[2]); // add user id to list
