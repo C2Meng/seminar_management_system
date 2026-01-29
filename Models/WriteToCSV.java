@@ -700,7 +700,10 @@ public void updateSession(Session session, int seminarID) {
     }
 
 
-    public void readEvaluationScores(String seminarID, String sessionID) {
+
+// read evaluation scores from Evaluations.csv and return evaluator object
+ 
+    public Evaluator readEvaluationScores(String seminarID, String sessionID) {
         String filePath = "Data/Evaluations.csv";
 
         File file = new File(filePath);
@@ -726,14 +729,7 @@ public void updateSession(Session session, int seminarID) {
 
 
 
-                Evaluator evaluator = new Evaluator(
-                        seminar,
-                        session,
-                        scoreClarity,
-                        scoreMethodology,
-                        scorePresentation,
-                        comment
-                );
+                
 
                 System.out.println("Seminar ID: " + seminar +
                         ", Session ID: " + session +
@@ -744,12 +740,22 @@ public void updateSession(Session session, int seminarID) {
 
 
 
+                return  new Evaluator(
+                        seminar,
+                        session,
+                        scoreClarity,
+                        scoreMethodology,
+                        scorePresentation,
+                        comment
+                );
+
 
             }
                 }
         } catch (IOException e) {
             System.out.println("Error reading evaluation scores file: " + e.getMessage());
         }
+        return null;
     }
 
 
