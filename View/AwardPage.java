@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Evaluator;
 import Controller.Seminar;
 import Controller.Session;
 import MainFrame.MainFrame;
@@ -150,9 +151,29 @@ public class AwardPage extends JPanel {
             int sessionID = (int) sessionModel.getValueAt(sessRow, 1);
             int seminarIDInt = (int) sessionModel.getValueAt(sessRow, 0);
 
-             csvModel.readEvaluationScores(String.valueOf(seminarIDInt), String.valueOf(sessionID));
+            Evaluator evaluator = csvModel.readEvaluationScores(String.valueOf(seminarIDInt), String.valueOf(sessionID));
 
+            if (evaluator == null) {
+               JOptionPane.showMessageDialog(viewDialog, "No evaluation scores found for this session.");
+               return;
+            }
 
+            String scoreDetails = "Evaluation Scores for Seminar ID: " + seminarIDInt + ", Session ID: " + sessionID
+                  + "\n\n" +
+                  "Clarity: " + evaluator.getScoreClarity() + "\n" +
+                  "Methodology: " + evaluator.getScoreMethodology() + "\n" +
+                  "Presentation: " + evaluator.getScorePresentation() + "\n\n" +
+                  "Comments: " + evaluator.getComment() + "\n" +
+                  "Total Score: " + (evaluator.getScoreClarity() + evaluator.getScoreMethodology()
+                        + evaluator.getScorePresentation());
+                  ;
+            JOptionPane.showMessageDialog(viewDialog, scoreDetails, "Evaluation Scores", JOptionPane.INFORMATION_MESSAGE);
+
+            
+
+            
+             
+           
          });
 
         

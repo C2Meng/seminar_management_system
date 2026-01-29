@@ -58,6 +58,33 @@ public class Evaluator extends User implements SignUp , SignIn{
     }
 
 
+    public String getSeminarIDstr(){
+        return this.seminarIDstr;
+    }
+
+    public int getSessionID(){
+        return this.sessionID;
+    }
+
+    public int getScoreClarity(){
+        return this.scoreClarity;
+    }
+
+    public int getScoreMethodology(){
+        return this.scoreMethodology;
+    }
+
+    public int getScorePresentation(){
+        return this.scorePresentation;
+    }
+
+    public String getComment(){
+        return this.comment;
+    }
+
+    
+
+
     //pass in nulls for constructor in User class
     public Evaluator (){
         super(null,null,null, Role.EVALUATOR);
