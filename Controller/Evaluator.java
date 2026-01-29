@@ -32,6 +32,7 @@ public class Evaluator extends User implements SignUp , SignIn{
     private WriteToCSV writeToCSV = new WriteToCSV();
     private boolean isRegistered = false;
     private String line;
+    private Seminar seminarID;
     private Navigator navigator;
     
     public Evaluator (String email, String name , String password , Navigator navigator ){
@@ -94,7 +95,7 @@ public class Evaluator extends User implements SignUp , SignIn{
     }
 
 
-public void saveGrade(Session s, int clarity, int method, int result, int pres, String comment) {
+public void saveGrade( String seminar, Session s, int clarity, int method, int result, int pres, String comment ) {
         // Logic to append/update Evaluations.csv
         List<String> lines = new ArrayList<>();
         File file = new File(evaluationfilepath);
@@ -103,7 +104,7 @@ public void saveGrade(Session s, int clarity, int method, int result, int pres, 
         // Header Check
         if (!file.exists()) {
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-                bw.write("SessionID,ScoreClarity,ScoreMethodology,ScoreResults,ScorePresentation,Comment");
+                bw.write("SeminarID,SessionID,ScoreClarity,ScoreMethodology,ScoreResults,ScorePresentation,Comment");
                 bw.newLine();
             } catch (IOException e) { e.printStackTrace(); }
         }
@@ -114,7 +115,7 @@ public void saveGrade(Session s, int clarity, int method, int result, int pres, 
                 String line;
                 while ((line = br.readLine()) != null) {
                     // If line starts with this SessionID, skip it (we will replace it)
-                    if (!line.startsWith(sID + ",")) {
+                    if (!line.startsWith(seminar + "," + sID + ",")) {
                         lines.add(line);
                     }
                 }
@@ -122,7 +123,7 @@ public void saveGrade(Session s, int clarity, int method, int result, int pres, 
         }
 
         // Add the new grade
-        lines.add(sID + "," + clarity + "," + method + "," + result + "," + pres + "," + comment);
+        lines.add(seminar + "," + sID + "," + clarity + "," + method + "," + result + "," + pres + "," + comment);
 
         // Write back
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
@@ -210,12 +211,13 @@ private void updateSubmissionStatus(String targetSubmissionId, String newStatus)
 
                 // Only load sessions for THIS evaluator
                 if (csvEvaluatorID.equals(myEvaluatorID)) {
-                    
+                    int semID = Integer.parseInt(data[0].trim());
                     int sID = Integer.parseInt(data[1].trim());
-                    Session session = new Session(null, sID, data[2].trim(), data[3].trim(), data[4].trim());
+                    Seminar seminarStub = new Seminar(semID, "Seminar " + semID);
+                    Session session = new Session(seminarStub, sID, data[2].trim(), data[3].trim(), data[4].trim());
                     session.setPresenter(data[5].trim()); 
                     String pID = data[6].trim();
-                    session.setPresenterID(pID);
+                    session.setPresenterID(pID);    
                     session.setEvaluatorID(csvEvaluatorID);
 
                     // LINKAGE: Find the submission matching this Student/Presenter ID

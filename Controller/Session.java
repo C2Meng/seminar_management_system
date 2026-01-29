@@ -1,9 +1,5 @@
 package Controller;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Session {
     
     private Seminar seminar;

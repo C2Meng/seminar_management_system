@@ -2,7 +2,6 @@ package View;
 
 import Controller.Evaluator;
 import Controller.Session;
-import Controller.Submission;
 import MainFrame.MainFrame;
 import java.awt.*;
 import java.util.ArrayList;
@@ -122,6 +121,7 @@ public class EvaluatorSystem extends JFrame {
             JPanel pnlInfo = new JPanel(new GridLayout(5, 1));
             pnlInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             pnlInfo.setBackground(new Color(240, 240, 240));
+            pnlInfo.add(new JLabel("Seminar ID: " + s.getSeminar().getSeminarID()));
             pnlInfo.add(new JLabel("Session ID: " + s.getSessionID()));
             pnlInfo.add(new JLabel("Student: " + s.getPresenter()));
             pnlInfo.add(new JLabel("Title: " + s.getProjectTitle()));
@@ -181,8 +181,17 @@ public class EvaluatorSystem extends JFrame {
 
         private void saveGrade() {
             String comment = txtComments.getText().replace("\n", " ").replace(",", ";");
+            String seminarID = "0"; 
+    if (session.getSeminar() != null) {
+        seminarID = String.valueOf(session.getSeminar().getSeminarID());
+    } else {
+        // Fallback: if your session stores seminarID as a separate field, use that
+        // seminarID = String.valueOf(session.getSeminarID()); 
+        System.out.println("Warning: Seminar object is null for Session " + session.getSessionID());
+    }
+            String seminar = seminarID;
             if(comment.isEmpty()) comment = "N/A";
-            controller.saveGrade(session, sliderClarity.getValue(), sliderMethodology.getValue(), sliderResults.getValue(), sliderPresentation.getValue(), comment);
+            controller.saveGrade(seminar, session, sliderClarity.getValue(), sliderMethodology.getValue(), sliderResults.getValue(), sliderPresentation.getValue(), comment);
             ((EvaluatorSystem) getParent()).gradedSessionIDs.add(String.valueOf(session.getSessionID()));
             ((EvaluatorSystem) getParent()).updateTableData();
             dispose();
