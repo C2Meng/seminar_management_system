@@ -1,22 +1,16 @@
 package View;
 
+import Controller.Seminar;
+import Controller.Session;
 import MainFrame.MainFrame;
 import Models.WriteToCSV;
-
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GridLayout;
-import java.io.File;
 import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,10 +19,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-
-import Controller.Seminar;
-import Controller.Session;
-import Controller.Award;;
+;
 
 public class AwardPage extends JPanel {
 
@@ -48,7 +39,7 @@ public class AwardPage extends JPanel {
       }
    }
 
-   public AwardPage(MainFrame mainFrame) {
+   public AwardPage(MainFrame mainFrame , String currentUserID) {
 
       setLayout(new BorderLayout());
 
@@ -79,6 +70,7 @@ public class AwardPage extends JPanel {
       tableModel = new DefaultTableModel(columnNames, 0);
       seminarTable = new JTable(tableModel);
       add(new JScrollPane(seminarTable), BorderLayout.CENTER);
+
 
       refreshTableData();
 
@@ -136,12 +128,32 @@ public class AwardPage extends JPanel {
 
          // Dialog Buttons
          JPanel dialogButtonPanel = new JPanel();
+         JButton inspectScoreBtn = new JButton("Inspect Scores");
          JButton assignAwardBtn = new JButton("Assign Award");
          JButton removeAwardBtn = new JButton("Remove Award");
+
+         dialogButtonPanel.add(inspectScoreBtn);
          dialogButtonPanel.add(assignAwardBtn);
          dialogButtonPanel.add(removeAwardBtn);
 
+
          viewDialog.add(dialogButtonPanel, BorderLayout.NORTH);
+
+
+         inspectScoreBtn.addActionListener(ev -> {
+            int sessRow = sessionTable.getSelectedRow();
+            if (sessRow == -1) {
+               JOptionPane.showMessageDialog(viewDialog, "Please select a session first!");
+               return;
+            }
+
+            int sessionID = (int) sessionModel.getValueAt(sessRow, 1);
+            int seminarIDInt = (int) sessionModel.getValueAt(sessRow, 0);
+
+             csvModel.readEvaluationScores(String.valueOf(seminarIDInt), String.valueOf(sessionID));
+
+
+         });
 
         
 

@@ -1,5 +1,6 @@
 package Models;
 
+import Controller.Evaluator;
 import Controller.Seminar;
 import Controller.Session;
 import InterfaceLib.Navigator;
@@ -24,11 +25,12 @@ public class WriteToCSV {
     private String seminarFilePath = "Data/seminar.csv"; // Stores Seminars
     private String sessionFilePath = "Data/sessions.csv"; // Stores Sessions
     private String submissionFilePath = "Data/Submission.csv"; // Stores Sessions
+    private String awardFilePath = "Data/awards.csv"; // stores awards
 
 
     // =========================== USER MANAGEMENT (EXISTING CODE)
     // =========================== //
-
+    
 
 
     public String getUserFilePath() {
@@ -696,5 +698,61 @@ public void updateSession(Session session, int seminarID) {
             );
         }
     }
+
+
+    public void readEvaluationScores(String seminarID, String sessionID) {
+        String filePath = "Data/Evaluations.csv";
+
+        File file = new File(filePath);
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip header
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                
+
+                if (data.length < 6) {
+                    System.out.println("Skipping malformed line: " + line);
+                    continue;
+                }
+
+                if (data[0].trim().equals(seminarID) && data[1].trim().equals(sessionID)) {
+                String seminar = data[0].trim();
+                String session = data[1].trim();
+                int scoreClarity = Integer.parseInt(data[2].trim());
+                int scoreMethodology = Integer.parseInt(data[3].trim());
+                int scorePresentation = Integer.parseInt(data[4].trim());
+                String comment = data[5].trim();
+
+
+
+                Evaluator evaluator = new Evaluator(
+                        seminar,
+                        session,
+                        scoreClarity,
+                        scoreMethodology,
+                        scorePresentation,
+                        comment
+                );
+
+                System.out.println("Seminar ID: " + seminar +
+                        ", Session ID: " + session +
+                        ", Clarity: " + scoreClarity +
+                        ", Methodology: " + scoreMethodology +
+                        ", Presentation: " + scorePresentation +
+                        ", Comment: " + comment);
+
+
+
+
+            }
+                }
+        } catch (IOException e) {
+            System.out.println("Error reading evaluation scores file: " + e.getMessage());
+        }
+    }
+
+
+    
 
 }
