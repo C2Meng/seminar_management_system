@@ -1,6 +1,7 @@
 package MainFrame;
 import Controller.Student;
 import InterfaceLib.Navigator;
+import View.AwardPage;
 import View.CoordinatorDashboard;
 import View.HomePage;
 import View.LoginPage;
@@ -135,6 +136,11 @@ public class MainFrame extends JFrame implements Navigator {
             ViewRegisteredSeminarsPage viewRegisteredSeminarsPage = new ViewRegisteredSeminarsPage(this , currentUserID);
             mainPanel.add(viewRegisteredSeminarsPage, "ViewRegisteredSeminarsPage");
         } 
+
+        if(pageName.equals("AwardPage")){
+            AwardPage awardPage = new AwardPage(this , currentUserID);
+            mainPanel.add(awardPage , "AwardPage");
+        }
         
         cardLayout.show(mainPanel, pageName);
     }

@@ -34,11 +34,30 @@ public class Evaluator extends User implements SignUp , SignIn{
     private String line;
     private Seminar seminarID;
     private Navigator navigator;
+    private String seminarIDstr;
+    private int sessionID;
+    private int scoreClarity;
+    private int scoreMethodology;
+    private int scorePresentation;
+    private String comment;
     
     public Evaluator (String email, String name , String password , Navigator navigator ){
         super(email , name , password , Role.EVALUATOR);
         this.navigator = navigator;
     }
+
+
+    public Evaluator (String seminarIDstr, String sessionID, int scoreClarity, int scoreMethodology, int scorePresentation, String comment ){
+        super("N/A", "N/A", "N/A", Role.EVALUATOR);
+        this.seminarIDstr = seminarIDstr;
+        this.sessionID = Integer.parseInt(sessionID);
+        this.scoreClarity = scoreClarity;
+        this.scoreMethodology = scoreMethodology;
+        this.scorePresentation = scorePresentation;
+        this.comment = comment;
+    }
+
+
     //pass in nulls for constructor in User class
     public Evaluator (){
         super(null,null,null, Role.EVALUATOR);

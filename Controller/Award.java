@@ -14,6 +14,8 @@ public enum Award {
         this.awardName = awardName;
        
     }
+
+    
     public String getDisplayName() { return awardName; }
     
 }
