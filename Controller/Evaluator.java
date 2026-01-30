@@ -277,9 +277,8 @@ public class Evaluator extends User implements SignUp, SignIn {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");
-                    // Fix: Corrected header check from 'SessionID' to 'SeminarID'
-                    if (parts.length > 0 && !parts[0].equals("SeminarID")) {
-                        gradedIds.add(parts[0].trim());
+                    if (parts.length > 1 && !parts[0].equals("SeminarID")) {
+                        gradedIds.add(parts[0].trim() + "-" + parts[1].trim());
                     }
                 }
             } catch (IOException e) {

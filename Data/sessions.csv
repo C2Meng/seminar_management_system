@@ -2,5 +2,5 @@ seminarID,sessionID,sessionType,startTime,endTime,presenter,presenterID,evaluato
 1,1,Oral,2pm,4pm,Deepa Raj,550e8400-e29b-41d4-a716-446655440000,Syed,bf193e04-febf-453c-9cb3-9320221b92cd
 1,2,Poster,4pm,6pm,Sarah Connor,f47ac10b-58cc-4372-a567-0e02b2c3d479,Syed,bf193e04-febf-453c-9cb3-9320221b92cd
 2,1,POSTER,2PM,4PM,Ali Abu,a1b2c3d4-e5f6-4g7h-8i9j-k1l2m3n4o5p6,Syed,bf193e04-febf-453c-9cb3-9320221b92cd
-3,1,POSTER,2PM,4PM,TBD,TBD,TBD,TBD
+3,1,POSTER,2PM,4PM,Sarah Connor,f47ac10b-58cc-4372-a567-0e02b2c3d479,June,e0de2f70-636e-4e11-94c5-57f21045a9db
 4,1,Poster,8.00am,10.00am,Raziq,877192ad-6b8f-4ee2-a5b8-9a1de0a7bcc6,Syed,bf193e04-febf-453c-9cb3-9320221b92cd
