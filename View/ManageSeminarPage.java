@@ -40,6 +40,7 @@ public class ManageSeminarPage extends JPanel {
             tableModel.addRow(row);
         }
     }
+
     private boolean validateDate(String date) {
         // Basic format check: DD/MM/YYYY
         String datePattern = "^\\d{2}/\\d{2}/\\d{4}$";
@@ -52,7 +53,8 @@ public class ManageSeminarPage extends JPanel {
         // Further validation can be added here (e.g., valid day/month ranges)
         return true;
     }
-    //error check stuff alnafdcsaddcm
+
+    // error check stuff alnafdcsaddcm
     private int toMinutes(String time) {
         if (time == null) // for cancel button
             return -1;
@@ -111,31 +113,37 @@ public class ManageSeminarPage extends JPanel {
         return true;
     }
 
-    private boolean validateSeminar(String semStart, String semEnd) {
-        
-            int start = toMinutes(semStart);
-            int end = toMinutes(semEnd);
+    private boolean validateSeminar(String date, String semStart, String semEnd) {
 
-            if (start >= end) {
-                JOptionPane.showMessageDialog(this,
-                        "Seminar start time must be before end time");
-                return false;
-            }
-            
-            //go thru the csv file and check for overlapping seminars
-            for (Seminar s : seminarList) {
+        int start = toMinutes(semStart);
+        int end = toMinutes(semEnd);
+
+        if (start >= end) {
+            JOptionPane.showMessageDialog(this,
+                    "Seminar start time must be before end time");
+            return false;
+        }
+
+        // go thru the csv file and check for overlapping seminars
+        for (Seminar s : seminarList) {
+
+            // Only check for time overlap if the DATE is the same
+            // Assuming date format is consistent (e.g., DD/MM/YYYY)
+            if (s.getDate().trim().equals(date.trim())) {
+
                 int existingStart = toMinutes(s.getStartTime());
                 int existingEnd = toMinutes(s.getEndTime());
 
                 if (overlaps(start, end, existingStart, existingEnd)) {
                     JOptionPane.showMessageDialog(this,
-                            "Seminar time overlaps with another seminar");
+                            "Seminar time overlaps with another seminar on " + date);
                     return false;
                 }
             }
+        }
 
-            return true;
-    };
+        return true;
+    }
 
     public ManageSeminarPage(MainFrame mainFrame, String currentUserID) {
         setLayout(new BorderLayout());
@@ -193,22 +201,27 @@ public class ManageSeminarPage extends JPanel {
                 return;
 
             String date = JOptionPane.showInputDialog(this, "Enter the date (DD/MM/YYYY)");
-            if (isEmpty(date, "Date")){
-                return;}
+            if (isEmpty(date, "Date")) {
+                return;
+            }
 
             if (!validateDate(date)) {
-                return;};
+                return;
+            }
+            ;
 
             String startTime = JOptionPane.showInputDialog(this, "Enter the start time");
-            if (isEmpty(startTime, "Start Time")){
-                return;}
+            if (isEmpty(startTime, "Start Time")) {
+                return;
+            }
 
             String endTime = JOptionPane.showInputDialog(this, "Enter the end time");
-            if (isEmpty(endTime, "End Time")){
-                return;}
-            
-            //check for overlapping seminars
-            if (!validateSeminar(startTime, endTime)){
+            if (isEmpty(endTime, "End Time")) {
+                return;
+            }
+
+            // check for overlapping seminars
+            if (!validateSeminar(date, startTime, endTime)) {
                 return;
             }
 
