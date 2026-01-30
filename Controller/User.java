@@ -10,8 +10,7 @@ public class User {
      protected String email;
      protected String password;
 
-
-
+     
        public User(String email, String name, String password, Role role) {
         this.id = generateUserId();
         this.email = email;
