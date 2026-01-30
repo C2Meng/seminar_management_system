@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Award;
 import Controller.Evaluator;
 import Controller.Seminar;
 import Controller.Session;
@@ -28,6 +29,7 @@ public class AwardPage extends JPanel {
    private DefaultTableModel tableModel;
    private WriteToCSV csvModel = new WriteToCSV();
    private ArrayList<Seminar> seminarList;
+
 
    private void refreshTableData() {
       seminarList = csvModel.readSeminars();
@@ -176,7 +178,49 @@ public class AwardPage extends JPanel {
            
          });
 
-        
+         int seminarIDInt = (int) tableModel.getValueAt(selectedRow, 0); // Define it once here
+
+         assignAwardBtn.addActionListener(ev -> {
+            int sessRow = sessionTable.getSelectedRow();
+            if (sessRow == -1) {
+               JOptionPane.showMessageDialog(viewDialog, "Please select a session first!");
+               return;
+            }
+
+            String sessionID = String.valueOf(sessionModel.getValueAt(sessRow, 1));
+            String presenterName = (String) sessionModel.getValueAt(sessRow, 6);
+
+            Award[] choices = Award.values();
+            Award selectedAward = (Award) JOptionPane.showInputDialog(
+                  viewDialog,
+                  "Select Award for Presenter: " + presenterName,
+                  "Assign Award",
+                  JOptionPane.QUESTION_MESSAGE,
+                  null,
+                  choices,
+                  choices[0]);
+                  
+            if (selectedAward != null) {
+
+               if (csvModel.isAwardAlreadyAssigned(String.valueOf(seminarIDInt), String.valueOf(sessionID))) {
+                  int overwrite = JOptionPane.showConfirmDialog(
+                        viewDialog,
+                        "An award already exists for this session");
+                  if (overwrite != JOptionPane.YES_OPTION) {
+                     return;
+                  }
+               }
+
+               csvModel.writeAward(String.valueOf(seminarIDInt), String.valueOf(sessionID), presenterName,
+                     selectedAward.name());
+               JOptionPane.showMessageDialog(viewDialog, "Award assigned successfully!");
+            } else {
+               JOptionPane.showMessageDialog(viewDialog, "No award selected.");
+            }
+           
+         });
+
+
 
          viewDialog.setLocationRelativeTo(this);
          viewDialog.setVisible(true);

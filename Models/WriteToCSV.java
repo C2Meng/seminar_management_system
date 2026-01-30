@@ -645,10 +645,7 @@ public void updateSession(Session session, int seminarID) {
 
             int totalSeminars = seminarList.size() - 1; // exclude header
             writer.write("Total Seminars: " + totalSeminars + "\n\n");
-            writer.write("-----------------------------------------------------\n");
-
-
-
+            writer.write("-----------------------------------------------------\n");    
             // write each seminar's details
             for (String seminar : seminarList.subList(1, seminarList.size())){ // skip header from csv file
                 String data[] = seminar.split(",");
@@ -730,7 +727,7 @@ public void updateSession(Session session, int seminarID) {
 
 
                 
-
+                
                 System.out.println("Seminar ID: " + seminar +
                         ", Session ID: " + session +
                         ", Clarity: " + scoreClarity +
@@ -759,6 +756,74 @@ public void updateSession(Session session, int seminarID) {
     }
 
 
-    
+
+
+    // write awards of best oral , best presenter to awards.csv 
+    public void writeAward(String seminarID, String sessionID, String awardTitle, String awardDescription) {
+        String filePath = awardFilePath;
+
+        try {
+            File file = new File(filePath);
+
+            // create folder if missing
+            file.getParentFile().mkdirs();
+
+            // write header only if file does NOT exist
+            boolean fileExists = file.exists();
+            try (FileWriter writer = new FileWriter(file, true)) {
+                if (!fileExists) {
+                    writer.append("SeminarID,SessionID,AwardTitle,AwardDescription\n"); // header
+                }
+
+
+                
+                String line = seminarID + "," + sessionID + "," + awardTitle + "," + awardDescription;
+                writer.append(line + "\n");
+                System.out.println("Award written to CSV: " + awardTitle);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    // function to check if award already assigned for a particular seminar and session
+    public boolean isAwardAlreadyAssigned(String seminarID , String sessionID){
+        File file = new File(awardFilePath);
+
+        if (!file.exists()) return false;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip header
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+
+                if (data.length >= 2) {
+                    String rowSeminarID = data[0].trim();
+                    String rowSessionID = data[1].trim();
+
+                    if (rowSeminarID.equals(seminarID) && rowSessionID.equals(sessionID)) {
+                        return true; // Award already assigned
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+        }
+
+
+
+
+
+
+        return false;
+    }
+
+
+
+
 
 }
