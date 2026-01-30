@@ -22,7 +22,7 @@ public class Seminar {
 
     // create a seminar first, then PC have to fill in the rest of the details
 
-    public Seminar(String id, String title) {
+    public Seminar(String id , String title){
         this.seminarID = Integer.parseInt(id);
         this.title = title;
     }
@@ -120,6 +120,7 @@ public class Seminar {
         if (!this.sessionsList.contains(session)) {
             this.sessionsList.add(session);
         }
+
     }
 
     // to add removers
@@ -152,14 +153,14 @@ public class Seminar {
 
     public void exportReport(MainFrame mainFrame) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setSelectedFile(new File("seminar_report.txt")); // default file name
-        int userSelection = fileChooser.showSaveDialog(mainFrame);
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-            System.out.println("Save as file: " + fileToSave.getAbsolutePath());
-        } else {
-            System.out.println("Save command cancelled by user.");
-        }
+                   fileChooser.setSelectedFile(new File("seminar_report.txt")); // default file name
+                   int userSelection = fileChooser.showSaveDialog(mainFrame);
+                   if (userSelection == JFileChooser.APPROVE_OPTION) {
+                          File fileToSave = fileChooser.getSelectedFile();
+                          System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+                     } else {
+                            System.out.println("Save command cancelled by user.");
+                     }
 
     }
 

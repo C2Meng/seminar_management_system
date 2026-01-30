@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class EvaluatorSystem extends JFrame {
@@ -18,12 +19,12 @@ public class EvaluatorSystem extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
     private String evaluatorID;
-    private Evaluator controller;
+    private Evaluator controller; 
 
     public EvaluatorSystem(String evaluatorID) {
         this.evaluatorID = evaluatorID;
         controller = new Evaluator();
-
+        
         setTitle("Seminar Evaluator - Session View");
         setSize(1000, 500); // Widened for Title column
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,28 +33,28 @@ public class EvaluatorSystem extends JFrame {
         loadData();
 
         // Added "Project Title" column
-        String[] columnNames = { "Session ID", "Date/Time", "Student Name", "Project Title", "Status" };
+        String[] columnNames = {"Session ID", "Date/Time", "Student Name", "Project Title", "Status"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            public boolean isCellEditable(int row, int column) { return false; }
         };
-
+        
         updateTableData();
 
         table = new JTable(tableModel);
         table.setRowHeight(30);
         // Set column width for Title to be wider
         table.getColumnModel().getColumn(3).setPreferredWidth(250);
+        
+        table.getColumnModel().getColumn(4).setCellRenderer(new StatusRenderer());
 
         JScrollPane scrollPane = new JScrollPane(table);
 
         JButton logOutButton = new JButton("Logout");
         logOutButton.addActionListener(e -> {
-            MainFrame mainFrame = new MainFrame();
-            mainFrame.setVisible(true);
-            this.dispose();
+           MainFrame mainFrame = new MainFrame();
+           mainFrame.setVisible(true);
+           this.dispose();
         });
 
         JButton btnGrade = new JButton("Grade Selected Session");
@@ -68,25 +69,25 @@ public class EvaluatorSystem extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
     }
-
+    
     private void loadData() {
         sessions = controller.loadSessions(evaluatorID);
         gradedSessionIDs = controller.loadGradedSessionIDs();
     }
 
     private void updateTableData() {
-        tableModel.setRowCount(0);
+        tableModel.setRowCount(0); 
         for (Session s : sessions) {
             String timeStr = s.getStartTime() + " - " + s.getEndTime();
             String status = gradedSessionIDs.contains(String.valueOf(s.getSessionID())) ? "Graded" : "Pending";
-
+            
             // s.getProjectTitle() pulls from the linked Submission object
-            tableModel.addRow(new Object[] {
-                    s.getSessionID(),
-                    timeStr,
-                    s.getPresenter(),
-                    s.getProjectTitle(),
-                    status
+            tableModel.addRow(new Object[]{
+                s.getSessionID(), 
+                timeStr, 
+                s.getPresenter(), 
+                s.getProjectTitle(),
+                status
             });
         }
     }
@@ -124,11 +125,10 @@ public class EvaluatorSystem extends JFrame {
             pnlInfo.add(new JLabel("Session ID: " + s.getSessionID()));
             pnlInfo.add(new JLabel("Student: " + s.getPresenter()));
             pnlInfo.add(new JLabel("Title: " + s.getProjectTitle()));
-
+            
             // Show Abstract from the linked submission
             String abstractText = (s.getSubmission() != null) ? s.getSubmission().getAbstractText() : "N/A";
-            pnlInfo.add(new JLabel("Abstract Snippet: "
-                    + (abstractText.length() > 50 ? abstractText.substring(0, 50) + "..." : abstractText)));
+            pnlInfo.add(new JLabel("Abstract Snippet: " + (abstractText.length() > 50 ? abstractText.substring(0, 50) + "..." : abstractText)));
 
             // --- Rubric Form ---
             JPanel pnlForm = new JPanel(new GridLayout(10, 1, 5, 5));
@@ -147,7 +147,7 @@ public class EvaluatorSystem extends JFrame {
             pnlForm.add(sliderResults);
             pnlForm.add(new JLabel("Presentation (20%):"));
             pnlForm.add(sliderPresentation);
-
+            
             pnlForm.add(new JLabel("Evaluator Comments:"));
             txtComments = new JTextArea(3, 20);
             txtComments.setLineWrap(true);
@@ -155,7 +155,7 @@ public class EvaluatorSystem extends JFrame {
 
             JPanel pnlFooter = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             lblTotal = new JLabel("Total Score: 0/100  ");
-
+            
             JButton btnSave = new JButton("Submit Evaluation");
             btnSave.addActionListener(e -> saveGrade());
 
@@ -169,12 +169,11 @@ public class EvaluatorSystem extends JFrame {
 
         private JSlider createSlider(int max) {
             JSlider slider = new JSlider(0, max, 0);
-            slider.setMajorTickSpacing(max / 5 > 0 ? max / 5 : 1);
+            slider.setMajorTickSpacing(max / 5 > 0 ? max / 5 : 1); 
             slider.setPaintTicks(true);
             slider.setPaintLabels(true);
             slider.addChangeListener(e -> {
-                int total = sliderClarity.getValue() + sliderMethodology.getValue() + sliderResults.getValue()
-                        + sliderPresentation.getValue();
+                int total = sliderClarity.getValue() + sliderMethodology.getValue() + sliderResults.getValue() + sliderPresentation.getValue();
                 lblTotal.setText("Total Score: " + total + "/100  ");
             });
             return slider;
@@ -182,18 +181,30 @@ public class EvaluatorSystem extends JFrame {
 
         private void saveGrade() {
             String comment = txtComments.getText().replace("\n", " ").replace(",", ";");
-            if (comment.isEmpty())
-                comment = "N/A";
-
-            String seminarID = (session.getSeminar() != null)
-                    ? String.valueOf(session.getSeminar().getSeminarID())
-                    : "0";
-            controller.saveGrade(seminarID, session, sliderClarity.getValue(), sliderMethodology.getValue(),
-                    sliderResults.getValue(), sliderPresentation.getValue(), comment);
+            String seminarID = "0"; 
+    if (session.getSeminar() != null) {
+        seminarID = String.valueOf(session.getSeminar().getSeminarID());
+    } else {
+        // Fallback: if your session stores seminarID as a separate field, use that
+        // seminarID = String.valueOf(session.getSeminarID()); 
+        System.out.println("Warning: Seminar object is null for Session " + session.getSessionID());
+    }
+            String seminar = seminarID;
+            if(comment.isEmpty()) comment = "N/A";
+            controller.saveGrade(seminar, session, sliderClarity.getValue(), sliderMethodology.getValue(), sliderResults.getValue(), sliderPresentation.getValue(), comment);
             ((EvaluatorSystem) getParent()).gradedSessionIDs.add(String.valueOf(session.getSessionID()));
             ((EvaluatorSystem) getParent()).updateTableData();
             dispose();
         }
     }
 
+    class StatusRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+            Component comp = super.getTableCellRendererComponent(t, v, s, f, r, c);
+            if ("Graded".equals(v)) comp.setForeground(new Color(0, 128, 0));
+            else comp.setForeground(Color.RED);
+            return comp;
+        }
+    }
 }
