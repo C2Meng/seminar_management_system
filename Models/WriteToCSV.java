@@ -814,11 +814,6 @@ public void updateSession(Session session, int seminarID) {
         } catch (Exception e) {
         }
 
-
-
-
-
-
         return false;
     }
 

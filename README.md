@@ -13,29 +13,29 @@ Roles
 
 • Student (Presenter) 
 ✓ Registers for the seminar with research title, abstract, supervisor name, and 
-preferred presentation type (Oral/Poster). 
-✓ Uploads presentation materials (slides or poster file path). 
+preferred presentation type (Oral/Poster).  ✅
+✓ Uploads presentation materials (slides or poster file path).  ✅
 
 
 • Evaluator (Panel Member) 
-✓ Reviews assigned presentations. 
+✓ Reviews assigned presentations.  ✅
 ✓ Provides evaluation based on predefined rubrics (e.g., Problem Clarity, 
-Methodology, Results, and Presentation) 
-✓ Adds comments and marks for each presenter 
+Methodology, Results, and Presentation)  ✅
+✓ Adds comments and marks for each presenter  ✅
 
 
 • Coordinator (Faculty Staff) 
-✓ Creates and manages seminar sessions (date, venue, session type). 
-✓ Assigns evaluators and presenters to sessions 
+✓ Creates and manages seminar sessions (date, venue, session type).  ✅
+✓ Assigns evaluators and presenters to sessions  ✅
 ✓ Generates seminar schedules and final evaluation reports 
-✓ Oversees award nomination for Best Oral, Best Poster, and People’s Choice. 
+✓ Oversees award nomination for Best Oral, Best Poster, and People’s Choice. ✅
 
 
 • System Requirements 
-✓ User Management with role selector for Student, Evaluator, or Coordinator. 
-✓ Student Module for registration, preference, and upload of presentation files. 
-✓ Session Management for creating and managing sessions and time slots. 
-✓ Evaluation Module for scoring and commenting using rubrics. 
+✓ User Management with role selector for Student, Evaluator, or Coordinator.  ✅
+✓ Student Module for registration, preference, and upload of presentation files.  ✅
+✓ Session Management for creating and managing sessions and time slots.  ✅
+✓ Evaluation Module for scoring and commenting using rubrics.  ✅
 ✓ Poster Presentation Management with board IDs and criteria. 
 ✓ Award & Ceremony Module for computing winners and generating award 
 agenda. 
