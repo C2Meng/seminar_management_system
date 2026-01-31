@@ -5,6 +5,7 @@ import Controller.Session;
 import MainFrame.MainFrame;
 import Models.WriteToCSV;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 import javax.swing.*;
@@ -294,7 +295,19 @@ public class ManageSeminarPage extends JPanel {
 
             int seminarID = (int) tableModel.getValueAt(selectedRow, 0);
             csvModel.generateSchedule(seminarID);
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Save Schedule");
+            fileChooser.setSelectedFile(new File("seminar_schedule.txt")); // default name
+            int option = fileChooser.showSaveDialog(this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File destination = fileChooser.getSelectedFile();
+                WriteToCSV writer = new WriteToCSV(); // create instance to use the method
+                writer.saveSeminarScheduleToFile(destination , mainFrame); // save the report to the chosen file
+            }
             JOptionPane.showMessageDialog(this, "Schedule generated successfully!");
+
+            
         });
 
         delButton.addActionListener(e -> {

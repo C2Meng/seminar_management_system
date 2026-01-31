@@ -727,7 +727,7 @@ public class WriteToCSV {
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(sessionFile))) { // read session data
-            
+
             String line; // to hold each line
             br.readLine(); // skip header
             while ((line = br.readLine()) != null) {
@@ -738,48 +738,63 @@ public class WriteToCSV {
                 }
             }
 
-
         }
-            
-        
+
         catch (IOException e) {
             e.printStackTrace();
         }
 
+        try (FileWriter writer = new FileWriter("Data/seminar_schedule.txt", false)) {
+            // write schedule to text file
 
+            String data[] = scheduleData.get(0).split(",");
+            writer.append("==================  Seminar Schedule ==================\n\n");
+            writer.write("Seminar ID   : " + data[0] + "\n");
+            writer.write("Title        : " + data[1] + "\n");
+            writer.write("Description  : " + data[2] + "\n");
+            writer.write("Venue        : " + data[3] + "\n");
+            writer.write("Date         : " + data[4] + "\n");
+            writer.write("Start Time   : " + data[5] + "\n");
+            writer.write("End Time     : " + data[6] + "\n");
+            writer.write("\n");
 
-            try (FileWriter writer = new FileWriter("Data/seminar_schedule.txt", false)) {
-                // write schedule to text file
+            writer.append("==================  Sessions  ==================\n\n");
+            for (String session : sessionsData) { // write each session's details
+                String sessionInfo[] = session.split(",");
 
-                String data[] = scheduleData.get(0).split(",");
-                writer.append("==================  Seminar Schedule ==================\n\n");
-                writer.write("Seminar ID   : " + data[0] + "\n");
-                writer.write("Title        : " + data[1] + "\n");
-                writer.write("Description  : " + data[2] + "\n");
-                writer.write("Venue        : " + data[3] + "\n");
-                writer.write("Date         : " + data[4] + "\n");
-                writer.write("Start Time   : " + data[5] + "\n");
-                writer.write("End Time     : " + data[6] + "\n");
-                writer.write("\n");
-
-                writer.append("==================  Sessions  ==================\n\n");
-                for (String session : sessionsData) { // write each session's details
-                    String sessionInfo[] = session.split(",");
-
-                    writer.write("Session ID     : " + sessionInfo[1] + "\n");
-                    writer.write("Session Type   : " + sessionInfo[2] + "\n");
-                    writer.write("Start Time     : " + sessionInfo[3] + "\n");
-                    writer.write("End Time       : " + sessionInfo[4] + "\n");
-                    writer.write("Presenter      : " + sessionInfo[5] + "\n");
-                    writer.write("Evaluator      : " + sessionInfo[7] + "\n");
-                    writer.write("-----------------------------------------------------\n");
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                writer.write("Session ID     : " + sessionInfo[1] + "\n");
+                writer.write("Session Type   : " + sessionInfo[2] + "\n");
+                writer.write("Start Time     : " + sessionInfo[3] + "\n");
+                writer.write("End Time       : " + sessionInfo[4] + "\n");
+                writer.write("Presenter      : " + sessionInfo[5] + "\n");
+                writer.write("Evaluator      : " + sessionInfo[7] + "\n");
+                writer.write("-----------------------------------------------------\n\n");
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    
+    }
+
+    public void saveSeminarScheduleToFile(File destination, MainFrame mainFrame) {
+        try {
+            Files.copy(
+                    Paths.get("Data/seminar_schedule.txt"), // getting the generated schedule
+                    destination.toPath(), // destination chosen by user
+                    StandardCopyOption.REPLACE_EXISTING // overwrite if file exists
+            );
+
+         
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    mainFrame,
+                    "Failed to save file.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     // read evaluation scores from Evaluations.csv and return evaluator object
 
