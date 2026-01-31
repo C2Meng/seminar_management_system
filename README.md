@@ -27,7 +27,7 @@ Methodology, Results, and Presentation)  ✅
 • Coordinator (Faculty Staff) 
 ✓ Creates and manages seminar sessions (date, venue, session type).  ✅
 ✓ Assigns evaluators and presenters to sessions  ✅
-✓ Generates seminar schedules and final evaluation reports 
+✓ Generates seminar schedules✅ and final evaluation reports 
 ✓ Oversees award nomination for Best Oral, Best Poster, and People’s Choice. ✅
 
 
