@@ -125,14 +125,14 @@ public class ManageSeminarPage extends JPanel {
         }
 
         // go thru the csv file and check for overlapping seminars
-        for (Seminar s : seminarList) {
+        for (Seminar sem : seminarList) {
 
             // Only check for time overlap if the DATE is the same
             // Assuming date format is consistent (e.g., DD/MM/YYYY)
-            if (s.getDate().trim().equals(date.trim())) {
+            if (sem.getDate().trim().equals(date.trim())) {
 
-                int existingStart = toMinutes(s.getStartTime());
-                int existingEnd = toMinutes(s.getEndTime());
+                int existingStart = toMinutes(sem.getStartTime());
+                int existingEnd = toMinutes(sem.getEndTime());
 
                 if (overlaps(start, end, existingStart, existingEnd)) {
                     JOptionPane.showMessageDialog(this,
@@ -144,6 +144,51 @@ public class ManageSeminarPage extends JPanel {
 
         return true;
     }
+
+
+    private boolean validateSession(int semID, String sessStart, String sessEnd) {
+
+        int start = toMinutes(sessStart);
+        int end = toMinutes(sessEnd);
+         Seminar sessionSem = null;
+            for (Seminar sem : seminarList) {
+                if (sem.getSeminarID() == semID) {
+
+                   if(start < toMinutes(sem.getStartTime()) || start > toMinutes(sem.getEndTime()) 
+                     || end < toMinutes(sem.getStartTime()) || end > toMinutes(sem.getEndTime())) {
+                       JOptionPane.showMessageDialog(this,
+                               "Session time must be within the seminar time frame.");
+                       return false;
+                    }
+
+                    sessionSem = sem;
+                    break;
+                }
+            }
+        Session tempSession = new Session(sessionSem);
+        ArrayList<Session> sessionsList = csvModel.readSessions(tempSession);
+        for (Session sess : sessionsList) {
+
+            // Only check for time overlap if the DATE is the same
+            // Assuming date format is consistent (e.g., DD/MM/YYYY)
+            if (sess.getSeminarID() == semID) {
+
+                int existingStart = toMinutes(sess.getStartTime());
+                int existingEnd = toMinutes(sess.getEndTime());
+
+                if (overlaps(start, end, existingStart, existingEnd)) {
+                    JOptionPane.showMessageDialog(this,
+                            "Session time overlaps with another session in the same seminar.");
+                    return false;
+                }
+
+
+            }
+        }
+
+        return true;
+    }
+    
 
     public ManageSeminarPage(MainFrame mainFrame, String currentUserID) {
         setLayout(new BorderLayout());
@@ -333,8 +378,12 @@ public class ManageSeminarPage extends JPanel {
                     return;
 
                 String startTime = JOptionPane.showInputDialog(viewDialog, "Enter Start Time:");
-
                 String endTime = JOptionPane.showInputDialog(viewDialog, "Enter End Time:");
+                if (!validateSession(seminarID, startTime, endTime)) {
+                    return;
+                }
+
+
 
                 Session newSess = new Session(finalSem, newSessionID, sessionType, startTime, endTime);
                 newSess.setPresenter("TBD");
@@ -369,14 +418,14 @@ public class ManageSeminarPage extends JPanel {
                     return;
                 }
 
-                // --- 1. Get Session Details ---
+                // --- Get Session Details ---
                 int currentseminarID = (int) sessionModel.getValueAt(selectedSessionRow, 0);
                 int sessID = (int) sessionModel.getValueAt(selectedSessionRow, 1);
                 String currentType = (String) sessionModel.getValueAt(selectedSessionRow, 2);
                 String currentStart = (String) sessionModel.getValueAt(selectedSessionRow, 3);
                 String currentEnd = (String) sessionModel.getValueAt(selectedSessionRow, 4);
 
-                // --- 2. Load Data ---
+                // --- Load Data ---
                 Map<String, ArrayList<String>> userData = csvModel.readData();
                 // Get list of Student UUIDs who submitted to this seminar
                 ArrayList<String> submissionUserID = csvModel.readSubmission(currentseminarID);
@@ -389,7 +438,7 @@ public class ManageSeminarPage extends JPanel {
                 ArrayList<String> studNames = new ArrayList<>();
                 ArrayList<String> studIDs = new ArrayList<>();
 
-                // --- FIX: Correctly fetch Student Names using UUIDs ---
+                // ---  Correctly fetch Student Names using UUIDs ---
                 for (String idString : submissionUserID) {
                     try {
                         // USE THE NEW METHOD HERE: readUserByID
@@ -411,7 +460,7 @@ public class ManageSeminarPage extends JPanel {
                     }
                 }
 
-                // --- 3. Select Evaluator Table ---
+                // ---  Select Evaluator Table ---
                 String[] evalColumns = { "ID", "Name" };
                 DefaultTableModel evalModel = new DefaultTableModel(evalColumns, 0) {
                     @Override
@@ -436,7 +485,7 @@ public class ManageSeminarPage extends JPanel {
                 String selectedEvalIDStr = (String) evalModel.getValueAt(evalTable.getSelectedRow(), 0);
                 String selectedEvalName = (String) evalModel.getValueAt(evalTable.getSelectedRow(), 1);
 
-                // --- 4. Select Presenter Table (Now Populated!) ---
+                // --- Select Presenter Table (Now Populated!) ---
                 String[] stuColumns = { "ID", "Name" };
                 DefaultTableModel stuModel = new DefaultTableModel(stuColumns, 0) {
                     @Override
