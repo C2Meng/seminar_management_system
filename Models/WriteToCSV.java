@@ -27,11 +27,8 @@ public class WriteToCSV {
     private String submissionFilePath = "Data/Submission.csv"; // Stores Sessions
     private String awardFilePath = "Data/awards.csv"; // stores awards
 
-
     // =========================== USER MANAGEMENT (EXISTING CODE)
     // =========================== //
-    
-
 
     public String getUserFilePath() {
         return userFilePath;
@@ -82,12 +79,12 @@ public class WriteToCSV {
         }
     }
 
-
-public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
+    public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
         ArrayList<String> assignedStudentIDs = new ArrayList<>();
         File file = new File(sessionFilePath);
 
-        if (!file.exists()) return assignedStudentIDs;
+        if (!file.exists())
+            return assignedStudentIDs;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
@@ -97,9 +94,9 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
                 String[] data = line.split(",", -1);
 
                 // CSV Structure based on your provided file:
-                // 0:seminarID, 1:sessionID, 2:Type, 3:Start, 4:End, 
+                // 0:seminarID, 1:sessionID, 2:Type, 3:Start, 4:End,
                 // 5:PresenterName, 6:PresenterID, 7:EvaluatorName, 8:EvaluatorID
-                
+
                 if (data.length >= 9) {
                     String rowEvaluatorID = data[8].trim();
                     String rowPresenterID = data[6].trim();
@@ -115,109 +112,111 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
         }
         return assignedStudentIDs;
     }
-  
 
     // filter database for evaluators and students, adding the names to respective
     // arraylist
-  public Map<String, ArrayList<String>> readData() {
-    Map<String, ArrayList<String>> map = new HashMap<>();
-    
-    // Initialize lists
-    ArrayList<String> evaluatorNames = new ArrayList<>();
-    ArrayList<String> evaluatorIDs   = new ArrayList<>();
-    ArrayList<String> studentNames   = new ArrayList<>();
-    ArrayList<String> studentIDs     = new ArrayList<>();
+    public Map<String, ArrayList<String>> readData() {
+        Map<String, ArrayList<String>> map = new HashMap<>();
 
-    File file = new File(userFilePath); // e.g., "Data/user.csv"
+        // Initialize lists
+        ArrayList<String> evaluatorNames = new ArrayList<>();
+        ArrayList<String> evaluatorIDs = new ArrayList<>();
+        ArrayList<String> studentNames = new ArrayList<>();
+        ArrayList<String> studentIDs = new ArrayList<>();
 
-    if (file.exists()) {
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            br.readLine(); // Skip header
-            while ((line = br.readLine()) != null) {
-                // Using -1 to keep empty trailing fields if any
-                String[] data = line.split(",", -1); 
-                
-                // Safety check: ensure we have enough columns
-                if (data.length >= 5) {
-                    String id   = data[0].trim(); // user_id is at index 0
-                    String name = data[2].trim(); // name is at index 2
-                    String role = data[4].trim(); // role is at index 4
+        File file = new File(userFilePath); // e.g., "Data/user.csv"
 
-                    if (role.equalsIgnoreCase("Evaluator")) {
-                        evaluatorNames.add(name);
-                        evaluatorIDs.add(id);
-                    } else if (role.equalsIgnoreCase("Student")) {
-                        studentNames.add(name);
-                        studentIDs.add(id);
+        if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                br.readLine(); // Skip header
+                while ((line = br.readLine()) != null) {
+                    // Using -1 to keep empty trailing fields if any
+                    String[] data = line.split(",", -1);
+
+                    // Safety check: ensure we have enough columns
+                    if (data.length >= 5) {
+                        String id = data[0].trim(); // user_id is at index 0
+                        String name = data[2].trim(); // name is at index 2
+                        String role = data[4].trim(); // role is at index 4
+
+                        if (role.equalsIgnoreCase("Evaluator")) {
+                            evaluatorNames.add(name);
+                            evaluatorIDs.add(id);
+                        } else if (role.equalsIgnoreCase("Student")) {
+                            studentNames.add(name);
+                            studentIDs.add(id);
+                        }
                     }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+        // Store in map with the EXACT keys your button listener expects
+        map.put("evaluatorNameList", evaluatorNames);
+        map.put("evaluatorIDList", evaluatorIDs);
+        map.put("studentNameList", studentNames);
+        map.put("studentIDList", studentIDs);
+
+        return map;
     }
 
-    // Store in map with the EXACT keys your button listener expects
-    map.put("evaluatorNameList", evaluatorNames);
-    map.put("evaluatorIDList", evaluatorIDs); 
-    map.put("studentNameList", studentNames);
-    map.put("studentIDList", studentIDs);
-    
-    return map;
-}
-
-    //get user information via userID
+    // get user information via userID
     public ArrayList<String> readUserByID(String userID) {
-    // This forces the internal reader to search Column 0 (ID) instead of Column 2 (Name)
-    return readUserInternal(userID, true); 
-}
+        // This forces the internal reader to search Column 0 (ID) instead of Column 2
+        // (Name)
+        return readUserInternal(userID, true);
+    }
 
     public ArrayList<String> readUser(String name) {
         return readUserInternal(name, false);
     }
+
     private ArrayList<String> readUserInternal(String value, boolean searchByID) {
 
-    ArrayList<String> userInfo = new ArrayList<>();
+        ArrayList<String> userInfo = new ArrayList<>();
 
-    try (BufferedReader reader = new BufferedReader(new FileReader(userFilePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(userFilePath))) {
 
-        String line;
+            String line;
 
-        // Skip header
-        reader.readLine();
+            // Skip header
+            reader.readLine();
 
-        while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
 
-            String[] data = line.split(",");
-            if (data.length < 5) {
-                continue;
+                String[] data = line.split(",");
+                if (data.length < 5) {
+                    continue;
+                }
+                boolean match;
+                if (searchByID) {
+                    match = data[0].equals(value); // id
+                } else {
+                    match = data[2].equalsIgnoreCase(value); // name
+                }
+                if (match) {
+                    // [0]=id, [1]=email, [2]=name, [3]=role
+                    userInfo.add(data[0]);
+                    userInfo.add(data[1]);
+                    userInfo.add(data[2]);
+                    userInfo.add(data[4]);
+                    break;
+                }
             }
-            boolean match;
-            if (searchByID) {
-                match = data[0].equals(value); // id
-            } else {
-                match = data[2].equalsIgnoreCase(value); // name
+            if (userInfo.isEmpty()) {
+                System.out.println("Error: User not found (" +
+                        (searchByID ? "id=" : "name=") + value + ")");
             }
-            if (match) {
-                // [0]=id, [1]=email, [2]=name, [3]=role
-                userInfo.add(data[0]);
-                userInfo.add(data[1]);
-                userInfo.add(data[2]);
-                userInfo.add(data[4]);
-                break;
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        if (userInfo.isEmpty()) {
-            System.out.println("Error: User not found (" +
-                    (searchByID ? "id=" : "name=") + value + ")");
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
+        return userInfo;
     }
-    return userInfo;
-}
-    //arrayList<String> userinfo = new csvModel.readUser; userid = userinfo.get(0), etc
+    // arrayList<String> userinfo = new csvModel.readUser; userid = userinfo.get(0),
+    // etc
 
     // Verifies user credentials for Login
     public String[] verifyUser(String email, String password, Navigator navigator) {
@@ -237,10 +236,9 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
                 String storedRole = data[4].trim();
 
                 if (storedEmail.equals(email) && storedPassword.equals(password)) {
-                    return new String[]{userId, storedRole};
+                    return new String[] { userId, storedRole };
                 }
 
-               
             }
             // If loop finishes without return, credentials are invalid
             System.out.println("Invalid email or password.");
@@ -250,83 +248,84 @@ public ArrayList<String> getAssignedStudentIDs(String currentEvaluatorID) {
 
         return null;
     }
-    //read submissions.csv to return user id of students who submitted for a particular seminar
-    public ArrayList<String> readSubmission(int SeminarID){
-            ArrayList<String> submissionUserID = new ArrayList<>();
-            File file = new File(submissionFilePath);
 
-            
-    if (file.exists()) {
-        
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            br.readLine(); // Skip header
-            while ((line = br.readLine()) != null) {
-                // Using -1 to keep empty trailing fields if any
-                // Submission ID , Seminar ID , User ID , Title , Abstract , Attachment , Supervisor , Presentation Type
-                String[] data = line.split(",", -1);
-                
+    // read submissions.csv to return user id of students who submitted for a
+    // particular seminar
+    public ArrayList<String> readSubmission(int SeminarID) {
+        ArrayList<String> submissionUserID = new ArrayList<>();
+        File file = new File(submissionFilePath);
 
-                // Skip invalid or incomplete rows
-                if (data.length < 9) {
-                    continue;
+        if (file.exists()) {
+
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                br.readLine(); // Skip header
+                while ((line = br.readLine()) != null) {
+                    // Using -1 to keep empty trailing fields if any
+                    // Submission ID , Seminar ID , User ID , Title , Abstract , Attachment ,
+                    // Supervisor , Presentation Type
+                    String[] data = line.split(",", -1);
+
+                    // Skip invalid or incomplete rows
+                    if (data.length < 9) {
+                        continue;
+                    }
+
+                    int ID = Integer.parseInt(data[1]);
+                    if (ID == SeminarID) {
+                        submissionUserID.add(data[2]); // add user id to list
+                    }
+
                 }
-                                
-                int ID = Integer.parseInt(data[1]);
-                if(ID == SeminarID){
-                    submissionUserID.add(data[2]); // add user id to list
-                }
-
-                
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-    }
         return submissionUserID;
     }
 
+    // =========================== SEMINAR REGISTRATION FOR STUDENT
+    // =========================== //
+    public void registerSeminar(String submitID, String seminarId, String studentID, String title, String abstractText,
+            String attachment, String supervisor, String presentationType, String graded) {
+        try {
+            File file = new File(submissionFilePath);
 
-
-  // =========================== SEMINAR REGISTRATION FOR STUDENT =========================== //
-public void registerSeminar(String submitID, String seminarId, String studentID, String title, String abstractText, String attachment, String supervisor, String presentationType, String graded) {
-    try {
-        File file = new File(submissionFilePath);
-
-        // Ensure directory and file exist with the correct header
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            try (FileWriter writer = new FileWriter(file)) {
-                // Header defines the structure: SubmissionID is index 0
-                writer.append("SubmissionID,SeminarID,UserID,Title,Abstract,Attachment,Supervisor,PresentationType,Graded\n");
+            // Ensure directory and file exist with the correct header
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                try (FileWriter writer = new FileWriter(file)) {
+                    // Header defines the structure: SubmissionID is index 0
+                    writer.append(
+                            "SubmissionID,SeminarID,UserID,Title,Abstract,Attachment,Supervisor,PresentationType,Graded\n");
+                }
             }
+
+            // Data Cleaning: Replace commas with semicolons to avoid breaking CSV columns
+            String safeTitle = title.replace(",", ";");
+            String safeAbstract = abstractText.replace(",", ";");
+
+            // Construct the row string using the submitID passed from your page
+            String line = submitID + "," +
+                    seminarId + "," +
+                    studentID + "," +
+                    safeTitle + "," +
+                    safeAbstract + "," +
+                    attachment + "," +
+                    supervisor + "," +
+                    presentationType + "," +
+                    graded;
+
+            // Append the line to the CSV
+            try (FileWriter writer = new FileWriter(file, true)) {
+                writer.append(line + "\n");
+                System.out.println("Submission successful! Saved ID: " + submitID);
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing submission to CSV: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        // Data Cleaning: Replace commas with semicolons to avoid breaking CSV columns
-        String safeTitle = title.replace(",", ";");
-        String safeAbstract = abstractText.replace(",", ";");
-
-        // Construct the row string using the submitID passed from your page
-        String line = submitID + "," + 
-                      seminarId + "," + 
-                      studentID + "," + 
-                      safeTitle + "," + 
-                      safeAbstract + "," + 
-                      attachment + "," + 
-                      supervisor + "," + 
-                      presentationType + "," + 
-                      graded;
-
-        // Append the line to the CSV
-        try (FileWriter writer = new FileWriter(file, true)) {
-            writer.append(line + "\n");
-            System.out.println("Submission successful! Saved ID: " + submitID);
-        }
-    } catch (IOException e) {
-        System.err.println("Error writing submission to CSV: " + e.getMessage());
-        e.printStackTrace();
     }
-}
 
     // =========================== SEMINAR MANAGEMENT =========================== //
 
@@ -455,223 +454,232 @@ public void registerSeminar(String submitID, String seminarId, String studentID,
     }
 
     // read sessions
-public ArrayList<Session> readSessions(Session session) {
-    ArrayList<Session> sessions = new ArrayList<>();
-    File file = new File(sessionFilePath);
+    public ArrayList<Session> readSessions(Session session) {
+        ArrayList<Session> sessions = new ArrayList<>();
+        File file = new File(sessionFilePath);
 
-    if (!file.exists()) return sessions;
+        if (!file.exists())
+            return sessions;
 
-    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-        String line;
-        br.readLine(); // Skip header
-        while ((line = br.readLine()) != null) {
-            String[] data = line.split(",", -1); 
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip header
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",", -1);
 
-            if (data.length >= 2) {
+                if (data.length >= 2) {
+                    try {
+                        int linkedID = Integer.parseInt(data[0]);
+
+                        if (linkedID == session.getSeminarID()) {
+                            Seminar sessionSem = new Seminar(session.getSeminarID(), "");
+                            int sessionID = Integer.parseInt(data[1]);
+
+                            Session s = new Session(sessionSem, sessionID, data[2], data[3], data[4]);
+
+                            // --- UPDATED LOGIC: No Integer.parseInt for IDs ---
+
+                            // Presenter
+                            if (data.length > 5) {
+                                s.setPresenter(data[5]);
+                                if (data.length > 6)
+                                    s.setPresenterID(data[6]); // Direct String assignment
+                            }
+
+                            // Evaluator
+                            if (data.length > 7) {
+                                s.setEvaluator(data[7]);
+                                if (data.length > 8)
+                                    s.setEvaluatorID(data[8]); // Direct String assignment
+                            }
+                            // --------------------------------------------------
+
+                            sessions.add(s);
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Skipping malformed line (Seminar/Session ID error): " + line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sessions;
+    }
+
+    // --- SESSION: Write (Append) ---
+    public void writeSession(Session session, int seminarID) {
+        try (FileWriter writer = new FileWriter(sessionFilePath, true)) {
+            File f = new File(sessionFilePath);
+
+            // 1. Update the Header to include ID columns
+            if (f.length() == 0)
+                writer.append(
+                        "seminarID,sessionID,sessionType,startTime,endTime,presenter,presenterID,evaluator,evaluatorID\n");
+
+            // 2. Add the IDs to the data string
+            // Order matches readSessions: ... Name, ID, Name, ID
+            String line = seminarID + "," +
+                    session.getSessionID() + "," +
+                    session.getSessionType() + "," +
+                    session.getStartTime() + "," +
+                    session.getEndTime() + "," +
+                    session.getPresenter() + "," +
+                    session.getPresenterID() + "," + // Insert Presenter ID
+                    session.getEvaluator() + "," +
+                    session.getEvaluatorID(); // Insert Evaluator ID
+
+            writer.append(line + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateSession(Session session, int seminarID) {
+        ArrayList<String> allLines = new ArrayList<>();
+
+        // Read all lines first
+        try (BufferedReader reader = new BufferedReader(new FileReader(sessionFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null)
+                allLines.add(line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Write back with updates
+        try (FileWriter writer = new FileWriter(sessionFilePath, false)) {
+            for (String line : allLines) {
+                // Use -1 limit to preserve empty trailing columns
+                String[] data = line.split(",", -1);
+
+                // 1. Skip logic for header or invalid lines
+                if (data.length < 2 || data[0].equalsIgnoreCase("seminarID")) {
+                    writer.write(line + "\n");
+                    continue;
+                }
+
                 try {
-                    int linkedID = Integer.parseInt(data[0]); 
+                    // 2. Parse SeminarID and SessionID (These remain ints)
+                    int rowSemID = Integer.parseInt(data[0].trim());
+                    int rowSessID = Integer.parseInt(data[1].trim());
 
-                    if (linkedID == session.getSeminarID()) {
-                        Seminar sessionSem = new Seminar(session.getSeminarID(), "");
-                        int sessionID = Integer.parseInt(data[1]);
+                    // 3. MATCH BOTH IDs: Ensure we only update the specific session
+                    if (rowSemID == seminarID && rowSessID == session.getSessionID()) {
 
-                        Session s = new Session(sessionSem, sessionID, data[2], data[3], data[4]);
+                        // Construct the new line with 9 columns
+                        // Order: SemID, SessID, Type, Start, End, PresName, PresID, EvalName, EvalID
+                        String newLine = seminarID + "," +
+                                session.getSessionID() + "," +
+                                session.getSessionType() + "," +
+                                session.getStartTime() + "," +
+                                session.getEndTime() + "," +
+                                session.getPresenter() + "," +
+                                session.getPresenterID() + "," + // Add Presenter UUID
+                                session.getEvaluator() + "," +
+                                session.getEvaluatorID(); // Add Evaluator UUID
 
-                        // --- UPDATED LOGIC: No Integer.parseInt for IDs ---
-                        
-                        // Presenter
-                        if (data.length > 5) {
-                            s.setPresenter(data[5]);
-                            if (data.length > 6) s.setPresenterID(data[6]); // Direct String assignment
-                        }
-
-                        // Evaluator
-                        if (data.length > 7) {
-                            s.setEvaluator(data[7]);
-                            if (data.length > 8) s.setEvaluatorID(data[8]); // Direct String assignment
-                        }
-                        // --------------------------------------------------
-
-                        sessions.add(s);
+                        writer.write(newLine + "\n");
+                    } else {
+                        // Write existing line unchanged
+                        writer.write(line + "\n");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Skipping malformed line (Seminar/Session ID error): " + line);
-                }
-            }
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    return sessions;
-}
-// --- SESSION: Write (Append) ---
-public void writeSession(Session session, int seminarID) {
-    try (FileWriter writer = new FileWriter(sessionFilePath, true)) {
-        File f = new File(sessionFilePath);
-        
-        // 1. Update the Header to include ID columns
-        if (f.length() == 0)
-            writer.append("seminarID,sessionID,sessionType,startTime,endTime,presenter,presenterID,evaluator,evaluatorID\n");
-
-        // 2. Add the IDs to the data string
-        // Order matches readSessions: ... Name, ID, Name, ID
-        String line = seminarID + "," +
-                session.getSessionID() + "," +
-                session.getSessionType() + "," +
-                session.getStartTime() + "," +
-                session.getEndTime() + "," +
-                session.getPresenter() + "," +
-                session.getPresenterID() + "," + // Insert Presenter ID
-                session.getEvaluator() + "," +
-                session.getEvaluatorID();        // Insert Evaluator ID
-        
-
-        writer.append(line + "\n");
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-
-public void updateSession(Session session, int seminarID) {
-    ArrayList<String> allLines = new ArrayList<>();
-    
-    // Read all lines first
-    try (BufferedReader reader = new BufferedReader(new FileReader(sessionFilePath))) {
-        String line;
-        while ((line = reader.readLine()) != null) allLines.add(line);
-    } catch (IOException e) { e.printStackTrace(); }
-
-    // Write back with updates
-    try (FileWriter writer = new FileWriter(sessionFilePath, false)) {
-        for (String line : allLines) {
-            // Use -1 limit to preserve empty trailing columns
-            String[] data = line.split(",", -1);
-
-            // 1. Skip logic for header or invalid lines
-            if (data.length < 2 || data[0].equalsIgnoreCase("seminarID")) {
-                writer.write(line + "\n");
-                continue;
-            }
-
-            try {
-                // 2. Parse SeminarID and SessionID (These remain ints)
-                int rowSemID = Integer.parseInt(data[0].trim());
-                int rowSessID = Integer.parseInt(data[1].trim());
-
-                // 3. MATCH BOTH IDs: Ensure we only update the specific session
-                if (rowSemID == seminarID && rowSessID == session.getSessionID()) {
-                    
-                    // Construct the new line with 9 columns
-                    // Order: SemID, SessID, Type, Start, End, PresName, PresID, EvalName, EvalID
-                    String newLine = seminarID + "," + 
-                                 session.getSessionID() + "," + 
-                                 session.getSessionType() + "," + 
-                                 session.getStartTime() + "," + 
-                                 session.getEndTime() + "," + 
-                                 session.getPresenter() + "," + 
-                                 session.getPresenterID() + "," + // Add Presenter UUID
-                                 session.getEvaluator() + "," + 
-                                 session.getEvaluatorID();        // Add Evaluator UUID
-                    
-                    writer.write(newLine + "\n");
-                } else {
-                    // Write existing line unchanged
+                    // In case of any other corrupted numeric data, just preserve the line
                     writer.write(line + "\n");
                 }
-            } catch (NumberFormatException e) {
-                // In case of any other corrupted numeric data, just preserve the line
-                writer.write(line + "\n");
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    } catch (IOException e) { e.printStackTrace(); }
-}
+    }
+
     // --- SESSION: Delete (Rewrite Method) ---
     public void deleteSession(int seminarID, int sessionIDToDelete) {
-    ArrayList<String> allLines = new ArrayList<>();
-    try (BufferedReader br = new BufferedReader(new FileReader(sessionFilePath))) {
-        String line;
-        while ((line = br.readLine()) != null) allLines.add(line);
-    } catch (IOException e) { e.printStackTrace(); }
-
-    try (FileWriter writer = new FileWriter(sessionFilePath, false)) {
-        for (String line : allLines) {
-            String[] data = line.split(",");
-
-            // Skip header check if data is too small
-            if (data.length < 2) {
-                writer.write(line + "\n");
-                continue;
-            }
-
-            try {
-                int currentSemID = Integer.parseInt(data[0].trim());
-                int currentSessID = Integer.parseInt(data[1].trim());
-
-                // ONLY delete if BOTH IDs match
-                if (currentSemID == seminarID && currentSessID == sessionIDToDelete) {
-                    continue; // Skip this line (Delete)
-                }
-            } catch (NumberFormatException e) {
-                // This handles the Header row
-            }
-            writer.write(line + "\n");
+        ArrayList<String> allLines = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(sessionFilePath))) {
+            String line;
+            while ((line = br.readLine()) != null)
+                allLines.add(line);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    } catch (IOException e) { e.printStackTrace(); }
-}
 
+        try (FileWriter writer = new FileWriter(sessionFilePath, false)) {
+            for (String line : allLines) {
+                String[] data = line.split(",");
 
-    public void generateSeminarReport(){
+                // Skip header check if data is too small
+                if (data.length < 2) {
+                    writer.write(line + "\n");
+                    continue;
+                }
 
-        
+                try {
+                    int currentSemID = Integer.parseInt(data[0].trim());
+                    int currentSessID = Integer.parseInt(data[1].trim());
+
+                    // ONLY delete if BOTH IDs match
+                    if (currentSemID == seminarID && currentSessID == sessionIDToDelete) {
+                        continue; // Skip this line (Delete)
+                    }
+                } catch (NumberFormatException e) {
+                    // This handles the Header row
+                }
+                writer.write(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void generateSeminarReport() {
+
         ArrayList<String> seminarList = new ArrayList<>(); // to store seminar data
-        File file = new File("Data/seminar.csv"); // 
+        File file = new File("Data/seminar.csv"); //
         file.getParentFile().mkdirs(); // ensure folder exists
 
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))){ // read seminar data
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) { // read seminar data
 
             String line; // to hold each line
-            while((line = br.readLine())!= null){
+            while ((line = br.readLine()) != null) {
                 seminarList.add(line); // add line to seminar list
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        } 
+        }
 
-
-        try (FileWriter writer = new FileWriter("Data/seminar_report.txt"  , false)){ // write report to text file
+        try (FileWriter writer = new FileWriter("Data/seminar_report.txt", false)) { // write report to text file
 
             writer.append("==================  Seminar Report ==================\n\n");
 
             int totalSeminars = seminarList.size() - 1; // exclude header
             writer.write("Total Seminars: " + totalSeminars + "\n\n");
-            writer.write("-----------------------------------------------------\n");    
+            writer.write("-----------------------------------------------------\n");
             // write each seminar's details
-            for (String seminar : seminarList.subList(1, seminarList.size())){ // skip header from csv file
+            for (String seminar : seminarList.subList(1, seminarList.size())) { // skip header from csv file
                 String data[] = seminar.split(",");
 
-            writer.write("Seminar ID   : " + data[0] + "\n");
-            writer.write("Title        : " + data[1] + "\n");
-            writer.write("Description  : " + data[2] + "\n");
-            writer.write("Venue        : " + data[3] + "\n");
-            writer.write("Date         : " + data[4] + "\n");
-            writer.write("Start Time   : " + data[5] + "\n");
-            writer.write("End Time     : " + data[6] + "\n");
-            writer.write("-----------------------------------------------------\n");
+                writer.write("Seminar ID   : " + data[0] + "\n");
+                writer.write("Title        : " + data[1] + "\n");
+                writer.write("Description  : " + data[2] + "\n");
+                writer.write("Venue        : " + data[3] + "\n");
+                writer.write("Date         : " + data[4] + "\n");
+                writer.write("Start Time   : " + data[5] + "\n");
+                writer.write("End Time     : " + data[6] + "\n");
+                writer.write("-----------------------------------------------------\n");
             }
 
-        System.out.println("Report generated successfully."); // confirmation message
+            System.out.println("Report generated successfully."); // confirmation message
 
-            
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-
-    public void saveSeminarReportToFile(File destination , MainFrame mainFrame) {
-            try {
+    public void saveSeminarReportToFile(File destination, MainFrame mainFrame) {
+        try {
             Files.copy(
                     Paths.get("Data/seminar_report.txt"), // getting the generated report
                     destination.toPath(), // destination chosen by user
@@ -682,8 +690,7 @@ public void updateSession(Session session, int seminarID) {
                     mainFrame,
                     "File saved successfully!",
                     "Saved",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+                    JOptionPane.INFORMATION_MESSAGE);
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -691,15 +698,91 @@ public void updateSession(Session session, int seminarID) {
                     mainFrame,
                     "Failed to save file.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    public void generateSchedule(int seminarID) {
+
+        ArrayList<String> scheduleData = new ArrayList<>(); // to store schedule data
+        ArrayList<String> sessionsData = new ArrayList<>();
+        File file = new File("Data/seminar.csv");
+        File sessionFile = new File("Data/sessions.csv");
+        file.getParentFile().mkdirs(); // ensure folder exists
+        sessionFile.getParentFile().mkdirs(); // ensure folder exists
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) { // read seminar data
+
+            String line; // to hold each line
+            br.readLine(); // skip header
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith(String.valueOf(seminarID))) { // match seminar ID
+                    scheduleData.add(line); // add line to schedule list
+                } else {
+                    continue;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(sessionFile))) { // read session data
+            
+            String line; // to hold each line
+            br.readLine(); // skip header
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith(String.valueOf(seminarID))) { // match seminar ID
+                    sessionsData.add(line); // add line to schedule list
+                } else {
+                    continue;
+                }
+            }
 
 
-// read evaluation scores from Evaluations.csv and return evaluator object
- 
+        }
+            
+        
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+            try (FileWriter writer = new FileWriter("Data/seminar_schedule.txt", false)) {
+                // write schedule to text file
+
+                String data[] = scheduleData.get(0).split(",");
+                writer.append("==================  Seminar Schedule ==================\n\n");
+                writer.write("Seminar ID   : " + data[0] + "\n");
+                writer.write("Title        : " + data[1] + "\n");
+                writer.write("Description  : " + data[2] + "\n");
+                writer.write("Venue        : " + data[3] + "\n");
+                writer.write("Date         : " + data[4] + "\n");
+                writer.write("Start Time   : " + data[5] + "\n");
+                writer.write("End Time     : " + data[6] + "\n");
+                writer.write("\n");
+
+                writer.append("==================  Sessions  ==================\n\n");
+                for (String session : sessionsData) { // write each session's details
+                    String sessionInfo[] = session.split(",");
+
+                    writer.write("Session ID     : " + sessionInfo[1] + "\n");
+                    writer.write("Session Type   : " + sessionInfo[2] + "\n");
+                    writer.write("Start Time     : " + sessionInfo[3] + "\n");
+                    writer.write("End Time       : " + sessionInfo[4] + "\n");
+                    writer.write("Presenter      : " + sessionInfo[5] + "\n");
+                    writer.write("Evaluator      : " + sessionInfo[7] + "\n");
+                    writer.write("-----------------------------------------------------\n");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    
+
+    // read evaluation scores from Evaluations.csv and return evaluator object
+
     public Evaluator readEvaluationScores(String seminarID, String sessionID) {
         String filePath = "Data/Evaluations.csv";
 
@@ -709,7 +792,6 @@ public void updateSession(Session session, int seminarID) {
             br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                
 
                 if (data.length < 6) {
                     System.out.println("Skipping malformed line: " + line);
@@ -717,48 +799,37 @@ public void updateSession(Session session, int seminarID) {
                 }
 
                 if (data[0].trim().equals(seminarID) && data[1].trim().equals(sessionID)) {
-                String seminar = data[0].trim();
-                String session = data[1].trim();
-                int scoreClarity = Integer.parseInt(data[2].trim());
-                int scoreMethodology = Integer.parseInt(data[3].trim());
-                int scorePresentation = Integer.parseInt(data[4].trim());
-                String comment = data[5].trim();
+                    String seminar = data[0].trim();
+                    String session = data[1].trim();
+                    int scoreClarity = Integer.parseInt(data[2].trim());
+                    int scoreMethodology = Integer.parseInt(data[3].trim());
+                    int scorePresentation = Integer.parseInt(data[4].trim());
+                    String comment = data[5].trim();
 
+                    System.out.println("Seminar ID: " + seminar +
+                            ", Session ID: " + session +
+                            ", Clarity: " + scoreClarity +
+                            ", Methodology: " + scoreMethodology +
+                            ", Presentation: " + scorePresentation +
+                            ", Comment: " + comment);
 
+                    return new Evaluator(
+                            seminar,
+                            session,
+                            scoreClarity,
+                            scoreMethodology,
+                            scorePresentation,
+                            comment);
 
-                
-                
-                System.out.println("Seminar ID: " + seminar +
-                        ", Session ID: " + session +
-                        ", Clarity: " + scoreClarity +
-                        ", Methodology: " + scoreMethodology +
-                        ", Presentation: " + scorePresentation +
-                        ", Comment: " + comment);
-
-
-
-                return  new Evaluator(
-                        seminar,
-                        session,
-                        scoreClarity,
-                        scoreMethodology,
-                        scorePresentation,
-                        comment
-                );
-
-
-            }
                 }
+            }
         } catch (IOException e) {
             System.out.println("Error reading evaluation scores file: " + e.getMessage());
         }
         return null;
     }
 
-
-
-
-    // write awards of best oral , best presenter to awards.csv 
+    // write awards of best oral , best presenter to awards.csv
     public void writeAward(String seminarID, String sessionID, String awardTitle, String awardDescription) {
         String filePath = awardFilePath;
 
@@ -775,8 +846,6 @@ public void updateSession(Session session, int seminarID) {
                     writer.append("SeminarID,SessionID,AwardTitle,AwardDescription\n"); // header
                 }
 
-
-                
                 String line = seminarID + "," + sessionID + "," + awardTitle + "," + awardDescription;
                 writer.append(line + "\n");
                 System.out.println("Award written to CSV: " + awardTitle);
@@ -787,13 +856,13 @@ public void updateSession(Session session, int seminarID) {
         }
     }
 
-
-
-    // function to check if award already assigned for a particular seminar and session
-    public boolean isAwardAlreadyAssigned(String seminarID , String sessionID){
+    // function to check if award already assigned for a particular seminar and
+    // session
+    public boolean isAwardAlreadyAssigned(String seminarID, String sessionID) {
         File file = new File(awardFilePath);
 
-        if (!file.exists()) return false;
+        if (!file.exists())
+            return false;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
@@ -810,26 +879,24 @@ public void updateSession(Session session, int seminarID) {
                     }
                 }
             }
-            
+
         } catch (Exception e) {
         }
 
         return false;
     }
 
-
-    public String getSeminarNameByID(int seminarID){
+    public String getSeminarNameByID(int seminarID) {
         ArrayList<Seminar> seminars = readSeminars();
-        for(Seminar s : seminars){
-            if(s.getSeminarID() == seminarID){
+        for (Seminar s : seminars) {
+            if (s.getSeminarID() == seminarID) {
                 return s.getTitle();
             }
         }
         return "Unknown Seminar";
     }
 
-
-    public ArrayList<String[]> viewAwards(int seminarID){
+    public ArrayList<String[]> viewAwards(int seminarID) {
         File file = new File(awardFilePath);
         ArrayList<String[]> filteredAwards = new ArrayList<>();
 
@@ -849,45 +916,34 @@ public void updateSession(Session session, int seminarID) {
                     String rowSeminarID = data[0].trim();
 
                     if (seminarID == Integer.parseInt(rowSeminarID)) {
-                    String seminarName = getSeminarNameByID(Integer.parseInt(rowSeminarID));
+                        String seminarName = getSeminarNameByID(Integer.parseInt(rowSeminarID));
 
+                        String rowSessionID = data[1].trim();
+                        String awardTitle = data[2].trim();
+                        String awardDescription = data[3].trim();
 
-                    
-                    String rowSessionID = data[1].trim();
-                    String awardTitle = data[2].trim();
-                    String awardDescription = data[3].trim();
+                        System.out.println(" Seminar ID: " + rowSeminarID +
+                                " Seminar Name: " + seminarName +
+                                ", Session ID: " + rowSessionID +
+                                ", Receiver: " + awardTitle +
+                                ", Award Name: " + awardDescription);
 
-                   
+                        filteredAwards.add(new String[] {
+                                rowSeminarID,
+                                rowSessionID,
+                                awardTitle,
+                                awardDescription
+                        });
 
-                    System.out.println(" Seminar ID: " + rowSeminarID + 
-                                       " Seminar Name: " + seminarName +
-                                       ", Session ID: " + rowSessionID +
-                                       ", Receiver: " + awardTitle +
-                                       ", Award Name: " + awardDescription);
-
-
-                    filteredAwards.add(new String[] {
-                        rowSeminarID,
-                        rowSessionID,
-                        awardTitle,
-                        awardDescription
-                    });
-                            
-                    
-                   
-                } else {
-                    System.out.println("No awards found for Seminar ID: " + seminarID);
+                    } else {
+                        System.out.println("No awards found for Seminar ID: " + seminarID);
+                    }
                 }
-            }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return filteredAwards;
     }
-
-
-
-
 
 }

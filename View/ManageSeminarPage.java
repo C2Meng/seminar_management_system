@@ -285,6 +285,16 @@ public class ManageSeminarPage extends JPanel {
         });
 
         scheduleButton.addActionListener(e -> {
+
+            int selectedRow = seminarTable.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Please select a seminar first.");
+                return;
+            }
+
+            int seminarID = (int) tableModel.getValueAt(selectedRow, 0);
+            csvModel.generateSchedule(seminarID);
+            JOptionPane.showMessageDialog(this, "Schedule generated successfully!");
         });
 
         delButton.addActionListener(e -> {
