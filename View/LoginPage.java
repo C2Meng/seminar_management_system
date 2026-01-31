@@ -106,7 +106,7 @@ public class LoginPage extends JPanel {
                 
                JOptionPane.showMessageDialog(LoginPage.this, "Invalid email or password",
                 "Error", JOptionPane.ERROR_MESSAGE);
-               }
+               };
 
            
     }

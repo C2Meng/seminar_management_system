@@ -17,6 +17,19 @@ public class ManageSeminarPage extends JPanel {
     private WriteToCSV csvModel = new WriteToCSV();
     private ArrayList<Seminar> seminarList;
 
+    private boolean isEmpty(String value, String fieldName) {
+        if (value == null) // for cancel button
+            return true;
+
+        if (value == null || value.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    fieldName + " cannot be empty");
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     private void refreshTableData() {
         seminarList = csvModel.readSeminars();
         tableModel.setRowCount(0);
@@ -28,7 +41,111 @@ public class ManageSeminarPage extends JPanel {
         }
     }
 
-    public ManageSeminarPage(MainFrame mainFrame , String currentUserID) {
+    private boolean validateDate(String date) {
+        // Basic format check: DD/MM/YYYY
+        String datePattern = "^\\d{2}/\\d{2}/\\d{4}$";
+        if (!date.matches(datePattern)) {
+            JOptionPane.showMessageDialog(this, "Please enter the date in DD/MM/YYYY format!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // Further validation can be added here (e.g., valid day/month ranges)
+        return true;
+    }
+
+    // error check stuff alnafdcsaddcm
+    private int toMinutes(String time) {
+        if (time == null) // for cancel button
+            return -1;
+
+        time = time.trim().toUpperCase();
+        String amPmAtEndPattern = "(?i)(AM|PM)$"; // Normalize: ensure space before AM/PM
+        String multipleSpacesPattern = "\\s+"; // Remove extra spaces
+        time = time.replaceAll(amPmAtEndPattern, " $1");
+        time = time.replaceAll(multipleSpacesPattern, " ");
+        time = time.trim();
+
+        String[] parts = time.split(" ");
+        if (parts.length != 2) {
+            JOptionPane.showMessageDialog(this, "Include AM/PM in time input!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+
+        }
+
+        String[] hm = parts[0].split(":");
+        if (hm.length != 2) {
+            String[] newHm = new String[2];
+            newHm[0] = hm[0];
+            newHm[1] = "00"; // asume minutes as 00 if not provided
+            hm = newHm;
+        }
+
+        int hour = Integer.parseInt(hm[0]);
+        int min = Integer.parseInt(hm[1]);
+        String am_pm = parts[1];
+
+        if (hour < 1 || hour > 12 || min < 0 || min > 59) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid time!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        if ("AM".equals(am_pm)) {
+            if (hour == 12)
+                hour = 0;
+        } else if ("PM".equals(am_pm)) {
+            if (hour != 12)
+                hour += 12;
+        }
+
+        return hour * 60 + min;
+    }
+
+    private boolean overlaps(int startA, int endA, int startB, int endB) {
+        // If A ends before B starts, no overlap.
+        if (endA <= startB)
+            return false;
+
+        // If A starts after B already finished, no overlap.
+        if (startA >= endB)
+            return false;
+
+        return true;
+    }
+
+    private boolean validateSeminar(String date, String semStart, String semEnd) {
+
+        int start = toMinutes(semStart);
+        int end = toMinutes(semEnd);
+
+        if (start >= end) {
+            JOptionPane.showMessageDialog(this,
+                    "Seminar start time must be before end time");
+            return false;
+        }
+
+        // go thru the csv file and check for overlapping seminars
+        for (Seminar s : seminarList) {
+
+            // Only check for time overlap if the DATE is the same
+            // Assuming date format is consistent (e.g., DD/MM/YYYY)
+            if (s.getDate().trim().equals(date.trim())) {
+
+                int existingStart = toMinutes(s.getStartTime());
+                int existingEnd = toMinutes(s.getEndTime());
+
+                if (overlaps(start, end, existingStart, existingEnd)) {
+                    JOptionPane.showMessageDialog(this,
+                            "Seminar time overlaps with another seminar on " + date);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public ManageSeminarPage(MainFrame mainFrame, String currentUserID) {
         setLayout(new BorderLayout());
 
         // --- Header Section ---
@@ -49,8 +166,6 @@ public class ManageSeminarPage extends JPanel {
         JButton backButton = new JButton("Back");
 
         System.out.println("Current User ID in ManageSeminarPage: " + currentUserID);
-
-     
 
         buttonPanel.add(createButton);
         buttonPanel.add(sessionButton);
@@ -74,14 +189,41 @@ public class ManageSeminarPage extends JPanel {
 
         createButton.addActionListener(e -> {
             String title = JOptionPane.showInputDialog(this, "Enter Seminar Title");
-            if (title == null || title.trim().isEmpty())
+            if (isEmpty(title, "Title"))
                 return;
 
             String description = JOptionPane.showInputDialog(this, "Enter Description");
+            if (isEmpty(description, "Description"))
+                return;
+
             String venue = JOptionPane.showInputDialog(this, "Enter the Venue");
+            if (isEmpty(venue, "Venue"))
+                return;
+
             String date = JOptionPane.showInputDialog(this, "Enter the date (DD/MM/YYYY)");
+            if (isEmpty(date, "Date")) {
+                return;
+            }
+
+            if (!validateDate(date)) {
+                return;
+            }
+            ;
+
             String startTime = JOptionPane.showInputDialog(this, "Enter the start time");
+            if (isEmpty(startTime, "Start Time")) {
+                return;
+            }
+
             String endTime = JOptionPane.showInputDialog(this, "Enter the end time");
+            if (isEmpty(endTime, "End Time")) {
+                return;
+            }
+
+            // check for overlapping seminars
+            if (!validateSeminar(date, startTime, endTime)) {
+                return;
+            }
 
             int newID = (seminarList.isEmpty()) ? 1 : seminarList.get(seminarList.size() - 1).getSeminarID() + 1;
 
@@ -191,6 +333,7 @@ public class ManageSeminarPage extends JPanel {
                     return;
 
                 String startTime = JOptionPane.showInputDialog(viewDialog, "Enter Start Time:");
+
                 String endTime = JOptionPane.showInputDialog(viewDialog, "Enter End Time:");
 
                 Session newSess = new Session(finalSem, newSessionID, sessionType, startTime, endTime);
@@ -251,7 +394,7 @@ public class ManageSeminarPage extends JPanel {
                     try {
                         // USE THE NEW METHOD HERE: readUserByID
                         ArrayList<String> userInfo = csvModel.readUserByID(idString);
-                        
+
                         if (userInfo != null && !userInfo.isEmpty()) {
                             // UserInfo format: [0]=id, [1]=email, [2]=name, [3]=role
                             String stuID = userInfo.get(0);
@@ -259,7 +402,6 @@ public class ManageSeminarPage extends JPanel {
 
                             studIDs.add(stuID);
                             studNames.add(stuName);
-                    
 
                         } else {
                             System.out.println("User ID found in submission but not in User.csv: " + idString);
@@ -336,7 +478,6 @@ public class ManageSeminarPage extends JPanel {
                 JOptionPane.showMessageDialog(viewDialog, "Assignment Saved!");
             });
 
-       
             viewDialog.setLocationRelativeTo(this);
             viewDialog.setVisible(true);
         });
