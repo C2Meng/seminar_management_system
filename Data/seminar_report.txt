@@ -1,0 +1,37 @@
+==================  Seminar Report ==================
+
+Total Seminars: 4
+
+-----------------------------------------------------
+Seminar ID   : 1
+Title        : Artificial Intelligence
+Description  : the field of AI
+Venue        : MPH1005
+Date         : 24/01/2026
+Start Time   : 2PM
+End Time     : 4PM
+-----------------------------------------------------
+Seminar ID   : 2
+Title        : Software Engineering
+Description  : The field of SE is big
+Venue        : MPH2005
+Date         : 24/01/2026
+Start Time   : 4PM
+End Time     : 6PM
+-----------------------------------------------------
+Seminar ID   : 3
+Title        : Data Science
+Description  : Data Science
+Venue        : MPH3005
+Date         : 24/01/2026
+Start Time   : 6PM
+End Time     : 8PM
+-----------------------------------------------------
+Seminar ID   : 4
+Title        : Liverpool Conference 2026
+Description  : Liverpool Research Competition
+Venue        : Anfield
+Date         : 10/03/2005
+Start Time   : 8.00am
+End Time     : 10.00pm
+-----------------------------------------------------

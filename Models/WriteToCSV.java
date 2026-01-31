@@ -818,6 +818,75 @@ public void updateSession(Session session, int seminarID) {
     }
 
 
+    public String getSeminarNameByID(int seminarID){
+        ArrayList<Seminar> seminars = readSeminars();
+        for(Seminar s : seminars){
+            if(s.getSeminarID() == seminarID){
+                return s.getTitle();
+            }
+        }
+        return "Unknown Seminar";
+    }
+
+
+    public ArrayList<String[]> viewAwards(int seminarID){
+        File file = new File(awardFilePath);
+        ArrayList<String[]> filteredAwards = new ArrayList<>();
+
+        if (!file.exists()) {
+            System.out.println("No awards assigned yet.");
+            return new ArrayList<>();
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip header
+            System.out.println("===== Awards Assigned =====");
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+
+                if (data.length >= 4) {
+                    String rowSeminarID = data[0].trim();
+
+                    if (seminarID == Integer.parseInt(rowSeminarID)) {
+                    String seminarName = getSeminarNameByID(Integer.parseInt(rowSeminarID));
+
+
+                    
+                    String rowSessionID = data[1].trim();
+                    String awardTitle = data[2].trim();
+                    String awardDescription = data[3].trim();
+
+                   
+
+                    System.out.println(" Seminar ID: " + rowSeminarID + 
+                                       " Seminar Name: " + seminarName +
+                                       ", Session ID: " + rowSessionID +
+                                       ", Receiver: " + awardTitle +
+                                       ", Award Name: " + awardDescription);
+
+
+                    filteredAwards.add(new String[] {
+                        rowSeminarID,
+                        rowSessionID,
+                        awardTitle,
+                        awardDescription
+                    });
+                            
+                    
+                   
+                } else {
+                    System.out.println("No awards found for Seminar ID: " + seminarID);
+                }
+            }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return filteredAwards;
+    }
+
+
 
 
 
