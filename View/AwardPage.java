@@ -74,9 +74,9 @@ public class AwardPage extends JPanel {
       seminarTable = new JTable(tableModel);
       add(new JScrollPane(seminarTable), BorderLayout.CENTER);
 
-
       refreshTableData();
 
+     
       awardButton.addActionListener(e -> {
 
          int selectedRow = seminarTable.getSelectedRow();
@@ -228,7 +228,34 @@ public class AwardPage extends JPanel {
          
       });
 
-      viewButton.addActionListener(e -> {});
+      viewButton.addActionListener(e -> {
+         JDialog awardDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
+               "View Awards", true);
+         awardDialog.setSize(600, 400);
+         awardDialog.setLayout(new BorderLayout());
+
+         String[] columns = { "Seminar ID", "Session ID", "Presenter", "Award" };
+         DefaultTableModel awardModel = new DefaultTableModel(columns, 0);
+         JTable awardTable = new JTable(awardModel);
+         awardDialog.add(new JScrollPane(awardTable), BorderLayout.CENTER);
+         int seminarIDInt = (int) tableModel.getValueAt(seminarTable.getSelectedRow(), 0); // Define it once here
+         // Load Awards Data
+
+
+         ArrayList<String[]> awardsList = csvModel.viewAwards(seminarIDInt);
+
+         if (awardsList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No awards found for the selected seminar.");
+            return;
+         }
+         
+         for (String[] awardData : awardsList) {
+            awardModel.addRow(awardData);
+         }
+
+         awardDialog.setLocationRelativeTo(this);
+         awardDialog.setVisible(true);
+      });
 
       backButton.addActionListener(e -> {
          mainFrame.showPage("CoordinatorDashboard");
