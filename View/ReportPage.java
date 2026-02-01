@@ -34,10 +34,7 @@ public class ReportPage extends JPanel {
         generateSeminarButton.addActionListener(e ->{
                 WriteToCSV writeToCSV = new WriteToCSV();
                 writeToCSV.generateSeminarReport();
-
                 int choice = JOptionPane.showConfirmDialog(mainFrame, "Seminar report generated! Do you want to save it to your device?" , "Success" , JOptionPane.YES_NO_OPTION);
-
-        
                 if (choice == JOptionPane.YES_OPTION) {
 
     // Open file chooser for user to pick save location
@@ -60,6 +57,8 @@ public class ReportPage extends JPanel {
 
         });
 
+
+
         add(Box.createVerticalStrut(10)); // spacing
 
 
@@ -68,6 +67,11 @@ public class ReportPage extends JPanel {
         add(generatefinalEvalButton);
 
         add(Box.createVerticalStrut(10)); // spacing
+
+        generatefinalEvalButton.addActionListener( e->{
+            WriteToCSV writeToCSV = new WriteToCSV();
+            writeToCSV.generateAwardReport();
+        });
 
 
         JButton backButton = new JButton("Back to Dashboard");
