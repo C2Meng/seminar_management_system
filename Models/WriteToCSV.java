@@ -961,4 +961,35 @@ public class WriteToCSV {
         return filteredAwards;
     }
 
+
+    public void generateAwardReport(){
+        ArrayList<String> awardList = new ArrayList<>();
+       File file = new File(awardFilePath); //
+       file.getParentFile().mkdirs(); // ensure folder exists
+
+       try (BufferedReader br = new BufferedReader(new FileReader(file))) { // read award data
+
+           String line; // to hold each line
+           while ((line = br.readLine()) != null) {
+               awardList.add(line); 
+            
+           }             
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+
+       try (FileWriter writer = new FileWriter("Data/award_report.txt", false)) {
+           writer.append("==================  Award Report ==================\n\n");
+           int totalAwards = awardList.size() - 1; // exclude header
+            writer.write("Total Awards Assigned: " + totalAwards + "\n\n");
+            writer.write("-----------------------------------------------------\n");
+            for (String record : awardList){
+                writer.write(record + "\n");
+            }
+       } catch (Exception e) {
+       }
+    
+
+    }
+
 }
