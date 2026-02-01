@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -678,29 +679,38 @@ public class WriteToCSV {
 
     }
 
-    public void saveSeminarReportToFile(File destination, MainFrame mainFrame) {
-        try {
-            Files.copy(
-                    Paths.get("Data/seminar_report.txt"), // getting the generated report
-                    destination.toPath(), // destination chosen by user
-                    StandardCopyOption.REPLACE_EXISTING // overwrite if file exists
-            );
+    public void saveReportToDevice(String sourcePath, File destination, MainFrame mainFrame) {
+    Path source = Paths.get(sourcePath);
 
-            JOptionPane.showMessageDialog(
-                    mainFrame,
-                    "File saved successfully!",
-                    "Saved",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(
-                    mainFrame,
-                    "Failed to save file.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+    // 1. Check if the generated report actually exists
+    if (!Files.exists(source)) {
+        JOptionPane.showMessageDialog(mainFrame, 
+            "The system couldn't find the generated report. Please generate it first.", 
+            "File Not Found", JOptionPane.WARNING_MESSAGE);
+        return;
     }
+
+    try {
+        // 2. Ensure destination has .txt extension
+        String destPath = destination.getAbsolutePath();
+        if (!destPath.toLowerCase().endsWith(".txt")) {
+            destination = new File(destPath + ".txt");
+        }
+
+        // 3. Perform the copy
+        Files.copy(source, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        JOptionPane.showMessageDialog(mainFrame, 
+            "Report saved successfully to:\n" + destination.getAbsolutePath(), 
+            "Success", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (IOException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(mainFrame, 
+            "Failed to save file: " + ex.getMessage(), 
+            "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
 
     public void generateSchedule(int seminarID) {
 
@@ -963,29 +973,51 @@ public class WriteToCSV {
 
 
     public void generateAwardReport(){
-        ArrayList<String> awardList = new ArrayList<>();
+        ArrayList<String[]> awardList = new ArrayList<>();
        File file = new File(awardFilePath); //
        file.getParentFile().mkdirs(); // ensure folder exists
 
        try (BufferedReader br = new BufferedReader(new FileReader(file))) { // read award data
 
            String line; // to hold each line
+           br.readLine(); // skip header
            while ((line = br.readLine()) != null) {
-               awardList.add(line); 
-            
+               String data[] = line.split(",");
+
+               if (data.length >= 4){
+                     awardList.add(data);
+               }
+
+    
            }             
        } catch (IOException e) {
            e.printStackTrace();
        }
 
        try (FileWriter writer = new FileWriter("Data/award_report.txt", false)) {
-           writer.append("==================  Award Report ==================\n\n");
-           int totalAwards = awardList.size() - 1; // exclude header
-            writer.write("Total Awards Assigned: " + totalAwards + "\n\n");
-            writer.write("-----------------------------------------------------\n");
-            for (String record : awardList){
-                writer.write(record + "\n");
-            }
+           writer.write("=====================================================\n");
+           writer.write("                SEMINAR AWARD REPORT                \n");
+           writer.write("=====================================================\n\n");
+
+            Seminar seminarObj = new Seminar(0, "");
+
+            writer.write("Total Awards Given: " + (awardList.size()) + "\n\n");
+
+           
+
+           for (String[] data : awardList){
+             writer.write("\n-------------------------------------------------------\n");
+             int currentSeminarID = Integer.parseInt(data[0].trim());
+             String seminarName = getSeminarNameByID(currentSeminarID);
+             writer.write("Seminar Name    : " + seminarName + "\n");
+             writer.write("Session ID       : " + data[1].trim() + "\n");
+             writer.write("Receiver         : " + data[2].trim() + "\n");
+             writer.write("Award Name      : " + data[3].trim() + "\n");
+           }
+
+           writer.write("\n=======================================================\n\n");
+           writer.write("End of Award Report\n");
+
        } catch (Exception e) {
        }
     

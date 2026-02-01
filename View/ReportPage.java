@@ -47,7 +47,7 @@ public class ReportPage extends JPanel {
         File destination = fileChooser.getSelectedFile(); // get the selected file
  
         WriteToCSV writer = new WriteToCSV(); // create instance to use the method
-        writer.saveSeminarReportToFile(destination , mainFrame); // save the report to the chosen file
+        writer.saveReportToDevice("Data/seminar_report.txt", destination, mainFrame); // save the report to the chosen file
     
     } else { 
         // user cancelled the save dialog
@@ -71,6 +71,24 @@ public class ReportPage extends JPanel {
         generatefinalEvalButton.addActionListener( e->{
             WriteToCSV writeToCSV = new WriteToCSV();
             writeToCSV.generateAwardReport();
+
+            int choice = JOptionPane.showConfirmDialog(mainFrame, "Final Evaluation report generated! Do you want to save it to your device?" , "Success" , JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.YES_OPTION) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setSelectedFile(new File("award_report.txt")); // default name
+
+                int option = fileChooser.showSaveDialog(mainFrame); // parent component
+
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File destination = fileChooser.getSelectedFile(); // get the selected file
+
+                    WriteToCSV writer = new WriteToCSV(); // create instance to use the method
+                    writer.saveReportToDevice("Data/award_report.txt", destination, mainFrame); // save the report to the chosen file
+                } else { 
+                    // user cancelled the save dialog
+                    JOptionPane.showMessageDialog(mainFrame, "Save operation cancelled." , "Cancelled" , JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
         });
 
 
