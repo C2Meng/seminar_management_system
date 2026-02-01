@@ -39,4 +39,4 @@ Methodology, Results, and Presentation)  ✅
 ✓ Poster Presentation Management with board IDs and criteria. 
 ✓ Award & Ceremony Module for computing winners and generating award 
 agenda. 
-✓ Reports & Summary with export options and data analytics.
+✓ Reports & Summary with export options and data analytics. 

@@ -92,6 +92,37 @@ public class ReportPage extends JPanel {
         });
 
 
+        JButton generateOverallReportButton = new JButton("Generate Overall Report");
+        generateOverallReportButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(generateOverallReportButton);
+
+
+        generateOverallReportButton.addActionListener( e->{
+            WriteToCSV writeToCSV = new WriteToCSV();
+            writeToCSV.generateOverallReport();
+            int choice = JOptionPane.showConfirmDialog(mainFrame, "Overall report generated! Do you want to save it to your device?" , "Success" , JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.YES_OPTION) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setSelectedFile(new File("overall_report.txt")); // default name
+
+                int option = fileChooser.showSaveDialog(mainFrame); // parent component
+
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    File destination = fileChooser.getSelectedFile(); // get the selected file
+
+                    WriteToCSV writer = new WriteToCSV(); // create instance to use the method
+                    writer.saveReportToDevice("Data/overall_report.txt", destination, mainFrame); // save the report to the chosen file
+                } else { 
+                    // user cancelled the save dialog
+                    JOptionPane.showMessageDialog(mainFrame, "Save operation cancelled." , "Cancelled" , JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+
+        });
+
+        add(Box.createVerticalStrut(10)); // spacing
+
+
         JButton backButton = new JButton("Back to Dashboard");
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(backButton);
