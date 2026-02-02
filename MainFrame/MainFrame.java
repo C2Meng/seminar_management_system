@@ -8,6 +8,7 @@ import View.LoginPage;
 import View.ManageSeminarPage;
 import View.RegisterSeminarPage;
 import View.ReportPage;
+import View.SeminarSchedulePage;
 import View.SignUpPage;
 import View.StudentDashboard;
 import View.ViewRegisteredSeminarsPage;
@@ -117,6 +118,11 @@ public class MainFrame extends JFrame implements Navigator {
             // Recreate ManageSeminarPage to ensure it has the latest data
             ManageSeminarPage manageSeminarPage = new ManageSeminarPage(this , currentUserID);
             mainPanel.add(manageSeminarPage, "ManageSeminarPage");
+        }
+
+        if(pageName.equals("SeminarSchedulePage")){
+            SeminarSchedulePage seminarSchedulePage = new SeminarSchedulePage(this , currentUserID);
+            mainPanel.add(seminarSchedulePage , "SeminarSchedulePage");
         }
 
         if (pageName.equals("ReportPage")) {
