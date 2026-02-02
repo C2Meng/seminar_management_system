@@ -1,5 +1,12 @@
 package Controller;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.table.DefaultTableModel;
+
+
 public class Session {
 
     private Seminar seminar;
@@ -21,6 +28,8 @@ public class Session {
         this.seminar = sem;
 
     }
+
+    public Session() {}
 
     public Session(Seminar sem, int sID, String sType, String sTime, String eTime) {
         this.seminar = sem;
@@ -124,4 +133,57 @@ public class Session {
     public String getProjectTitle() {
         return (submission != null) ? submission.getTitle() : "Awaiting Submission";
     }
+
+
+
+   public void viewSession(DefaultTableModel model) {
+    // Map to store: seminarID -> "SeminarTitle|Venue"
+    Map<String, String> seminarDataMap = new HashMap<>();
+
+    try {
+        // 1. Load Seminar Names and Venues from seminar.csv
+        BufferedReader brSem = new BufferedReader(new FileReader("Data/seminar.csv"));
+        String line;
+        brSem.readLine(); // Skip header
+        while ((line = brSem.readLine()) != null) {
+            String[] parts = line.split(",");
+            if (parts.length >= 4) {
+                String id = parts[0];
+                String title = parts[1];
+                String venue = parts[3]; // Venue is the 4th column (index 3)
+                seminarDataMap.put(id, title + "|" + venue);
+            }
+        }
+        brSem.close();
+
+        // 2. Load Sessions and combine with the Seminar Data
+        BufferedReader brSes = new BufferedReader(new FileReader("Data/sessions.csv"));
+        brSes.readLine(); // Skip header
+        while ((line = brSes.readLine()) != null) {
+            String[] parts = line.split(",");
+            // sessions.csv indices: 0:semID, 1:sesID, 2:type, 3:start, 4:end, 5:presName
+            if (parts.length >= 6) {
+                String semID = parts[0];
+                String seminarInfo = seminarDataMap.getOrDefault(semID, "Unknown Seminar|Unknown Venue");
+                
+                // Split the mapped string back into Title and Venue
+                String[] info = seminarInfo.split("\\|");
+                String semName = info[0];
+                String venue = info[1];
+                
+                String type = parts[2];
+                String start = parts[3];
+                String end = parts[4];
+                String presenter = parts[5];
+
+                // Add to table model in the order matching your ColumnNames
+                model.addRow(new Object[]{semName, venue, type, start, end, presenter});
+            }
+        }
+        brSes.close();
+    } catch (Exception e) {
+        System.err.println("Error loading schedule: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
 }
