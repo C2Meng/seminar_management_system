@@ -1,4 +1,5 @@
 package View;
+import Controller.Report;
 import MainFrame.MainFrame;
 import Models.WriteToCSV;
 import java.awt.Component;
@@ -10,6 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 public class ReportPage extends JPanel {
 
@@ -23,6 +25,14 @@ public class ReportPage extends JPanel {
         add(label);
 
         add(Box.createVerticalStrut(10)); // spacing
+
+
+
+        JTable table = new JTable();
+        table.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(table);
+
+        
 
 
 
@@ -69,8 +79,8 @@ public class ReportPage extends JPanel {
         add(Box.createVerticalStrut(10)); // spacing
 
         generatefinalEvalButton.addActionListener( e->{
-            WriteToCSV writeToCSV = new WriteToCSV();
-            writeToCSV.generateAwardReport();
+            Report report = new Report("Final Evaluation Report", "Final Evaluation Report Content");
+            report.generateAwardReport();
 
             int choice = JOptionPane.showConfirmDialog(mainFrame, "Final Evaluation report generated! Do you want to save it to your device?" , "Success" , JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
@@ -98,8 +108,8 @@ public class ReportPage extends JPanel {
 
 
         generateOverallReportButton.addActionListener( e->{
-            WriteToCSV writeToCSV = new WriteToCSV();
-            writeToCSV.generateOverallReport();
+            Report report = new Report("Overall Report", "Overall Report Content");
+            report.generateOverallReport();
             int choice = JOptionPane.showConfirmDialog(mainFrame, "Overall report generated! Do you want to save it to your device?" , "Success" , JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
                 JFileChooser fileChooser = new JFileChooser();

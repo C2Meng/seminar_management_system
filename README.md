@@ -27,7 +27,7 @@ Methodology, Results, and Presentation)  ✅
 • Coordinator (Faculty Staff) 
 ✓ Creates and manages seminar sessions (date, venue, session type).  ✅
 ✓ Assigns evaluators and presenters to sessions  ✅
-✓ Generates seminar schedules✅ and final evaluation reports 
+✓ Generates seminar schedules and final evaluation reports  ✅
 ✓ Oversees award nomination for Best Oral, Best Poster, and People’s Choice. ✅
 
 
@@ -36,7 +36,7 @@ Methodology, Results, and Presentation)  ✅
 ✓ Student Module for registration, preference, and upload of presentation files.  ✅
 ✓ Session Management for creating and managing sessions and time slots.  ✅
 ✓ Evaluation Module for scoring and commenting using rubrics.  ✅
-✓ Poster Presentation Management with board IDs and criteria. 
+✓ Poster Presentation Management with board IDs and criteria.  ✅
 ✓ Award & Ceremony Module for computing winners and generating award 
 agenda. 
-✓ Reports & Summary with export options and data analytics. 
+✓ Reports & Summary with export options and data analytics. ✅
