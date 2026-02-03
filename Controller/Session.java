@@ -20,6 +20,7 @@ public class Session {
     private Award assignedAward;
     private String presenterID;
     private String evaluatorID;
+    private String submissionFilePath;
 
     private Submission submission;
 
@@ -116,6 +117,15 @@ public class Session {
 
     public void setEvaluatorID(String id) {
         this.evaluatorID = id;
+    }
+
+
+    public void setSubmissionFilePath(Submission s) {
+        this.submission = s;
+    }
+
+    public String getSubmissionFilePath() {
+        return submissionFilePath;
     }
 
     public String getEvaluatorID() {

@@ -106,13 +106,14 @@ public class ViewRegisteredSeminarsPage extends JPanel {
     }
 
 
-    private void viewPreview(String filePath , String id , String title) {
+    private void viewPreview(String filePath , String id , String title ) {
         try {
             SwingController controller = new SwingController();
             SwingViewBuilder factory = new SwingViewBuilder(controller);
             JPanel viewerComponentPanel = factory.buildViewerPanel();
 
             JFrame viewerFrame = new JFrame("Preview - " + title + " (ID: " + id + ")");
+
             viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             viewerFrame.getContentPane().add(viewerComponentPanel);
             viewerFrame.pack();
