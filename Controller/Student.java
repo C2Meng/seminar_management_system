@@ -4,6 +4,7 @@ import InterfaceLib.Navigator;
 import InterfaceLib.Role;
 import InterfaceLib.SignUp;
 import Models.WriteToCSV;
+import java.io.File;
 
 
 
@@ -114,7 +115,31 @@ public class Student extends User implements SignUp {
 
    public void registerSeminar(String submissionID, String seminarId,String studentID , String title, String abstractText, String attachment, String supervisor, String presentationType, String graded) {
     // Pass everything to the Model
-    writeToCSV.registerSeminar(submissionID, seminarId, studentID, title, abstractText, attachment, supervisor, presentationType, graded);
+
+    // 1. Define the internal storage path
+    File destinatorDir = new File("Data/Attachments/" + submissionID);
+    if (!destinatorDir.exists()) {
+        destinatorDir.mkdirs();
+    }
+
+    File sourceFile = new File(attachment);
+    // Use the original filename to keep the extension (.pdf)
+    File finalDestFile = new File(destinatorDir, sourceFile.getName());
+
+    try {
+        // 2. Perform the actual physical copy
+        if (sourceFile.exists()) {
+            java.nio.file.Files.copy(
+                sourceFile.toPath(), 
+                finalDestFile.toPath(), 
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING
+            );
+        }
+    } catch (java.io.IOException e) {
+        System.out.println("File upload failed: " + e.getMessage());
+    }
+
+    writeToCSV.registerSeminar(submissionID, seminarId, studentID, title, abstractText, attachment, supervisor, presentationType, graded , finalDestFile.getAbsolutePath());
     
     // Redirect if needed (ensure "StudentDashboard" matches your MainFrame routing)
     if (navigator != null) {

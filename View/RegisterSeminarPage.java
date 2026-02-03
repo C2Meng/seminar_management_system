@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class RegisterSeminarPage extends JPanel {
 
@@ -168,6 +169,11 @@ public class RegisterSeminarPage extends JPanel {
             JFileChooser fileChoose = new JFileChooser();
             fileChoose.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileChoose.setDialogTitle("Select File");
+
+            FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files", "pdf");
+            fileChoose.setFileFilter(pdfFilter);
+            fileChoose.setAcceptAllFileFilterUsed(false);
+            
             int result = fileChoose.showOpenDialog(RegisterSeminarPage.this);
             if (result == JFileChooser.APPROVE_OPTION){
                 File selectedFile = fileChoose.getSelectedFile();
