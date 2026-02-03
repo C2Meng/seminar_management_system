@@ -287,8 +287,9 @@ public class WriteToCSV {
 
     // =========================== SEMINAR REGISTRATION FOR STUDENT
     // =========================== //
-    public void registerSeminar(String submitID, String seminarId, String studentID, String title, String abstractText,
-            String attachment, String supervisor, String presentationType, String graded) {
+    public void registerSeminar(String submitID, String seminarId, String studentID, String title, 
+                                String abstractText, String attachment, String supervisor, 
+                                String presentationType, String graded, String storedAttachmentPath) {
         try {
             File file = new File(submissionFilePath);
 
@@ -297,25 +298,27 @@ public class WriteToCSV {
                 file.getParentFile().mkdirs();
                 try (FileWriter writer = new FileWriter(file)) {
                     // Header defines the structure: SubmissionID is index 0
-                    writer.append(
-                            "SubmissionID,SeminarID,UserID,Title,Abstract,Attachment,Supervisor,PresentationType,Graded\n");
+                    writer.append("SubmissionID,SeminarID,UserID,Title,Abstract,Attachment,Supervisor,PresentationType,Graded\n");
                 }
             }
 
             // Data Cleaning: Replace commas with semicolons to avoid breaking CSV columns
             String safeTitle = title.replace(",", ";");
             String safeAbstract = abstractText.replace(",", ";");
+            String safeSupervisor = supervisor.replace(",", ";");
+            String safePath = storedAttachmentPath.replace(",", ";");
 
             // Construct the row string using the submitID passed from your page
-            String line = submitID + "," +
-                    seminarId + "," +
-                    studentID + "," +
-                    safeTitle + "," +
-                    safeAbstract + "," +
-                    attachment + "," +
-                    supervisor + "," +
-                    presentationType + "," +
-                    graded;
+            String line = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                submitID, 
+                seminarId, 
+                studentID, 
+                safeTitle, 
+                safeAbstract, 
+                safePath, 
+                safeSupervisor, 
+                presentationType, 
+                graded);
 
             // Append the line to the CSV
             try (FileWriter writer = new FileWriter(file, true)) {

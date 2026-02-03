@@ -2,6 +2,8 @@ package View;
 
 import MainFrame.MainFrame;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,6 +40,18 @@ public class ViewRegisteredSeminarsPage extends JPanel {
         String[] columnNames = {"Submission ID", "Seminar ID" , "User ID" , "Title", "Abstract", "Attachment", "Supervisor" , "Presentation Type" , "Status (Graded)"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         JTable seminarsTable = new JTable(tableModel);
+
+        seminarsTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked (MouseEvent e){
+                if (e.getClickCount() == 1){
+                    int row = seminarsTable.getSelectedRow();
+
+                    String filePath = seminarsTable.getValueAt(row, 5).toString();
+                    openPDF(filePath);
+                }
+            }
+        });
 
         // Load data from CSV file filtered by student email
         loadRegisteredSeminars(tableModel, currentUserID);
@@ -86,5 +100,17 @@ public class ViewRegisteredSeminarsPage extends JPanel {
         } catch (IOException e) {
             System.out.println("Error reading seminars file: " + e.getMessage());
         }
+    }
+
+
+    private void openPDF(String filePath) {
+        try {
+            if (filePath != null && !filePath.isEmpty()) {
+                java.awt.Desktop.getDesktop().open(new java.io.File(filePath));
+            }
+        } catch (IOException e) {
+            System.out.println("Error opening PDF: " + e.getMessage());
+        }
+
     }
 }
