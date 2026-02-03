@@ -31,9 +31,28 @@ private String submissionId;
             this.status = "Pending";
         }
     }
+
+    public Submission(String submissionId, int seminarId, String userId, String title, 
+                      String abstractText, String attachment, String supervisor, 
+                      String presentationType, String status) {
+        this.submissionId = submissionId;
+        this.seminarId = seminarId;
+        this.userId = userId;
+        this.title = title;
+        this.abstractText = abstractText;
+        this.attachment = attachment;
+        this.supervisor = supervisor;
+        this.presentationType = presentationType;
+        this.status = (status == null || status.isEmpty()) ? "Pending" : status;
+    }
+
+    
     public String getStatus() { return status; }
     public String getSubmissionId() { return submissionId; }
     public String getUserId() { return userId; }
     public String getTitle() { return title; }
-    public String getAbstractText() { return abstractText; }    
+    public String getAbstractText() { return abstractText; }  
+    public String getAttachment() { return attachment; }
+    public String getSupervisor() { return supervisor; }
+    public String getPresentationType() { return presentationType; }  
 }

@@ -3,6 +3,7 @@ package Models;
 import Controller.Evaluator;
 import Controller.Seminar;
 import Controller.Session;
+import Controller.Submission;
 import InterfaceLib.Navigator;
 import MainFrame.MainFrame;
 import java.io.BufferedReader;
@@ -975,6 +976,46 @@ public class WriteToCSV {
     }
 
 
+public Map<String , Submission> loadAllSubmissions(){
+        Map<String , Submission> submissions = new HashMap<>();
+        File file = new File(submissionFilePath);
+
+        if (!file.exists())
+            return submissions; // Return empty map if no file exists
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip header
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",", -1);
+
+                // Basic validation: must have at least ID and Title
+                if (data.length >= 3) {
+                    try {
+                        String submissionID = data[0];
+                        int seminarID = Integer.parseInt(data[1]);
+                        String userID = data[2];
+                        String title = data.length > 3 ? data[3] : "";
+                        String abstractText = data.length > 4 ? data[4] : "";
+                        String attachment = data.length > 5 ? data[5] : "";
+                        String supervisor = data.length > 6 ? data[6] : "";
+                        String presentationType = data.length > 7 ? data[7] : "";
+                        String graded = data.length > 8 ? data[8] : "";
+
+                        Submission s = new Submission(submissionID, seminarID, userID, title, abstractText, attachment, supervisor, presentationType, graded);
+
+                        submissions.put(submissionID, s); // Change from submissionID to userID
+                    } catch (NumberFormatException e) {
+                        System.out.println("Skipping invalid seminar ID: " + data[1]);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+    }
+
+        return submissions;
+}
     
 
 

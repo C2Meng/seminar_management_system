@@ -1,0 +1,20 @@
+==================  Seminar Schedule ==================
+
+Seminar ID   : 4
+Title        : Liverpool Conference 2026
+Description  : Liverpool Research Competition
+Venue        : Anfield
+Date         : 10/03/2005
+Start Time   : 8.00am
+End Time     : 10.00pm
+
+==================  Sessions  ==================
+
+Session ID     : 1
+Session Type   : Poster
+Start Time     : 8.00am
+End Time       : 10.00am
+Presenter      : Raziq
+Evaluator      : Syed
+-----------------------------------------------------
+

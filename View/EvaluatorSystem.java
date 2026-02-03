@@ -4,6 +4,8 @@ import Controller.Evaluator;
 import Controller.Session;
 import MainFrame.MainFrame;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.Set;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.icepdf.ri.common.SwingController;
+import org.icepdf.ri.common.SwingViewBuilder;
+
 
 public class EvaluatorSystem extends JFrame {
 
@@ -41,6 +46,7 @@ public class EvaluatorSystem extends JFrame {
             }
         };
 
+
         updateTableData();
 
         table = new JTable(tableModel);
@@ -49,6 +55,17 @@ public class EvaluatorSystem extends JFrame {
         table.getColumnModel().getColumn(3).setPreferredWidth(250);
 
         table.getColumnModel().getColumn(4).setCellRenderer(new StatusRenderer());
+
+        table.addMouseListener( new MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    openPDF();
+                }
+            }
+
+          
+        });
 
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -71,6 +88,11 @@ public class EvaluatorSystem extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
     }
+
+    public void getFilePath(String filePath){
+        this.filePath = filePath;
+    }
+    
 
     private void loadData() {
         sessions = controller.loadSessions(evaluatorID);
@@ -108,6 +130,48 @@ public class EvaluatorSystem extends JFrame {
         }
         new GradingDialog(this, selectedSession, controller).setVisible(true);
     }
+
+
+    private void openPDF() {
+    int selectedRow = table.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a session.");
+        return;
+    }
+
+    Session selectedSession = sessions.get(selectedRow);
+    if (selectedSession.getSubmission() == null) {
+        JOptionPane.showMessageDialog(this, "No submission available.");
+        return;
+    }
+
+    String actualPdfPath = selectedSession.getSubmission().getAttachment();
+
+    if (actualPdfPath == null || actualPdfPath.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "File path is empty.");
+        return;
+    }
+
+    showPdfWindow(actualPdfPath);
+}
+
+    private void showPdfWindow(String filePath) {
+    SwingController controller = new SwingController();
+    SwingViewBuilder factory = new SwingViewBuilder(controller);
+
+    JPanel pdfPanel = factory.buildViewerPanel();
+    
+    JFrame pdfFrame = new JFrame("Submission Preview - " + filePath);
+    pdfFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    pdfFrame.getContentPane().add(pdfPanel);
+
+    controller.openDocument(filePath);
+
+    // Make it a bit larger for readability
+    pdfFrame.setSize(900, 800); 
+    pdfFrame.setLocationRelativeTo(this);
+    pdfFrame.setVisible(true);
+}
 
     class GradingDialog extends JDialog {
         private Session session;
