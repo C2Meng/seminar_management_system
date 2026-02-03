@@ -10,13 +10,14 @@ import java.io.IOException;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
-
+import org.icepdf.ri.common.SwingController;
+import org.icepdf.ri.common.SwingViewBuilder;
 
 public class ViewRegisteredSeminarsPage extends JPanel {
 
@@ -48,7 +49,9 @@ public class ViewRegisteredSeminarsPage extends JPanel {
                     int row = seminarsTable.getSelectedRow();
 
                     String filePath = seminarsTable.getValueAt(row, 5).toString();
-                    openPDF(filePath);
+                    String id = seminarsTable.getValueAt(row, 0).toString();
+                    String title = seminarsTable.getValueAt(row, 3).toString();
+                    viewPreview( filePath , id , title);
                 }
             }
         });
@@ -103,14 +106,42 @@ public class ViewRegisteredSeminarsPage extends JPanel {
     }
 
 
+    private void viewPreview(String filePath , String id , String title) {
+        try {
+            SwingController controller = new SwingController();
+            SwingViewBuilder factory = new SwingViewBuilder(controller);
+            JPanel viewerComponentPanel = factory.buildViewerPanel();
+
+            JFrame viewerFrame = new JFrame("Preview - " + title + " (ID: " + id + ")");
+            viewerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            viewerFrame.getContentPane().add(viewerComponentPanel);
+            viewerFrame.pack();
+            viewerFrame.setVisible(true);
+            viewerFrame.setSize(800, 600);
+
+
+            controller.openDocument(filePath);
+            viewerComponentPanel.setVisible(true);  
+
+            
+            
+        } catch (Exception e) {
+        }
+
+
+    
+    }
+
+
     private void openPDF(String filePath) {
         try {
             if (filePath != null && !filePath.isEmpty()) {
                 java.awt.Desktop.getDesktop().open(new java.io.File(filePath));
+            } else {
+                System.out.println("Invalid file path.");
             }
         } catch (IOException e) {
             System.out.println("Error opening PDF: " + e.getMessage());
         }
-
     }
 }
