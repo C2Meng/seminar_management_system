@@ -1,0 +1,7 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\User\\Downloads\\icepdf-core-6.2.2.jar",
+        "c:\\Users\\User\\Downloads\\icepdf-viewer-6.2.2.jar"
+    ]
+}
